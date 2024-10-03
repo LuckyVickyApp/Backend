@@ -3,6 +3,33 @@ spring:
   profiles:
     active: local
 
+  # 용량 제한 늘리기
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
+
+# s3
+cloud:
+  aws:
+    s3:
+      bucket: ${aws.s3.bucket}
+      path:
+        location: location
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${aws.s3.access.key}
+      secretKey: ${aws.s3.secret.key}
+
+# 로그인 jwt
+jwt:
+  secret: ${jwt.secret}
+  accessExpirationTime: ${jwt.expiration}
+  refreshExpirationTime: ${jwt.refresh.expiration}
+
 # swagger
 springdoc:
   swagger-ui:
@@ -60,5 +87,5 @@ spring:
         #        show_sql: true
         use_sql_comments: true
         hbm2ddl:
-          auto: update
+          auto: create
         default_batch_fetch_size: 1000
