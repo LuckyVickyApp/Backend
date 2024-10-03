@@ -1,7 +1,6 @@
 package LuckyVicky.backend.user.controller;
 
 import LuckyVicky.backend.global.api_payload.ApiResponse;
-import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.user.converter.UserConverter;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.dto.JwtDto;
