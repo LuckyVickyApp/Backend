@@ -106,4 +106,15 @@ public class UserController {
         userService.updateProfileImage(profileImage, user);
         return ApiResponse.onSuccess(SuccessCode.USER_INFO_UPDATE_SUCCESS, "프로필 이미지가 성공적으로 업로드 되었습니다");
     }
+
+    @Operation(summary = "회원 정보 조회", description = "현재 로그인한 회원의 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원 정보 조회 완료")
+    })
+    @GetMapping("/info")
+    public ApiResponse<UserResponseDto.MyPageUserDto> getUserInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        User user = userService.findByUserName(customUserDetails.getUsername());
+        UserResponseDto.MyPageUserDto userResponseDto = UserConverter.toUserDTO(user);
+        return ApiResponse.onSuccess(SuccessCode.USER_INFO_VIEW_SUCCESS, userResponseDto);
+    }
 }

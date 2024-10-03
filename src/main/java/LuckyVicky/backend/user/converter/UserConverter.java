@@ -38,4 +38,14 @@ public class UserConverter {
                 .build();
     }
 
+    public static UserResponseDto.MyPageUserDto toUserDTO(User user) {
+        return UserResponseDto.MyPageUserDto.builder()
+                .profileImage(user.getProfileImage())
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+                .address(user.getAddress())
+                .signInDate(user.getSignInDate())
+                .inviteCode(user.getInviteCode())
+                .build();
+    }
 }
