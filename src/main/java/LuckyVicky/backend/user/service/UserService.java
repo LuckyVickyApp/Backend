@@ -172,4 +172,36 @@ public class UserService {
         user.updateAddress(userUpdateAddressDto.getAddress());
     }
 
+    @Transactional
+    public void updateProfileImage(MultipartFile file, User user) throws IOException {
+        String uploadFileUrl = null;
+        String dirName = "profile/";
+
+        if (file != null) {
+            String contentType = file.getContentType();
+            if (ObjectUtils.isEmpty(contentType)) {
+                throw GeneralException.of(ErrorCode.INVALID_FILE_CONTENT_TYPE);
+            }
+
+            MediaType mediaType = amazonS3Manager.contentType(Objects.requireNonNull(file.getOriginalFilename()));
+            if (mediaType == null || !(mediaType.equals(MediaType.IMAGE_PNG) || mediaType.equals(MediaType.IMAGE_JPEG))) {
+                throw GeneralException.of(ErrorCode.MISMATCH_IMAGE_FILE);
+            }
+
+            // 이전 프로필 이미지가 존재하는지 확인
+            if (!isEmpty(user.getProfileImage())) {
+                // 기존 프로필 이미지를 S3에서 삭제
+                String previousFilePath = user.getProfileImage();
+                amazonS3Manager.delete(previousFilePath); // S3에서 삭제
+            }
+
+            java.io.File uploadFile = amazonS3Manager.convert(file)
+                    .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패했습니다."));
+
+            String fileName = dirName + AmazonS3Manager.generateFileName(file);
+            uploadFileUrl = amazonS3Manager.putS3(uploadFile, fileName);
+
+            user.updateProfileImage(uploadFileUrl); // 새로운 사진 url 저장
+        }
+    }
 }

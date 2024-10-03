@@ -93,4 +93,17 @@ public class UserController {
             throw GeneralException.of(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Operation(summary = "프로필 사진 추가 및 수정", description = "프로필 사진을 추가하거나 수정합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "프로필 사진 추가/수정 완료")
+    })
+    @PutMapping(value = "/profile-image", consumes = {"multipart/form-data"})
+    public ApiResponse<String> updateProfileImage(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestPart("profileImage") MultipartFile profileImage) throws IOException {
+        User user = userService.findByUserName(customUserDetails.getUsername());
+        userService.updateProfileImage(profileImage, user);
+        return ApiResponse.onSuccess(SuccessCode.USER_INFO_UPDATE_SUCCESS, "프로필 이미지가 성공적으로 업로드 되었습니다");
+    }
 }
