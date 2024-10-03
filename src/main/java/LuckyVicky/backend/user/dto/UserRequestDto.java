@@ -1,10 +1,7 @@
 package LuckyVicky.backend.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 public class UserRequestDto {
@@ -24,5 +21,27 @@ public class UserRequestDto {
         @Schema(description = "social type")
         private String provider;
 
+    }
+
+    @Schema(description = "UserNicknameReqDto")
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserNicknameReqDto {
+
+        @Schema(description = "닉네임")
+        private String nickname;
+
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserAddressDto {
+        @Schema(description = "주소")
+        private String address;
     }
 }

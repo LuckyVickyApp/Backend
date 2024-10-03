@@ -151,4 +151,25 @@ public class UserService {
         log.info("{} 회원 탈퇴 완료", username);
     }
 
+    @Transactional
+    public void saveNickname(UserRequestDto.UserNicknameReqDto nicknameReqDto, User user) {
+        // 입력된 닉네임
+        String nickname = nicknameReqDto.getNickname();
+
+        // 중복 검사
+        if (userRepository.existsByNickname(nickname)) {
+            throw GeneralException.of(ErrorCode.ALREADY_USED_NICKNAME);
+        }
+        user.updateNickname(nickname);
+    }
+
+    @Transactional
+    public void updateAddress(User user, UserRequestDto.UserAddressDto userUpdateAddressDto) {
+        if (userUpdateAddressDto.getAddress() == null || userUpdateAddressDto.getAddress().isEmpty()) {
+            throw GeneralException.of(ErrorCode.USER_ADDRESS_NULL);
+        }
+
+        user.updateAddress(userUpdateAddressDto.getAddress());
+    }
+
 }
