@@ -10,7 +10,6 @@ import LuckyVicky.backend.user.domain.RefreshToken;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.dto.JwtDto;
 import LuckyVicky.backend.user.dto.UserRequestDto;
-import LuckyVicky.backend.user.dto.UserResponseDto;
 import LuckyVicky.backend.user.jwt.JwtTokenUtils;
 import LuckyVicky.backend.user.repository.RefreshTokenRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
