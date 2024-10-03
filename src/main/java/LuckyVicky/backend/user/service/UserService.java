@@ -91,4 +91,64 @@ public class UserService {
         return jwt;
     }
 
+    @Transactional
+    public void logout(HttpServletRequest request) {
+        // 1. access token 찾아오기
+        String accessToken = request.getHeader("Authorization").split(" ")[1];
+
+        // 2. 리프레시 토큰을 username으로 찾아 삭제
+        String username = jwtTokenUtils.parseClaims(accessToken).getSubject();
+        log.info("access token에서 추출한 username : {}", username);
+        if (refreshTokenRepository.existsByUsername(username)) {
+            refreshTokenRepository.deleteByUsername(username);
+            log.info("DB에서 리프레시 토큰 삭제 완료");
+        } else {
+            throw GeneralException.of(ErrorCode.WRONG_REFRESH_TOKEN);
+        }
+    }
+
+    // access, refresh 토큰 재발급
+    @Transactional
+    public JwtDto reissue(HttpServletRequest request) {
+        // 1. Request에서 Refresh Token 추출
+        String refreshTokenValue = request.getHeader("Authorization").split(" ")[1];
+
+        // 2. DB에서 해당 Refresh Token을 찾음
+        RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(refreshTokenValue)
+                .orElseThrow(() -> new GeneralException(ErrorCode.WRONG_REFRESH_TOKEN));
+        log.info("찾은 refresh token : {}", refreshToken);
+
+        // 3. Refresh Token을 발급한 사용자 정보 로드
+        UserDetails userDetails = manager.loadUserByUsername(refreshToken.getUsername());
+        log.info("refresh token에서 추출한 username : {}", refreshToken.getUsername());
+
+        // 4. 새로운 Access Token 및 Refresh Token 생성, 저장
+        JwtDto jwt = jwtTokenUtils.generateToken(userDetails);
+        log.info("reissue: refresh token 재발급 완료");
+        refreshToken.updateRefreshToken(jwt.getRefreshToken());
+
+        log.info("accessToken: {}", jwt.getAccessToken());
+        log.info("refreshToken: {} ", jwt.getRefreshToken());
+
+        // 5. DB에 새로운 리프레시 토큰이 정상적으로 저장되었는지 확인
+        if (!refreshTokenRepository.existsByUsername(refreshToken.getUsername())) {
+            throw GeneralException.of(ErrorCode.WRONG_REFRESH_TOKEN);
+        }
+
+        return jwt;
+    }
+
+    @Transactional
+    public void deleteUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
+
+        if (refreshTokenRepository.existsByUsername(username)) {
+            refreshTokenRepository.deleteByUsername(username);
+            log.info("DB에서 리프레시 토큰 삭제 완료");
+        }
+        userRepository.delete(user);
+        log.info("{} 회원 탈퇴 완료", username);
+    }
+
 }
