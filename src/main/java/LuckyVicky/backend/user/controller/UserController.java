@@ -18,7 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
 import java.io.IOException;
 
@@ -82,16 +81,11 @@ public class UserController {
     })
     @PostMapping("/address")
     public ApiResponse<String> saveAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                           @RequestBody UserRequestDto.UserAddressDto userUpdateAddressDto) {
-        try {
-            User user = userService.findByUserName(customUserDetails.getUsername());
-            userService.updateAddress(user, userUpdateAddressDto);
-            return ApiResponse.onSuccess(SuccessCode.USER_INFO_UPDATE_SUCCESS, "주소가 성공적으로 저장되었습니다.");
-        } catch (IllegalArgumentException e) {
-            throw GeneralException.of(ErrorCode.BAD_REQUEST);
-        } catch (Exception e) {
-            throw GeneralException.of(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+                                           @RequestBody UserRequestDto.UserAddressDto userUpdateAddressDto
+    ) {
+        User user = userService.findByUserName(customUserDetails.getUsername());
+        userService.updateAddress(user, userUpdateAddressDto);
+        return ApiResponse.onSuccess(SuccessCode.USER_INFO_UPDATE_SUCCESS, "주소가 성공적으로 저장되었습니다.");
     }
 
     @Operation(summary = "프로필 사진 추가 및 수정", description = "프로필 사진을 추가하거나 수정합니다.")
