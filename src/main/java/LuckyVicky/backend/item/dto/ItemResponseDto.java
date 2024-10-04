@@ -15,6 +15,6 @@ public class ItemResponseDto {
     private String name;
     private String description;
     private String imageUrl;
-    private Integer quantity;
+    private String quantity;
     private LocalDate availableDate;
 }

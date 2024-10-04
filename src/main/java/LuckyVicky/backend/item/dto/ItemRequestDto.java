@@ -5,7 +5,6 @@ import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 @Getter
 @Setter
@@ -26,7 +25,7 @@ public class ItemRequestDto {
     private String availableDate;
 
     @Schema(description = "상품 수량", example = "100")
-    private String quantity;  // 이제 수량을 문자열로 받음
+    private String quantity;
 
     @Schema(description = "상품 이미지 파일", type = "file")
     private MultipartFile imageFile;

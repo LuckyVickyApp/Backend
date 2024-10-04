@@ -19,7 +19,7 @@ public class ItemConverter {
                 .name(requestDto.getItemName())
                 .description(requestDto.getItemDescription())
                 .availableDate(availableDate)
-                .quantity(requestDto.getQuantity())  // quantity는 문자열로 변환
+                .quantity(requestDto.getQuantity())
                 .imageUrl(imageUrl)
                 .build();
     }
@@ -30,7 +30,7 @@ public class ItemConverter {
                 .name(item.getName())
                 .description(item.getDescription())
                 .availableDate(item.getAvailableDate())
-                .quantity(Integer.valueOf(item.getQuantity()))
+                .quantity(item.getQuantity())
                 .imageUrl(item.getImageUrl())
                 .build();
     }

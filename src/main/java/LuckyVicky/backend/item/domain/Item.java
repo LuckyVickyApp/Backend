@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "item")  // 테이블 이름을 명시
+@Table(name = "item")
 public class Item {
 
     @Id
@@ -25,11 +25,19 @@ public class Item {
     private String description;
 
     @Column(nullable = true)
-    private LocalDate availableDate;  // 날짜를 LocalDate로 저장
+    private LocalDate availableDate;
 
     @Column(nullable = true)
-    private String quantity;  // 수량을 문자열로 처리
+    private String quantity;
 
     @Column(nullable = true)
-    private String imageUrl;  // 이미지 URL 저장
+    private String imageUrl;
+
+    public void updateItem(String name, String description, String availableDate, String quantity, String imageUrl) {
+        this.name = name;
+        this.description = description;
+        this.availableDate = availableDate != null ? LocalDate.parse(availableDate) : this.availableDate;
+        this.quantity = quantity;
+        this.imageUrl = imageUrl;
+    }
 }

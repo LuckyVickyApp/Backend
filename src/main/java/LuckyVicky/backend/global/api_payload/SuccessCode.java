@@ -22,9 +22,13 @@ public enum SuccessCode implements BaseCode {
     USER_INFO_VIEW_SUCCESS(HttpStatus.OK, "USER_2006", "회원 정보 조회가 완료 되었습니다."),
     USER_PROFILE_IMAGE_UPDATE_SUCCESS(HttpStatus.OK, "USER_2007", "프로필 사진 이미지 업로드가 완료 되었습니다."),
 
-    ITEM_CREATE_SUCCESS(HttpStatus.OK, "USER_2008", "아이템 생성이 완료되었습니다."),
-    ITEM_UPDATE_SUCCESS(HttpStatus.OK, "USER_2009", "아이템 수정이 완료되었습니다."),
-    ITEM_DELETE_SUCCESS(HttpStatus.OK, "USER_2010", "아이템 삭제가 완료되었습니다.");
+    // Item (상품 관련 성공 코드)
+    ITEM_CREATE_SUCCESS(HttpStatus.CREATED, "ITEM_2011", "상품 생성이 완료되었습니다."),
+    ITEM_UPDATE_SUCCESS(HttpStatus.OK, "ITEM_2008", "상품 수정이 완료되었습니다."),
+    ITEM_DELETE_SUCCESS(HttpStatus.OK, "ITEM_2009", "상품 삭제가 완료되었습니다."),
+    ITEM_VIEW_SUCCESS(HttpStatus.OK, "ITEM_2010", "상품 조회가 완료되었습니다."),
+    ITEM_IMAGE_UPLOAD_SUCCESS(HttpStatus.OK, "ITEM_2011", "상품 이미지 업로드가 완료되었습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;

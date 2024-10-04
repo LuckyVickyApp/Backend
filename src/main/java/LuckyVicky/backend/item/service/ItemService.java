@@ -1,11 +1,14 @@
 package LuckyVicky.backend.item.service;
 
+import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.item.converter.ItemConverter;
 import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.item.dto.ItemRequestDto;
 import LuckyVicky.backend.item.dto.ItemResponseDto;
 import LuckyVicky.backend.item.repository.ItemRepository;
+import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.global.s3.AmazonS3Manager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,17 +18,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ItemService {
 
     private final ItemRepository itemRepository;
     private final ItemConverter itemConverter;
     private final AmazonS3Manager amazonS3Manager;
-
-    public ItemService(ItemRepository itemRepository, ItemConverter itemConverter, AmazonS3Manager amazonS3Manager) {
-        this.itemRepository = itemRepository;
-        this.itemConverter = itemConverter;
-        this.amazonS3Manager = amazonS3Manager;
-    }
 
     @Transactional
     public ItemResponseDto createItem(ItemRequestDto requestDto) throws IOException {
@@ -45,6 +43,22 @@ public class ItemService {
         return itemRepository.findAll().stream()
                 .map(itemConverter::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public ItemResponseDto getItemByName(String name) {
+        Item item = itemRepository.findByName(name)
+                .orElseThrow(() -> new GeneralException(ErrorCode.ITEM_NOT_FOUND));
+        return itemConverter.toDto(item);
+    }
+
+    @Transactional
+    public void deleteItemByName(String name) {
+        // 해당 이름의 상품이 있는지 확인
+        Item item = itemRepository.findByName(name)
+                .orElseThrow(() -> new GeneralException(ErrorCode.ITEM_NOT_FOUND));
+
+        // 상품 삭제
+        itemRepository.delete(item);
     }
 
     private String uploadImageToS3(MultipartFile imageFile) throws IOException {
