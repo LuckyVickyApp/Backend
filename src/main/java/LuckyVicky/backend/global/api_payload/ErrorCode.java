@@ -24,11 +24,14 @@ public enum ErrorCode implements BaseCode {
     TOKEN_NO_AUTH(HttpStatus.FORBIDDEN, "JWT_4033", "권한 정보가 없는 토큰입니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "JWT_4011", "토큰 유효기간이 만료되었습니다."),
 
-    // File
-    INVALID_FILE_CONTENT_TYPE(HttpStatus.BAD_REQUEST, "COMMON_4001", "잘못된 파일 형식입니다."),
-    MISMATCH_IMAGE_FILE(HttpStatus.BAD_REQUEST, "COMMON_4002", "파일 형식은 이미지(JPEG 또는 PNG)여야 합니다."),
-
-
+    // Item (상품 관련 오류 코드)
+    ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM_4041", "존재하지 않는 상품입니다."),
+    ITEM_NAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "ITEM_4001", "이미 존재하는 상품명입니다."),
+    ITEM_QUANTITY_INVALID(HttpStatus.BAD_REQUEST, "ITEM_4002", "유효하지 않은 수량입니다."),
+    ITEM_CREATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_5001", "상품 생성에 실패하였습니다."),
+    ITEM_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_5002", "상품 수정에 실패하였습니다."),
+    ITEM_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_5003", "상품 삭제에 실패하였습니다."),
+    ITEM_IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_5004", "상품 이미지 업로드에 실패하였습니다."),
     ;
 
     private final HttpStatus httpStatus;

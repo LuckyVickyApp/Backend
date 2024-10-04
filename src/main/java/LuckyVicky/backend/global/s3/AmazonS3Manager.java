@@ -64,4 +64,5 @@ public class AmazonS3Manager {
     public static String generateFileName(MultipartFile file) { // 파일명 생성
         return UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
     }
+
 }

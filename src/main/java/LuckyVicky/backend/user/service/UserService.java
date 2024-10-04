@@ -179,12 +179,12 @@ public class UserService {
         if (file != null) {
             String contentType = file.getContentType();
             if (ObjectUtils.isEmpty(contentType)) {
-                throw GeneralException.of(ErrorCode.INVALID_FILE_CONTENT_TYPE);
+                throw GeneralException.of(ErrorCode.ITEM_IMAGE_UPLOAD_FAILED);
             }
 
             MediaType mediaType = amazonS3Manager.contentType(Objects.requireNonNull(file.getOriginalFilename()));
             if (mediaType == null || !(mediaType.equals(MediaType.IMAGE_PNG) || mediaType.equals(MediaType.IMAGE_JPEG))) {
-                throw GeneralException.of(ErrorCode.MISMATCH_IMAGE_FILE);
+                throw GeneralException.of(ErrorCode.ITEM_IMAGE_UPLOAD_FAILED);
             }
 
             // 이전 프로필 이미지가 존재하는지 확인
