@@ -21,6 +21,7 @@ public class ItemConverter {
                 .availableDate(availableDate)
                 .quantity(requestDto.getQuantity())
                 .imageUrl(imageUrl)
+                .likeCount(0)
                 .build();
     }
 
