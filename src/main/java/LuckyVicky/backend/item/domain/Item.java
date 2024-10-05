@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,11 +35,26 @@ public class Item {
     @Column(nullable = true)
     private String imageUrl;
 
+    private Integer likeCount;
+
+    @OneToMany(mappedBy = "item")
+    private List<ItemLike> itemLikeList = new ArrayList<>();
+
     public void updateItem(String name, String description, String availableDate, String quantity, String imageUrl) {
         this.name = name;
         this.description = description;
         this.availableDate = availableDate != null ? LocalDate.parse(availableDate) : this.availableDate;
         this.quantity = quantity;
         this.imageUrl = imageUrl;
+    }
+
+    public Integer increaseLikeCount() {
+        this.likeCount += 1;
+        return this.likeCount;
+    }
+
+    public Integer decreaseLikeCount() {
+        this.likeCount -= 1;
+        return this.likeCount;
     }
 }

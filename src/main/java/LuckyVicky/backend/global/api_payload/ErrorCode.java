@@ -32,6 +32,8 @@ public enum ErrorCode implements BaseCode {
     ITEM_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_5002", "상품 수정에 실패하였습니다."),
     ITEM_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_5003", "상품 삭제에 실패하였습니다."),
     ITEM_IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_5004", "상품 이미지 업로드에 실패하였습니다."),
+    ITEM_ALREADY_LIKE(HttpStatus.BAD_REQUEST, "ITEM_4003", "이미 좋아요한 상품입니다."),
+    ITEM_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM_4042", "존재하지 않는 상품 좋아요입니다."),
     ;
 
     private final HttpStatus httpStatus;
