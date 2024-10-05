@@ -2,6 +2,7 @@ package LuckyVicky.backend.item.controller;
 
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
+import LuckyVicky.backend.item.converter.ItemConverter;
 import LuckyVicky.backend.item.dto.ItemRequestDto;
 import LuckyVicky.backend.item.dto.ItemResponseDto;
 import LuckyVicky.backend.item.service.ItemService;
@@ -39,16 +40,11 @@ public class ItemController {
             @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
 
         // DTO 빌드
-        ItemRequestDto requestDto = ItemRequestDto.builder()
-                .itemName(itemName)
-                .itemDescription(itemDescription)
-                .availableDate(availableDate)
-                .quantity(quantity)  // 문자열로 처리
-                .imageFile(imageFile)
-                .build();
+        ItemRequestDto requestDto = ItemConverter.itemRequestDto(itemName, itemDescription, availableDate, quantity, imageFile);
 
         // 서비스 로직 호출
         ItemResponseDto createdItem = itemService.createItem(requestDto);
+
         return ApiResponse.onSuccess(SuccessCode.ITEM_CREATE_SUCCESS, createdItem);
     }
 
