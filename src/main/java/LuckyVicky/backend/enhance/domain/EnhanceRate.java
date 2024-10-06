@@ -25,19 +25,19 @@ public class EnhanceRate {
     private JewelType jewelType;
 
     // 상승 확률
-    @Column(precision = 5, scale = 4)
+    @Column(precision = 3, scale = 2)
     private BigDecimal upRate;
 
     // 하락 확률
-    @Column(precision = 5, scale = 4)
+    @Column(precision = 3, scale = 2)
     private BigDecimal downRate;
 
     // 유지 확률
-    @Column(precision = 5, scale = 4)
+    @Column(precision = 3, scale = 2)
     private BigDecimal keepRate;
 
     // 파괴 확률
-    @Column(precision = 5, scale = 4)
+    @Column(precision = 3, scale = 2)
     private BigDecimal destroyRate;
 
 }
