@@ -26,8 +26,9 @@ public class Item {
     @Column(nullable = true)
     private String description;
 
+    // 상품 강화 시작일
     @Column(nullable = true)
-    private LocalDate availableDate;
+    private LocalDate enhanceStartDate;
 
     @Column(nullable = true)
     private String quantity;
@@ -40,13 +41,8 @@ public class Item {
     @OneToMany(mappedBy = "item")
     private List<ItemLike> itemLikeList = new ArrayList<>();
 
-    public void updateItem(String name, String description, String availableDate, String quantity, String imageUrl) {
-        this.name = name;
-        this.description = description;
-        this.availableDate = availableDate != null ? LocalDate.parse(availableDate) : this.availableDate;
-        this.quantity = quantity;
-        this.imageUrl = imageUrl;
-    }
+    @OneToMany(mappedBy = "item")
+    private List<UserItem> userItemList = new ArrayList<>();
 
     public Integer increaseLikeCount() {
         this.likeCount += 1;

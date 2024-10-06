@@ -21,7 +21,7 @@ public class ItemConverter {
         return Item.builder()
                 .name(requestDto.getItemName())
                 .description(requestDto.getItemDescription())
-                .availableDate(availableDate)
+                .enhanceStartDate(availableDate)
                 .quantity(requestDto.getQuantity())
                 .imageUrl(imageUrl)
                 .likeCount(0)
@@ -33,7 +33,7 @@ public class ItemConverter {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .availableDate(item.getAvailableDate())
+                .enhanceStartDate(item.getEnhanceStartDate())
                 .quantity(item.getQuantity())
                 .imageUrl(item.getImageUrl())
                 .build();

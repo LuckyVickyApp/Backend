@@ -1,9 +1,12 @@
 package LuckyVicky.backend.user.domain;
 
 import LuckyVicky.backend.global.entity.BaseEntity;
+import LuckyVicky.backend.item.domain.UserItem;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -53,6 +56,12 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private Integer advertiseTodayLeftNum;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserJewel> userJewelList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<UserItem> userItemList = new ArrayList<>();
 
     public User(String username, String nickname, String email, String provider) {
         this.username = username;

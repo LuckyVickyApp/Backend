@@ -14,6 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +29,26 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ItemConverter itemConverter;
     private final AmazonS3Manager amazonS3Manager;
+
+    // 현재 강화할 수 있는 상품 리스트 반환
+    @Transactional
+    public List<Item> getEnhanceItemList() {
+        LocalDateTime curTime = LocalDateTime.now();
+        DayOfWeek dayOfWeek = curTime.getDayOfWeek();
+
+        // 강화 기간(월요일 ~ 일요일 오후 9시까지)이 아닐 경우
+        if (dayOfWeek == DayOfWeek.SUNDAY && curTime.toLocalTime().isAfter(LocalTime.of(21, 0))) {
+            // 빈 리스트 반환
+            return new ArrayList<>();
+        }
+
+        LocalDate curDate = curTime.toLocalDate();
+        LocalDate enhanceEndDate = curDate.plusDays(6);  // 강화 종료일 계산
+
+        // 강화 가능 상품 리스트 반환
+        return itemRepository.findItemsEligibleForEnhancement(curDate, enhanceEndDate);
+    }
+
 
     @Transactional
     public ItemResponseDto createItem(ItemRequestDto requestDto) throws IOException {
