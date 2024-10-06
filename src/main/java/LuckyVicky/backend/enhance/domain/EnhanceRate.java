@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -24,15 +25,19 @@ public class EnhanceRate {
     private JewelType jewelType;
 
     // 상승 확률
-    private Double upRate;
+    @Column(precision = 5, scale = 4)
+    private BigDecimal upRate;
 
     // 하락 확률
-    private Double downRate;
+    @Column(precision = 5, scale = 4)
+    private BigDecimal downRate;
 
     // 유지 확률
-    private Double keepRate;
+    @Column(precision = 5, scale = 4)
+    private BigDecimal keepRate;
 
     // 파괴 확률
-    private Double destroyRate;
+    @Column(precision = 5, scale = 4)
+    private BigDecimal destroyRate;
 
 }
