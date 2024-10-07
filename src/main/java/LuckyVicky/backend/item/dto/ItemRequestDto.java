@@ -4,8 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,7 +13,6 @@ import javax.validation.constraints.NotNull;
 public class ItemRequestDto {
 
     @Schema(description = "상품명", example = "강화된 검")
-    @NotNull(message = "상품명은 필수입니다.")
     private String itemName;
 
     @Schema(description = "상품 설명", example = "이 검은 매우 강력합니다.")
