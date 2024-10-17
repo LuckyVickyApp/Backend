@@ -1,5 +1,6 @@
 package LuckyVicky.backend.user.service;
 
+import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.entity.Uuid;
 import LuckyVicky.backend.global.exception.GeneralException;
@@ -8,10 +9,12 @@ import LuckyVicky.backend.global.s3.AmazonS3Manager;
 import LuckyVicky.backend.user.converter.UserConverter;
 import LuckyVicky.backend.user.domain.RefreshToken;
 import LuckyVicky.backend.user.domain.User;
+import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.dto.JwtDto;
 import LuckyVicky.backend.user.dto.UserRequestDto;
 import LuckyVicky.backend.user.jwt.JwtTokenUtils;
 import LuckyVicky.backend.user.repository.RefreshTokenRepository;
+import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -38,6 +41,7 @@ public class UserService {
     private final JwtTokenUtils jwtTokenUtils;
     private final AmazonS3Manager amazonS3Manager;
     private final UuidRepository uuidRepository;
+    private final UserJewelRepository userJewelRepository;
 
     public User findByUserName(String userName){
         return userRepository.findByUsername(userName)
@@ -57,6 +61,10 @@ public class UserService {
 
         // 새로운 사용자 정보를 반환하기 전에 저장된 UserDetails를 다시 로드하여 동기화 시도
         manager.loadUserByUsername(userReqDto.getUsername());
+
+        userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.S).count(0).build());
+        userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.A).count(0).build());
+        userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.B).count(0).build());
 
         return newUser;
     }
