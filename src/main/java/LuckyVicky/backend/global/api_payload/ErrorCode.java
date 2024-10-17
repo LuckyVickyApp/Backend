@@ -36,7 +36,8 @@ public enum ErrorCode implements BaseCode {
     ITEM_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM_4042", "존재하지 않는 상품 좋아요입니다."),
 
     // Invitation
-    INVITATION_NOT_FOUND(HttpStatus.NOT_FOUND, "INVITE_4041", "존재하지 않는 초대 코드입니다.")
+    INVITATION_NOT_FOUND(HttpStatus.NOT_FOUND, "INVITE_4041", "존재하지 않는 초대 코드입니다."),
+    INVITATION_ALREADY_ACCEPTED(HttpStatus.BAD_REQUEST, "INVITE_4001", "초대 수락을 이미 완료한 상태입니다."),
 
     ;
 

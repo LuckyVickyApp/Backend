@@ -21,9 +21,11 @@ public class InvitationService {
         User owner = userRepository.findByInviteCode(code).orElseThrow(()
                 -> new GeneralException(ErrorCode.INVITATION_NOT_FOUND));
 
-        invitationRepository.save(Invitation.builder().user(owner).friendUsername(writer.getUsername()).build());
+        // 이미 초대 수락 했다면, 또 못하도록
+        if (invitationRepository.findByWriter(writer.getUsername()).isPresent())
+            throw new GeneralException(ErrorCode.INVITATION_ALREADY_ACCEPTED);
 
-        // 초대한 친구에게 보상주기
+        invitationRepository.save(Invitation.builder().owner(owner).writer(writer.getUsername()).build());
 
         return owner.getNickname();
     }
