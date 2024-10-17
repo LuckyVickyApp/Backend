@@ -30,6 +30,7 @@ public enum SuccessCode implements BaseCode {
     ITEM_IMAGE_UPLOAD_SUCCESS(HttpStatus.OK, "ITEM_2012", "상품 이미지 업로드가 완료되었습니다."),
     ITEM_LIKE_SUCCESS(HttpStatus.OK, "ITEM_2001", "상품 좋아요가 완료되었습니다."),
     ITEM_UNLIKE_SUCCESS(HttpStatus.OK, "ITEM_2002", "상품 좋아요가 취소되었습니다."),
+    ITEM_ENHANCE_SUCCESS(HttpStatus.OK, "ITEM_2003", "상품 강화 화면에 필요한 요소들이 반환 완료되었습니다."),
 
     // Invitation
     INVITE_ACCEPT_SUCCESS(HttpStatus.OK, "INVITE_2011", "초대 수락이 완료되었습니다."),
