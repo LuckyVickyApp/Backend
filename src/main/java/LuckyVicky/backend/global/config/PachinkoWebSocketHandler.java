@@ -1,6 +1,11 @@
 package LuckyVicky.backend.global.config;
 
 import LuckyVicky.backend.pachinko.service.PachinkoService;
+import LuckyVicky.backend.user.domain.User;
+import LuckyVicky.backend.user.jwt.JwtTokenUtils;
+import LuckyVicky.backend.user.service.UserService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -15,8 +20,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PachinkoWebSocketHandler extends TextWebSocketHandler {
 
-    private List<WebSocketSession> sessions = new ArrayList<>();
     private final PachinkoService pachinkoService;
+    private final UserService userService;
+    private final JwtTokenUtils jwtTokenUtils;
+
+    // ObjectMapper 필드로 선언하여 재사용
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private List<WebSocketSession> sessions = new ArrayList<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -26,23 +37,45 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // 메시지를 받을 때
-        String userMessage = message.getPayload();
-        int selectedSquare = Integer.parseInt(userMessage); // 칸 번호를 받음
+        String payload = message.getPayload();
+        JsonNode node = objectMapper.readTree(payload);
 
-        // 서비스 계층에서 칸 선택 처리
-        boolean isValidSelection = pachinkoService.selectSquare(selectedSquare);
+        // JWT 토큰이 없는 경우도 처리 (첫 번째 메시지에만 JWT 필수) -> 프론트가 연결하자마자 토큰 줘야함
+        if (!session.getAttributes().containsKey("user") && node.has("token")) {
+            String token = node.get("token").asText();
+            if (jwtTokenUtils.validateToken(token)) {
+                String username = jwtTokenUtils.getUsernameFromToken(token);
+                User user = userService.findByUserName(username);
+                // 사용자 정보를 세션에 저장
+                session.getAttributes().put("user", user);
 
-        // 선택이 유효하면 모든 클라이언트에게 업데이트
-        if (isValidSelection) {
-            for (WebSocketSession webSocketSession : sessions) {
-                webSocketSession.sendMessage(new TextMessage("Square " + selectedSquare + " selected."));
+            } else {
+                session.close(); // JWT 검증 실패 시 연결 종료
+                return; // 이후 코드 실행 중단
             }
-        } else {
-            // 선택이 유효하지 않으면 해당 클라이언트에 알림
-            session.sendMessage(new TextMessage("Square " + selectedSquare + " is already selected."));
         }
 
+        // 칸 선택 처리 (JWT 검증이 완료된 후)
+        if (node.has("square")) {  // JSON에 "square" 필드가 있는지 확인
+            int selectedSquare = node.get("square").asInt();  // "square" 필드의 값을 추출
+            User user = (User) session.getAttributes().get("user");
+
+            if (user != null) {
+                long currentRound = pachinkoService.getCurrentRound();
+                boolean isValidSelection = pachinkoService.selectSquare(user, currentRound, selectedSquare);
+                if (isValidSelection) {
+                    for (WebSocketSession webSocketSession : sessions) {
+                        webSocketSession.sendMessage(new TextMessage("User " + user.getUsername() + " selected square " + selectedSquare));
+                    }
+                } else {
+                    session.sendMessage(new TextMessage("Square " + selectedSquare + " is already selected."));
+                }
+            } else {
+                session.sendMessage(new TextMessage("User is not authenticated.")); // 예외 처리
+            }
+        } else {
+            session.sendMessage(new TextMessage("Invalid message format: 'square' field is missing."));
+        }
     }
 
     @Override
@@ -51,4 +84,3 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
     }
 }
-

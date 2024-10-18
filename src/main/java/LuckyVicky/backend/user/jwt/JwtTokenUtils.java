@@ -1,9 +1,7 @@
 package LuckyVicky.backend.user.jwt;
 
 import LuckyVicky.backend.user.dto.JwtDto;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,6 +76,32 @@ public class JwtTokenUtils {
         return jwtParser
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String getUsernameFromToken(String token) {
+        return jwtParser
+                .parseClaimsJws(token)
+                .getBody().getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            parseClaims(token);  // 토큰을 파싱해서 예외가 발생하지 않으면 유효한 토큰
+            return true;
+        } catch (SecurityException | MalformedJwtException e) {
+            // 잘못된 JWT 서명
+            System.out.println("잘못된 JWT 서명");
+        } catch (ExpiredJwtException e) {
+            // 만료된 JWT
+            System.out.println("JWT 토큰이 만료됨");
+        } catch (UnsupportedJwtException e) {
+            // 지원되지 않는 JWT
+            System.out.println("지원되지 않는 JWT 토큰");
+        } catch (IllegalArgumentException e) {
+            // 잘못된 토큰
+            System.out.println("잘못된 JWT 토큰");
+        }
+        return false;  // 검증 실패
     }
 
     // 문자열로 저장된 authorities를 다시 Collection으로 변환
