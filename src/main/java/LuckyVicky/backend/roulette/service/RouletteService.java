@@ -3,7 +3,6 @@ package LuckyVicky.backend.roulette.service;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
-import LuckyVicky.backend.roulette.dto.RouletteResultDto;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
@@ -31,7 +30,6 @@ public class RouletteService {
         BigDecimal bGrade2Probability = BigDecimal.valueOf(0.10);
         BigDecimal bGrade3Probability = BigDecimal.valueOf(0.10);
         BigDecimal aGrade1Probability = BigDecimal.valueOf(0.09);
-        BigDecimal aGrade2Probability = BigDecimal.valueOf(0.01);
 
         String message;
         int jewelCount;
