@@ -35,6 +35,10 @@ public enum SuccessCode implements BaseCode {
     // Invitation
     INVITE_ACCEPT_SUCCESS(HttpStatus.OK, "INVITE_2011", "초대 수락이 완료되었습니다."),
 
+    // Enhance
+    ENHANCE_LIST_SUCCESS(HttpStatus.OK, "ENHANCE_2001", "상품 강화 화면에 필요한 요소들이 반환 완료되었습니다."),
+    ENHANCE_RESULT_SUCCESS(HttpStatus.OK, "ENHANCE_2002", "강화 시도 후, 결과 반환이 완료되었습니다"),
+
     ;
 
 
