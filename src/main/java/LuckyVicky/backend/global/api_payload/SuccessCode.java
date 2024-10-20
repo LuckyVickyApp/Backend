@@ -39,6 +39,9 @@ public enum SuccessCode implements BaseCode {
     ENHANCE_LIST_SUCCESS(HttpStatus.OK, "ENHANCE_2001", "상품 강화 화면에 필요한 요소들이 반환 완료되었습니다."),
     ENHANCE_RESULT_SUCCESS(HttpStatus.OK, "ENHANCE_2002", "강화 시도 후, 결과 반환이 완료되었습니다"),
 
+    // Roulette
+    ROULETTE_SUCCESS(HttpStatus.OK, "ROULETTE_2001", "룰렛 돌리기가 완료되었습니다."),
+
     ;
 
 
