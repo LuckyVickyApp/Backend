@@ -1,6 +1,7 @@
 package LuckyVicky.backend.user.domain;
 
 import LuckyVicky.backend.global.entity.BaseEntity;
+import LuckyVicky.backend.invitation.domain.Invitation;
 import LuckyVicky.backend.item.domain.UserItem;
 import jakarta.persistence.*;
 import lombok.*;
@@ -62,6 +63,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<UserItem> userItemList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "owner")
+    private List<Invitation> acceptorList = new ArrayList<>();
 
     public User(String username, String nickname, String email, String provider) {
         this.username = username;

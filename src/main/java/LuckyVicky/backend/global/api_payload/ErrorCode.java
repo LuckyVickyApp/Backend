@@ -34,6 +34,11 @@ public enum ErrorCode implements BaseCode {
     ITEM_IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "ITEM_5004", "상품 이미지 업로드에 실패하였습니다."),
     ITEM_ALREADY_LIKE(HttpStatus.BAD_REQUEST, "ITEM_4003", "이미 좋아요한 상품입니다."),
     ITEM_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM_4042", "존재하지 않는 상품 좋아요입니다."),
+
+    // Invitation
+    INVITATION_NOT_FOUND(HttpStatus.NOT_FOUND, "INVITE_4041", "존재하지 않는 초대 코드입니다."),
+    INVITATION_ALREADY_ACCEPTED(HttpStatus.BAD_REQUEST, "INVITE_4001", "초대 수락을 이미 완료한 상태입니다."),
+
     ;
 
     private final HttpStatus httpStatus;
