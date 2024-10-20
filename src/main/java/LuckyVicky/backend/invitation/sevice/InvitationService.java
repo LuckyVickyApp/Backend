@@ -34,7 +34,7 @@ public class InvitationService {
 
         // 초대자는 s급 보석 하나 얻도록
         UserJewel sLevelJewel = jewelRepository.findFirstByUserAndJewelType(owner, JewelType.S);
-        sLevelJewel.updateCount(1);
+        sLevelJewel.increaseCount(1);
         System.out.println(sLevelJewel.getCount());
 
         return owner.getNickname();

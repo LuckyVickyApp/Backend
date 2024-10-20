@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserJewelRepository extends JpaRepository<UserJewel, Long> {
     UserJewel findFirstByUserAndJewelType(User user, JewelType jewelType);
+
 }

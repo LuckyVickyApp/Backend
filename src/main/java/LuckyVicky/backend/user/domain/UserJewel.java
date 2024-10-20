@@ -25,7 +25,11 @@ public class UserJewel {
     // 보석 종류
     private JewelType jewelType;
 
-    public void updateCount(int num){
-        this.count += num;
+    public void decreaseCount(Integer count) {
+        this.count -= count;
+    }
+
+    public void increaseCount(Integer count) {
+        this.count += count;
     }
 }
