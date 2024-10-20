@@ -31,9 +31,10 @@ public class RouletteController {
     })
     @GetMapping("/spin")
     public ApiResponse<RouletteResultDto> spinRoulette(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        // 사용자 정보 가져오기
         User user = rouletteService.findUserByUsername(customUserDetails.getUsername());
-        String[] result = rouletteService.spinRoulette(user);
-        RouletteResultDto resultDto = rouletteConverter.convertToDto(result[0], Integer.parseInt(result[1]));
-        return ApiResponse.onSuccess(SuccessCode.ROULETTE_SUCCESS, resultDto);
+        RouletteResultDto resultDto = rouletteService.spinRoulette(user);
+        RouletteResultDto convertedResult = rouletteConverter.convertToDto(resultDto.getMessage(), resultDto.getJewelCount());
+        return ApiResponse.onSuccess(SuccessCode.ROULETTE_SUCCESS, convertedResult);
     }
 }
