@@ -22,6 +22,7 @@ public class EnhanceRate {
     private Integer enhanceLevel;
 
     // 강화 시도 보석 종류
+    @Enumerated(EnumType.STRING)
     private JewelType jewelType;
 
     // 상승 확률

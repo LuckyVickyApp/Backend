@@ -23,5 +23,6 @@ public class UserJewel {
     private Integer count;
 
     // 보석 종류
+    @Enumerated(EnumType.STRING)
     private JewelType jewelType;
 }
