@@ -83,4 +83,13 @@ public class User extends BaseEntity {
     }
 
     public void updateAddress(String address) { this.address = address; }
+
+    public LocalDateTime getRouletteAvailableTime() {
+        return this.rouletteAvailableTime;
+    }
+
+    public void setRouletteAvailableTime(LocalDateTime nextAvailableTime) {
+        this.rouletteAvailableTime = nextAvailableTime;
+    }
 }
+
