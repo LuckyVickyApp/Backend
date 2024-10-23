@@ -43,7 +43,7 @@ public class UserService {
     private final UuidRepository uuidRepository;
     private final UserJewelRepository userJewelRepository;
 
-    public User findByUserName(String userName){
+    public User findByUserName(String userName) {
         return userRepository.findByUsername(userName)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND_BY_USERNAME));
     }
@@ -70,7 +70,7 @@ public class UserService {
     }
 
     @Transactional
-    public JwtDto jwtMakeSave(String username){
+    public JwtDto jwtMakeSave(String username) {
 
         // JWT 생성 - access & refresh
         UserDetails details

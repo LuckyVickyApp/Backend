@@ -7,6 +7,7 @@ import LuckyVicky.backend.roulette.dto.RouletteResultDto;
 import LuckyVicky.backend.roulette.service.RouletteService;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.jwt.CustomUserDetails;
+import LuckyVicky.backend.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +25,7 @@ public class RouletteController {
 
     private final RouletteService rouletteService;
     private final RouletteConverter rouletteConverter;
+    private final UserService userService;
 
     @Operation(summary = "룰렛 돌리기", description = "사용자가 룰렛을 돌려 보석을 얻을 수 있습니다.")
     @ApiResponses(value = {
@@ -31,8 +33,7 @@ public class RouletteController {
     })
     @GetMapping("/spin")
     public ApiResponse<RouletteResultDto> spinRoulette(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        // 사용자 정보 가져오기
-        User user = rouletteService.findUserByUsername(customUserDetails.getUsername());
+        User user = userService.findByUserName(customUserDetails.getUsername());
         RouletteResultDto resultDto = rouletteService.spinRoulette(user);
         RouletteResultDto convertedResult = rouletteConverter.convertToDto(resultDto.getMessage(), resultDto.getJewelCount());
         return ApiResponse.onSuccess(SuccessCode.ROULETTE_SUCCESS, convertedResult);

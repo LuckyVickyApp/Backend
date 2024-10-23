@@ -84,8 +84,4 @@ public class RouletteService {
         jewel.increaseCount(count);
         userJewelRepository.save(jewel);
     }
-
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
-    }
 }
