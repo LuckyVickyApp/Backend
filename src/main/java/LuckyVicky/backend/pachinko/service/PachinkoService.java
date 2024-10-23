@@ -195,4 +195,23 @@ public class PachinkoService {
         }
     }
 
+    // 서버 내린다음 다시 올릴때 이전 게임 로딩
+    public void updateSelectedSquaresSet(){
+
+        if (selectedSquares.size() == 36){
+            currentRound = userpachinkoRepository.findCurrentRound() + 1;
+        }
+        else{
+            currentRound = userpachinkoRepository.findCurrentRound();
+
+            List<UserPachinko> userPachinkoList = userpachinkoRepository.findByRound(currentRound);
+            for (UserPachinko userPachinko : userPachinkoList) {
+                selectedSquares.add(userPachinko.getSquare1());
+                selectedSquares.add(userPachinko.getSquare2());
+                selectedSquares.add(userPachinko.getSquare3());
+            }
+            selectedSquares.remove(0);
+        }
+    }
+
 }
