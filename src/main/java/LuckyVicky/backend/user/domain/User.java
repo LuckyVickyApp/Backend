@@ -1,8 +1,9 @@
 package LuckyVicky.backend.user.domain;
 
+import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import LuckyVicky.backend.global.entity.BaseEntity;
 import LuckyVicky.backend.invitation.domain.Invitation;
-import LuckyVicky.backend.enhance.domain.EnhanceItem;
+import LuckyVicky.backend.pachinko.domain.UserPachinko;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -42,7 +43,7 @@ public class User extends BaseEntity {
 
     private String address;
 
-    private String phoneNumber; // ?
+    private String phoneNumber;
 
     private String profileImage;
 
@@ -52,6 +53,7 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String inviteCode;
 
+    @Setter
     @Column(nullable = false)
     private LocalDateTime rouletteAvailableTime;
 
@@ -66,6 +68,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "owner")
     private List<Invitation> acceptorList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<UserPachinko> userPachinkoList = new ArrayList<>();
 
     public User(String username, String nickname, String email, String provider) {
         this.username = username;
@@ -84,12 +89,4 @@ public class User extends BaseEntity {
 
     public void updateAddress(String address) { this.address = address; }
 
-    public LocalDateTime getRouletteAvailableTime() {
-        return this.rouletteAvailableTime;
-    }
-
-    public void setRouletteAvailableTime(LocalDateTime nextAvailableTime) {
-        this.rouletteAvailableTime = nextAvailableTime;
-    }
 }
-

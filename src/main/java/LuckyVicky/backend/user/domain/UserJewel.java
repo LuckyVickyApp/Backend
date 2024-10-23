@@ -17,13 +17,18 @@ public class UserJewel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    User user;
 
     // 보유 개수
     private Integer count;
 
     // 보석 종류
+    @Enumerated(EnumType.STRING)
     private JewelType jewelType;
+
+    public void setCount(int plus){
+        this.count += plus;
+    }
 
     public void decreaseCount(Integer count) {
         this.count -= count;

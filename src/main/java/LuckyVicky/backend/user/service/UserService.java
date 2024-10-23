@@ -42,8 +42,7 @@ public class UserService {
     private final AmazonS3Manager amazonS3Manager;
     private final UuidRepository uuidRepository;
     private final UserJewelRepository userJewelRepository;
-
-    public User findByUserName(String userName) {
+    public User findByUserName(String userName){
         return userRepository.findByUsername(userName)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND_BY_USERNAME));
     }
@@ -59,18 +58,19 @@ public class UserService {
         uuidRepository.save(uuid);
         User newUser = userRepository.save(UserConverter.saveUser(userReqDto, nick));
 
-        // 새로운 사용자 정보를 반환하기 전에 저장된 UserDetails를 다시 로드하여 동기화 시도
-        manager.loadUserByUsername(userReqDto.getUsername());
-
+        // 보석함 만들기
         userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.S).count(0).build());
         userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.A).count(0).build());
         userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.B).count(0).build());
+
+        // 새로운 사용자 정보를 반환하기 전에 저장된 UserDetails를 다시 로드하여 동기화 시도
+        manager.loadUserByUsername(userReqDto.getUsername());
 
         return newUser;
     }
 
     @Transactional
-    public JwtDto jwtMakeSave(String username) {
+    public JwtDto jwtMakeSave(String username){
 
         // JWT 생성 - access & refresh
         UserDetails details
