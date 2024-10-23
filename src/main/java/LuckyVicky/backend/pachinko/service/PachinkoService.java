@@ -66,11 +66,11 @@ public class PachinkoService {
     }
 
     @Transactional
-    public boolean canSelectMore(User user, Long round){
-        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, round)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_PACHINKO_NOT_FOUND));
-
-        return userPachinko.getSquare3() == 0;
+    public boolean canSelectMore(User user, Long round) {
+        // Optional로 조회하여 값이 없으면 true 반환, 있으면 조건에 맞게 처리
+        return userpachinkoRepository.findByUserAndRound(user, round)
+                .map(userPachinko -> userPachinko.getSquare3() == 0)  // 존재할 때 조건에 맞게 처리
+                .orElse(true);  // 존재하지 않으면 true 반환
     }
 
     @Transactional
