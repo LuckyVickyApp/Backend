@@ -25,4 +25,8 @@ public class UserJewel {
     // 보석 종류
     @Enumerated(EnumType.STRING)
     private JewelType jewelType;
+
+    public void setCount(int plus){
+        this.count += plus;
+    }
 }
