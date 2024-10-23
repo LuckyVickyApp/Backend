@@ -18,7 +18,7 @@ public class WebSocketConfig implements WebSocketConfigurer { // 인터페이스
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(pachinkoWebSocketHandler, "/ws").setAllowedOrigins("*");
-        // 웹소켓 엔드포인트 /ws를 설정하고, pachinkoWebSocketHandler를 해당 엔드포인트에서 실행될 핸들러로 지정
+        registry.addHandler(pachinkoWebSocketHandler, "/pachinko").setAllowedOrigins("*");
+        // 웹소켓 엔드포인트 /pachinko를 설정하고, pachinkoWebSocketHandler를 해당 엔드포인트에서 실행될 핸들러로 지정
     }
 }
