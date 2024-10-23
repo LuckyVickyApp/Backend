@@ -2,6 +2,7 @@ package LuckyVicky.backend.user.domain;
 
 import LuckyVicky.backend.global.entity.BaseEntity;
 import LuckyVicky.backend.item.domain.UserItem;
+import LuckyVicky.backend.pachinko.domain.UserPachinko;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -62,6 +63,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<UserItem> userItemList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<UserPachinko> userPachinkoList = new ArrayList<>();
 
     public User(String username, String nickname, String email, String provider) {
         this.username = username;
