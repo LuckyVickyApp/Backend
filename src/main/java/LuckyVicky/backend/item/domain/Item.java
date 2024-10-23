@@ -1,5 +1,6 @@
 package LuckyVicky.backend.item.domain;
 
+import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,10 +10,9 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Table(name = "item")
 public class Item {
 
@@ -27,8 +27,12 @@ public class Item {
     private String description;
 
     // 상품 강화 시작일
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDate enhanceStartDate;
+
+    // 상품 강화 종료일
+    @Column(nullable = false)
+    private LocalDate enhanceEndDate;
 
     @Column(nullable = true)
     private String quantity;
@@ -42,7 +46,7 @@ public class Item {
     private List<ItemLike> itemLikeList = new ArrayList<>();
 
     @OneToMany(mappedBy = "item")
-    private List<UserItem> userItemList = new ArrayList<>();
+    private List<EnhanceItem> enhanceItemList = new ArrayList<>();
 
     public Integer increaseLikeCount() {
         this.likeCount += 1;

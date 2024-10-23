@@ -29,4 +29,12 @@ public class UserJewel {
     public void setCount(int plus){
         this.count += plus;
     }
+
+    public void decreaseCount(Integer count) {
+        this.count -= count;
+    }
+
+    public void increaseCount(Integer count) {
+        this.count += count;
+    }
 }

@@ -43,12 +43,17 @@ public class ItemService {
         }
 
         LocalDate curDate = curTime.toLocalDate();
-        LocalDate enhanceEndDate = curDate.plusDays(6);  // 강화 종료일 계산
 
         // 강화 가능 상품 리스트 반환
-        return itemRepository.findItemsEligibleForEnhancement(curDate, enhanceEndDate);
+        return itemRepository.findItemsEligibleForEnhancement(curDate);
     }
 
+    @Transactional
+    public Item findById(Long id) {
+        return itemRepository.findById(id)
+                .orElseThrow(() -> GeneralException.of(ErrorCode.ITEM_NOT_FOUND));
+
+    }
 
     @Transactional
     public ItemResponseDto createItem(ItemRequestDto requestDto) throws IOException {

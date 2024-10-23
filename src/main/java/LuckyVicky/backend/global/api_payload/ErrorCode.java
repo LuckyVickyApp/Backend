@@ -38,6 +38,18 @@ public enum ErrorCode implements BaseCode {
     ITEM_ALREADY_LIKE(HttpStatus.BAD_REQUEST, "ITEM_4003", "이미 좋아요한 상품입니다."),
     ITEM_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM_4042", "존재하지 않는 상품 좋아요입니다."),
 
+    // Invitation
+    INVITATION_NOT_FOUND(HttpStatus.NOT_FOUND, "INVITE_4041", "존재하지 않는 초대 코드입니다."),
+    INVITATION_ALREADY_ACCEPTED(HttpStatus.BAD_REQUEST, "INVITE_4001", "초대 수락을 이미 완료한 상태입니다."),
+
+    // Enhance
+    ENHANCE_JEWEL_NOT_FOUND(HttpStatus.NOT_FOUND, "ENHANCE_4041", "존재하지 않는 보석 종류입니다."),
+    ENHANCE_JEWEL_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "ENHANCE_4001", "강화를 위한 보석 개수가 부족합니다."),
+    ENHANCE_RATE_NOT_FOUND(HttpStatus.NOT_FOUND, "ENHANCE_4042", "존재하지 않는 강화 확률 입니다."),
+
+    // Roulette
+    ROULETTE_COOLDOWN(HttpStatus.BAD_REQUEST, "ROULETTE_4001", "룰렛은 10분에 한 번만 돌릴 수 있습니다."),
+
     // Pachinko
     USER_PACHINKO_NOT_FOUND(HttpStatus.NOT_FOUND, "PACHINKO_4041", "유저가 해당 빠칭코 판에 참여한적이 없습니다."),
     PACHINKO_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, "PACHINKO_4001", "빠칭코 칸의 범위(1~36)를 넘어섰습니다."),

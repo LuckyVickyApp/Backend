@@ -14,6 +14,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Optional<Item> findByName(String name);
 
     // 강화 가능한 상품 리스트 조회 (강화 시작일 <= 오늘 <= 강화 종료일)
-    @Query("SELECT i FROM Item i WHERE i.enhanceStartDate <= :curDate AND :curDate <= :enhanceEndDate")
-    List<Item> findItemsEligibleForEnhancement(@Param("curDate") LocalDate curDate, @Param("enhanceEndDate") LocalDate enhanceEndDate);
+    @Query("SELECT i FROM Item i WHERE i.enhanceStartDate <= :curDate AND :curDate <= i.enhanceEndDate")
+    List<Item> findItemsEligibleForEnhancement(@Param("curDate") LocalDate curDate);
 }
