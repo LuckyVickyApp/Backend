@@ -38,7 +38,7 @@ public class PachinkoService {
     private final UserRepository userRepository;
 
     @Getter
-    private Set<Integer> selectedSquares = new HashSet<>();
+    private final Set<Integer> selectedSquares = new HashSet<>();
 
     @Getter
     private Long currentRound = 1L;
