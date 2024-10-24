@@ -35,7 +35,7 @@ public enum SuccessCode implements BaseCode {
     // Pachinko
     PACHINKO_GET_SQUARES_SUCCESS(HttpStatus.OK, "PACHINKO_2001", "빠칭코 선택 완료된 칸들을 반환 완료되었습니다."),
     PACHINKO_START_SUCCESS(HttpStatus.OK, "PACHINKO_2002", "빠칭코 첫 게임의 각 칸에 대한 보상이 정해졌습니다."),
-
+    PACHINKO_REWARD_SHOW_SUCCESS(HttpStatus.OK, "PACHINKO_2003", "빠칭코 게임 종료 후, 각 사용자가 받는 보상을 반환 완료했습니다."),
 
     // Invitation
     INVITE_ACCEPT_SUCCESS(HttpStatus.OK, "INVITE_2011", "초대 수락이 완료되었습니다."),

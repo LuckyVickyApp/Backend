@@ -56,6 +56,7 @@ public enum ErrorCode implements BaseCode {
     PACHINKO_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, "PACHINKO_4001", "빠칭코 칸의 범위(1~36)를 넘어섰습니다."),
     PACHINKO_NO_MORE_CHANCE(HttpStatus.BAD_REQUEST, "PACHINKO_4002", "이미 세칸을 고르셨습니다."),
     PACHINKO_NO_REWARD(HttpStatus.NOT_FOUND, "PACHINKO_4042", "해당 보석 종류에 대한 보상 레코드가 없습니다."),
+    PACHINKO_NO_PREVIOUS_ROUND(HttpStatus.NOT_FOUND, "PACHINKO_4043", "사용자가 빠칭코 게임을 한 전적이 없어 보상 반환이 불가합니다."),
 
     ;
 

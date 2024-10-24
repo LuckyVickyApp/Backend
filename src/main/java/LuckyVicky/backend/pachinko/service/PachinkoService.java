@@ -12,6 +12,7 @@ import LuckyVicky.backend.pachinko.repository.UserPachinkoRepository;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
+import LuckyVicky.backend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class PachinkoService {
     private final UserPachinkoRepository userpachinkoRepository;
     private final PachinkoRewardRepository pachinkoRewardRepository;
     private final UserJewelRepository userJewelRepository;
+    private final UserRepository userRepository;
 
     @Getter
     private Set<Integer> selectedSquares = new HashSet<>();
@@ -110,6 +112,7 @@ public class PachinkoService {
         for (UserPachinko userPachinko : userPachinkoList) {
             User user = userPachinko.getUser();
             user.updatePreviousPachinkoRound(currentRound);
+            userRepository.save(user);
 
             List<Integer> squares = new ArrayList<>();
             squares.add(userPachinko.getSquare1());
@@ -199,6 +202,8 @@ public class PachinkoService {
     @Transactional
     public List<Long> getRewards(User user){
         Long round = user.getPreviousPachinkoRound();
+        if(round == 0) throw new GeneralException(ErrorCode.PACHINKO_NO_PREVIOUS_ROUND);
+
         UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, round)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_PACHINKO_NOT_FOUND));
 
