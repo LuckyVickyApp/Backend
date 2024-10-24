@@ -105,6 +105,7 @@ public class PachinkoService {
         return selectedSquares.size() == 36;
     }
 
+    @Transactional
     public void giveRewards(){
         System.out.println("보상 전달 시작");
         List<UserPachinko> userPachinkoList = userpachinkoRepository.findByRound(currentRound);
@@ -229,7 +230,7 @@ public class PachinkoService {
     }
 
     // 서버 내린다음 다시 올릴때 이전 게임 로딩
-    public void updateSelectedSquaresSet(){
+    public Long updateSelectedSquaresSet(){
 
         if (selectedSquares.size() == 36){
             currentRound = userpachinkoRepository.findCurrentRound() + 1;
@@ -245,6 +246,8 @@ public class PachinkoService {
             }
             selectedSquares.remove(0);
         }
+
+        return currentRound;
     }
 
 }

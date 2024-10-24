@@ -25,9 +25,9 @@ public class DevController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PACHINKO_2011", description = "빠칭코 선택완료 칸 확인 성공"),
     })
     @PostMapping("/pachinko/set-update")
-    public ApiResponse<Boolean> updateSet(){
-        pachinkoService.updateSelectedSquaresSet();
-        return ApiResponse.onSuccess(SuccessCode.OK, true);
+    public ApiResponse<Long> updateSet(){
+        Long round = pachinkoService.updateSelectedSquaresSet();
+        return ApiResponse.onSuccess(SuccessCode.OK, round);
     }
 
 }
