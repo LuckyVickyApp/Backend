@@ -144,8 +144,6 @@ public class PachinkoService {
             }
             System.out.println("보상 전달 완료");
         }
-        System.out.println("새로운 라운드 시작");
-        startNewRound();
     }
 
     public void assignRewardsToSquares(Long currentRound){
