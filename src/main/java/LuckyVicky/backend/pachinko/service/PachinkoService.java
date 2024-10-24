@@ -96,6 +96,12 @@ public class PachinkoService {
             userpachinkoRepository.save(UserPachinko.builder()
                     .round(currentRound).user(user).square1(squareNumber).square2(0).square3(0).build());
         }
+
+        // B급 보석 한개 차감
+        UserJewel userJewel = userJewelRepository.findByUserAndJewelType(user, JewelType.B)
+                        .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
+        userJewel.decreaseCount(1); userJewelRepository.save(userJewel);
+
         selectedSquares.add(squareNumber);
         return true;
     }
@@ -238,6 +244,7 @@ public class PachinkoService {
 
         if (selectedSquares.size() == 36){
             currentRound = userpachinkoRepository.findCurrentRound() + 1;
+            selectedSquares.clear();
         }
         else{
             currentRound = userpachinkoRepository.findCurrentRound();
