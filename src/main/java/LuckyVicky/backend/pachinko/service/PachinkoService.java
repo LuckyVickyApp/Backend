@@ -60,7 +60,7 @@ public class PachinkoService {
     @Transactional
     public boolean noMoreJewel(User user){
         UserJewel userJewelB = userJewelRepository.findByUserAndJewelType(user, JewelType.B)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_SERVER_ERROR));
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
 
         return userJewelB.getCount() <= 0;
     }
@@ -109,6 +109,7 @@ public class PachinkoService {
 
         for (UserPachinko userPachinko : userPachinkoList) {
             User user = userPachinko.getUser();
+            user.updatePreviousPachinkoRound(currentRound);
 
             List<Integer> squares = new ArrayList<>();
             squares.add(userPachinko.getSquare1());
@@ -193,6 +194,33 @@ public class PachinkoService {
                     .round(currentRound).square(i).jewelType(jewelType).jewelNum(jewelNum).build());
             System.out.println("각각의 칸에 보상 설정 완료");
         }
+    }
+
+    @Transactional
+    public List<Long> getRewards(User user){
+        Long round = user.getPreviousPachinkoRound();
+        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, round)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_PACHINKO_NOT_FOUND));
+
+        List<Integer> squares = new ArrayList<>();
+        squares.add(userPachinko.getSquare1());
+        squares.add(userPachinko.getSquare2());
+        squares.add(userPachinko.getSquare3());
+
+        List<Long> jewelsNum = new ArrayList<>(Collections.nCopies(3, 0L));
+
+        for(int i = 0; i < 3; i++){
+            if(squares.get(i) > 0){
+                int sq = squares.get(i);
+                Pachinko pa = pachinkoRepository.findByRoundAndSquare(round, sq)
+                        .orElseThrow( () -> new GeneralException(ErrorCode.BAD_REQUEST));
+                if (pa.getJewelType() == JewelType.S) jewelsNum.set(0, jewelsNum.get(0) + pa.getJewelNum());
+                else if (pa.getJewelType() == JewelType.A) jewelsNum.set(1, jewelsNum.get(1) + pa.getJewelNum());
+                else if (pa.getJewelType() == JewelType.B) jewelsNum.set(2, jewelsNum.get(2) + pa.getJewelNum());
+            }
+        }
+
+        return jewelsNum;
     }
 
     // 서버 내린다음 다시 올릴때 이전 게임 로딩

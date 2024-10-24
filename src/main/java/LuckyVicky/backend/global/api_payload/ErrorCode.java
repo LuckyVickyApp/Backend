@@ -20,6 +20,7 @@ public enum ErrorCode implements BaseCode {
 
     // User Jewel
     USER_JEWEL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "USER_5001", "회원의 보석함 정보가 DB에서 일부 혹은 전체가 사라졌습니다."),
+    USER_JEWEL_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_4041", "회원의 보석함이 없습니다."),
 
     // Jwt
     WRONG_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "JWT_4041", "일치하는 리프레시 토큰이 없습니다."),
