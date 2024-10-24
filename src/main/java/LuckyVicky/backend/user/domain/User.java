@@ -53,6 +53,9 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String inviteCode;
 
+    @Column(nullable = false)
+    private Long previousPachinkoRound;
+
     @Setter
     @Column(nullable = false)
     private LocalDateTime rouletteAvailableTime;
@@ -88,5 +91,9 @@ public class User extends BaseEntity {
     }
 
     public void updateAddress(String address) { this.address = address; }
+
+    public void updatePreviousPachinkoRound(Long round){
+        this.previousPachinkoRound = round;
+    }
 
 }
