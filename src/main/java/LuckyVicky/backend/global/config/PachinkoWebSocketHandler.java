@@ -89,9 +89,9 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     private void checkGameStatusAndCloseSessionsIfNeeded() {
         if (pachinkoService.isGameOver()) {
             System.out.println("게임 끝남 확인. 보상 전달 시작");
-            broadcastMessage("해당 판이 종료되었습니다. 10초 후 새로운 판이 시작됩니다. ");
+            broadcastMessage("해당 판이 종료되었습니다. 10초 후 새로운 판이 시작됩니다.");
             pachinkoService.giveRewards();
-            broadcastMessage("보상 전달이 완료되었습니다. ");
+            broadcastMessage("보상 전달이 완료되었습니다.");
 
             new Thread(() -> {
                 try {
