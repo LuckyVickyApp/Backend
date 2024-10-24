@@ -229,6 +229,10 @@ public class PachinkoService {
         return jewelsNum;
     }
 
+    public List<Pachinko> getPreviousPachinkoRewards(Long round){
+        return pachinkoRepository.findByRound(round);
+    }
+
     // 서버 내린다음 다시 올릴때 이전 게임 로딩
     public Long updateSelectedSquaresSet(){
 

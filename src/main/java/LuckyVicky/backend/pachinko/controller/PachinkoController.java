@@ -3,6 +3,7 @@ package LuckyVicky.backend.pachinko.controller;
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
 import LuckyVicky.backend.pachinko.converter.PachinkoConverter;
+import LuckyVicky.backend.pachinko.domain.Pachinko;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoRewardResDto;
 import LuckyVicky.backend.pachinko.service.PachinkoService;
 import LuckyVicky.backend.user.domain.User;
@@ -58,7 +59,8 @@ public class PachinkoController {
     public ApiResponse<PachinkoRewardResDto> getRewards(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         User user = userService.findByUserName(customUserDetails.getUsername());
         List<Long> userJewelList = pachinkoService.getRewards(user);
-        return ApiResponse.onSuccess(SuccessCode.PACHINKO_REWARD_SHOW_SUCCESS, PachinkoConverter.pachinkoRewardResDto(userJewelList));
+        List<Pachinko> pachinkoList = pachinkoService.getPreviousPachinkoRewards(user.getPreviousPachinkoRound());
+        return ApiResponse.onSuccess(SuccessCode.PACHINKO_REWARD_SHOW_SUCCESS, PachinkoConverter.pachinkoRewardResDto(userJewelList, pachinkoList));
     }
 
 }
