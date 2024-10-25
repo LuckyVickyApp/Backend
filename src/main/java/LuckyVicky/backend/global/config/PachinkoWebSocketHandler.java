@@ -25,7 +25,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     private final JwtTokenUtils jwtTokenUtils;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private List<WebSocketSession> sessions = new ArrayList<>();
+    private final List<WebSocketSession> sessions = new ArrayList<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -89,9 +89,40 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     private void checkGameStatusAndCloseSessionsIfNeeded() {
         if (pachinkoService.isGameOver()) {
             System.out.println("게임 끝남 확인. 보상 전달 시작");
+            broadcastMessage("해당 판이 종료되었습니다. 10초 후 새로운 판이 시작됩니다. ");
             pachinkoService.giveRewards();
-            System.out.println("보상 전달 완료. 모든 세션 종료 시작");
-            endGameForAll();
+            broadcastMessage("보상 전달이 완료되었습니다. ");
+
+            new Thread(() -> {
+                try {
+                    countdownAndNotifyPlayers(10);
+                    startNewRoundAndNotifyPlayers();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
+    }
+
+    private void countdownAndNotifyPlayers(int seconds) throws InterruptedException {
+        for (int i = seconds; i > 0; i--) {
+            broadcastMessage(i + "초 후에 새로운 게임이 시작됩니다.");
+            Thread.sleep(1000);
+        }
+    }
+
+    private void startNewRoundAndNotifyPlayers() {
+        broadcastMessage("새로운 판이 시작됩니다.");
+        pachinkoService.startNewRound();
+    }
+
+    private void broadcastMessage(String message) {
+        for (WebSocketSession session : sessions) {
+            try {
+                session.sendMessage(new TextMessage(message));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -103,12 +134,10 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
 
 
     public void endGameForAll() {
-        System.out.println("게임이 끝나 모든 클라이언트와의 세션을 종료합니다");
-
         List<WebSocketSession> sessionsCopy = new ArrayList<>(sessions);
         for (WebSocketSession session : sessionsCopy) {
             try {
-                session.sendMessage(new TextMessage("게임 종료 & 보상 전달 완료되어 세션을 종료합니다."));
+                session.sendMessage(new TextMessage("해당 게임의 세션을 모두 종료합니다."));
                 session.close(CloseStatus.NORMAL);
             } catch (IOException e) {
                 e.printStackTrace();

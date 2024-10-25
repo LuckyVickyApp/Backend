@@ -20,6 +20,7 @@ public enum ErrorCode implements BaseCode {
 
     // User Jewel
     USER_JEWEL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "USER_5001", "회원의 보석함 정보가 DB에서 일부 혹은 전체가 사라졌습니다."),
+    USER_JEWEL_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_4041", "회원의 보석함이 없습니다."),
 
     // Jwt
     WRONG_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "JWT_4041", "일치하는 리프레시 토큰이 없습니다."),
@@ -55,6 +56,7 @@ public enum ErrorCode implements BaseCode {
     PACHINKO_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, "PACHINKO_4001", "빠칭코 칸의 범위(1~36)를 넘어섰습니다."),
     PACHINKO_NO_MORE_CHANCE(HttpStatus.BAD_REQUEST, "PACHINKO_4002", "이미 세칸을 고르셨습니다."),
     PACHINKO_NO_REWARD(HttpStatus.NOT_FOUND, "PACHINKO_4042", "해당 보석 종류에 대한 보상 레코드가 없습니다."),
+    PACHINKO_NO_PREVIOUS_ROUND(HttpStatus.NOT_FOUND, "PACHINKO_4043", "사용자가 빠칭코 게임을 한 전적이 없어 보상 반환이 불가합니다."),
 
     ;
 

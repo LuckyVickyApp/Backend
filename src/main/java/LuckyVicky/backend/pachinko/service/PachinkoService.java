@@ -12,6 +12,7 @@ import LuckyVicky.backend.pachinko.repository.UserPachinkoRepository;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
+import LuckyVicky.backend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -34,9 +35,10 @@ public class PachinkoService {
     private final UserPachinkoRepository userpachinkoRepository;
     private final PachinkoRewardRepository pachinkoRewardRepository;
     private final UserJewelRepository userJewelRepository;
+    private final UserRepository userRepository;
 
     @Getter
-    private Set<Integer> selectedSquares = new HashSet<>();
+    private final Set<Integer> selectedSquares = new HashSet<>();
 
     @Getter
     private Long currentRound = 1L;
@@ -60,7 +62,7 @@ public class PachinkoService {
     @Transactional
     public boolean noMoreJewel(User user){
         UserJewel userJewelB = userJewelRepository.findByUserAndJewelType(user, JewelType.B)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_SERVER_ERROR));
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
 
         return userJewelB.getCount() <= 0;
     }
@@ -94,6 +96,12 @@ public class PachinkoService {
             userpachinkoRepository.save(UserPachinko.builder()
                     .round(currentRound).user(user).square1(squareNumber).square2(0).square3(0).build());
         }
+
+        // B급 보석 한개 차감
+        UserJewel userJewel = userJewelRepository.findByUserAndJewelType(user, JewelType.B)
+                        .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
+        userJewel.decreaseCount(1); userJewelRepository.save(userJewel);
+
         selectedSquares.add(squareNumber);
         return true;
     }
@@ -103,12 +111,15 @@ public class PachinkoService {
         return selectedSquares.size() == 36;
     }
 
+    @Transactional
     public void giveRewards(){
         System.out.println("보상 전달 시작");
         List<UserPachinko> userPachinkoList = userpachinkoRepository.findByRound(currentRound);
 
         for (UserPachinko userPachinko : userPachinkoList) {
             User user = userPachinko.getUser();
+            user.updatePreviousPachinkoRound(currentRound);
+            userRepository.save(user);
 
             List<Integer> squares = new ArrayList<>();
             squares.add(userPachinko.getSquare1());
@@ -133,8 +144,6 @@ public class PachinkoService {
             }
             System.out.println("보상 전달 완료");
         }
-        System.out.println("새로운 라운드 시작");
-        startNewRound();
     }
 
     public void assignRewardsToSquares(Long currentRound){
@@ -195,11 +204,45 @@ public class PachinkoService {
         }
     }
 
+    @Transactional
+    public List<Long> getRewards(User user){
+        Long round = user.getPreviousPachinkoRound();
+        if(round == 0) throw new GeneralException(ErrorCode.PACHINKO_NO_PREVIOUS_ROUND);
+
+        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, round)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_PACHINKO_NOT_FOUND));
+
+        List<Integer> squares = new ArrayList<>();
+        squares.add(userPachinko.getSquare1());
+        squares.add(userPachinko.getSquare2());
+        squares.add(userPachinko.getSquare3());
+
+        List<Long> jewelsNum = new ArrayList<>(Collections.nCopies(3, 0L));
+
+        for(int i = 0; i < 3; i++){
+            if(squares.get(i) > 0){
+                int sq = squares.get(i);
+                Pachinko pa = pachinkoRepository.findByRoundAndSquare(round, sq)
+                        .orElseThrow( () -> new GeneralException(ErrorCode.BAD_REQUEST));
+                if (pa.getJewelType() == JewelType.S) jewelsNum.set(0, jewelsNum.get(0) + pa.getJewelNum());
+                else if (pa.getJewelType() == JewelType.A) jewelsNum.set(1, jewelsNum.get(1) + pa.getJewelNum());
+                else if (pa.getJewelType() == JewelType.B) jewelsNum.set(2, jewelsNum.get(2) + pa.getJewelNum());
+            }
+        }
+
+        return jewelsNum;
+    }
+
+    public List<Pachinko> getPreviousPachinkoRewards(Long round){
+        return pachinkoRepository.findByRound(round);
+    }
+
     // 서버 내린다음 다시 올릴때 이전 게임 로딩
-    public void updateSelectedSquaresSet(){
+    public Long updateSelectedSquaresSet(){
 
         if (selectedSquares.size() == 36){
             currentRound = userpachinkoRepository.findCurrentRound() + 1;
+            selectedSquares.clear();
         }
         else{
             currentRound = userpachinkoRepository.findCurrentRound();
@@ -212,6 +255,8 @@ public class PachinkoService {
             }
             selectedSquares.remove(0);
         }
+
+        return currentRound;
     }
 
 }

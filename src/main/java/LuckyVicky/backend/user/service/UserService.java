@@ -60,8 +60,8 @@ public class UserService {
 
         // 보석함 만들기
         userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.S).count(0).build());
-        userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.A).count(0).build());
-        userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.B).count(0).build());
+        userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.A).count(5).build());
+        userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.B).count(10).build());
 
         // 새로운 사용자 정보를 반환하기 전에 저장된 UserDetails를 다시 로드하여 동기화 시도
         manager.loadUserByUsername(userReqDto.getUsername());
