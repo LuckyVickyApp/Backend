@@ -22,7 +22,7 @@ public class ItemRequestDto {
     private String availableDate;
 
     @Schema(description = "상품 수량", example = "100")
-    private String quantity;
+    private Integer quantity;
 
     @Schema(description = "상품 이미지 파일", type = "file")
     private MultipartFile imageFile;

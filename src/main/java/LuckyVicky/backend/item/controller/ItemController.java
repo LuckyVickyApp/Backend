@@ -34,7 +34,7 @@ public class ItemController {
             @RequestPart("itemName") String itemName,
             @RequestPart(value = "itemDescription", required = false) String itemDescription,
             @RequestPart(value = "availableDate", required = false) String availableDate,
-            @RequestPart(value = "quantity", required = false) String quantity,  // 수량을 문자열로 받음
+            @RequestPart(value = "quantity", required = false) Integer quantity,
             @RequestPart(value = "imageFile", required = false) MultipartFile imageFile) throws IOException {
 
         // DTO 빌드

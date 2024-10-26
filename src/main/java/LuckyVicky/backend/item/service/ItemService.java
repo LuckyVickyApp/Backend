@@ -49,6 +49,11 @@ public class ItemService {
     }
 
     @Transactional
+    public List<Item> getWeekItemList(LocalDate localDate) {
+        return itemRepository.findItemsEligibleForEnhancement(localDate);
+    }
+
+    @Transactional
     public Item findById(Long id) {
         return itemRepository.findById(id)
                 .orElseThrow(() -> GeneralException.of(ErrorCode.ITEM_NOT_FOUND));
