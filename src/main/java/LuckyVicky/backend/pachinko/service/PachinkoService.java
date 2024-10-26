@@ -47,6 +47,25 @@ public class PachinkoService {
         assignRewardsToSquares(currentRound);
     }
 
+    public List<Integer> getMeChosen(User user) {
+        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, currentRound)
+                .orElse(UserPachinko.builder()
+                        .round(currentRound)
+                        .user(user)
+                        .square1(0)
+                        .square2(0)
+                        .square3(0)
+                        .build());
+        if(userPachinko.getSquare1() == 0) return Collections.nCopies(3, 0);
+        else {
+            List<Integer> meChosen =  new ArrayList<>(Collections.nCopies(3, 0));
+            meChosen.set(0, userPachinko.getSquare1());
+            if(userPachinko.getSquare2() != 0) meChosen.set(1, userPachinko.getSquare2());
+            if(userPachinko.getSquare3() != 0) meChosen.set(2, userPachinko.getSquare3());
+            return meChosen;
+        }
+    }
+
     @Transactional
     public void startNewRound() {
         System.out.println("라운드 갱신");
