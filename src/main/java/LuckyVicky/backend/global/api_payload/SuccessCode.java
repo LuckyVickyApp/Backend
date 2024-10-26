@@ -47,6 +47,11 @@ public enum SuccessCode implements BaseCode {
     // Roulette
     ROULETTE_SUCCESS(HttpStatus.OK, "ROULETTE_2001", "룰렛 돌리기가 완료되었습니다."),
 
+    // Ranking
+    RANKING_CURRENT_WEEK_SUCCESS(HttpStatus.OK, "RANKING_2001", "현재 주차 상품 별 랭킹을 반환이 완료되었습니다."),
+    RANKING_PREVIOUS_WEEK_SUCCESS(HttpStatus.OK, "RANKING_2002", "이전 주차 상품 별 랭킹을 반환이 완료되었습니다."),
+    RANKING_NEXT_WEEK_SUCCESS(HttpStatus.OK, "RANKING_2003", "다음 주차 상품 별 랭킹을 반환이 완료되었습니다."),
+
     ;
 
 
