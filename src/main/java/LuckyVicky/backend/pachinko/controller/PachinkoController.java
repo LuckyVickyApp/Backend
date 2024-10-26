@@ -13,7 +13,6 @@ import LuckyVicky.backend.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
