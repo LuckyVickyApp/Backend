@@ -58,6 +58,8 @@ public enum ErrorCode implements BaseCode {
     PACHINKO_NO_REWARD(HttpStatus.NOT_FOUND, "PACHINKO_4042", "해당 보석 종류에 대한 보상 레코드가 없습니다."),
     PACHINKO_NO_PREVIOUS_ROUND(HttpStatus.NOT_FOUND, "PACHINKO_4043", "사용자가 빠칭코 게임을 한 전적이 없어 보상 반환이 불가합니다."),
 
+    // Ranking
+    RANKING_WEEK_ITEM_LIST_EMPTY(HttpStatus.BAD_REQUEST, "RANKING_4001", "해당 주차에 강화한 상품이 없습니다."),
     ;
 
     private final HttpStatus httpStatus;

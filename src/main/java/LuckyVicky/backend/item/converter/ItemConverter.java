@@ -39,7 +39,7 @@ public class ItemConverter {
                 .build();
     }
 
-    public static ItemRequestDto itemRequestDto(String itemName, String itemDescription, String availableDate, String quantity, MultipartFile imageFile) {
+    public static ItemRequestDto itemRequestDto(String itemName, String itemDescription, String availableDate, Integer quantity, MultipartFile imageFile) {
         return ItemRequestDto.builder()
                 .itemName(itemName)
                 .itemDescription(itemDescription)

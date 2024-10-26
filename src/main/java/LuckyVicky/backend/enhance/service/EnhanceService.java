@@ -136,6 +136,7 @@ public class EnhanceService {
         for (int i = 0; i < enhanceItems.size(); i++) {
             EnhanceItem item = enhanceItems.get(i);
             item.updateRanking(i + 1);
+            item.updateIsGet(item.getItem().getQuantity());
             enhanceItemRepository.save(item);
         }
     }
