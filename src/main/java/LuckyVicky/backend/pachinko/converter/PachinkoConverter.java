@@ -1,15 +1,26 @@
 package LuckyVicky.backend.pachinko.converter;
 
 import LuckyVicky.backend.pachinko.domain.Pachinko;
+import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoChosenResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoRewardResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoSquareRewardResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoUserRewardResDto;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class PachinkoConverter {
+
+    public static PachinkoChosenResDto pachinkoChosenResDto(Set<Integer> meChosen, Set<Integer> chosenSquares){
+        chosenSquares.removeAll(meChosen);
+
+        return PachinkoChosenResDto.builder()
+                .meChosen(meChosen)
+                .othersChosen(chosenSquares)
+                .build();
+    }
 
     public static PachinkoUserRewardResDto pachinkoUserRewardResDto(List<Long> userJewelList){
 

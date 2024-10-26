@@ -4,6 +4,7 @@ import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
 import LuckyVicky.backend.pachinko.converter.PachinkoConverter;
 import LuckyVicky.backend.pachinko.domain.Pachinko;
+import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoChosenResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoRewardResDto;
 import LuckyVicky.backend.pachinko.service.PachinkoService;
 import LuckyVicky.backend.user.domain.User;
@@ -12,6 +13,8 @@ import LuckyVicky.backend.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
+import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,10 +38,17 @@ public class PachinkoController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PACHINKO_2001", description = "빠칭코 선택완료 칸 확인 성공"),
     })
     @PostMapping("/chosen-squares")
-    public ApiResponse<Set<Integer>> SelectedSquares(){
+    public ApiResponse<PachinkoChosenResDto> SelectedSquares(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ){
+        User user = userService.findByUserName(customUserDetails.getUsername());
         Set<Integer> chosenSquares = pachinkoService.getSelectedSquares();
 
-        return ApiResponse.onSuccess(SuccessCode.PACHINKO_GET_SQUARES_SUCCESS, chosenSquares);
+        List<Integer> meChosenList = pachinkoService.getMeChosen(user);
+        Set<Integer> meChosenSet = new HashSet<>(meChosenList);
+        meChosenSet.remove(0);
+
+        return ApiResponse.onSuccess(SuccessCode.PACHINKO_GET_SQUARES_SUCCESS, PachinkoConverter.pachinkoChosenResDto(meChosenSet, chosenSquares));
     }
 
     @Operation(summary = "빠칭코 첫 게임 시작", description = "빠칭코 첫 게임의 각 칸에 대한 보상을 정하는 메서드입니다.")

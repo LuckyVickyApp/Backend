@@ -3,6 +3,7 @@ package LuckyVicky.backend.pachinko.dto;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +11,20 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class PachinkoResponseDto {
+
+    @Schema(description = "PachinkoChosenResDto")
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PachinkoChosenResDto {
+        @Schema(description = "내가 선택한 칸들")
+        private Set<Integer> meChosen;
+
+        @Schema(description = "다른 유저들이 선택한 칸들 반환")
+        private Set<Integer> othersChosen;
+    }
+
     @Schema(description = "PachinkoRewardResDto")
     @Getter
     @Builder
