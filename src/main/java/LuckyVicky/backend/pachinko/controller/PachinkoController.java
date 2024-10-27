@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,7 +37,7 @@ public class PachinkoController {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PACHINKO_2001", description = "빠칭코 선택완료 칸 확인 성공"),
     })
-    @PostMapping("/chosen-squares")
+    @GetMapping("/chosen-squares")
     public ApiResponse<PachinkoChosenResDto> SelectedSquares(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
@@ -64,7 +65,7 @@ public class PachinkoController {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PACHINKO_2003", description = "빠칭코 보상 반환 성공"),
     })
-    @PostMapping("/reward")
+    @GetMapping("/reward")
     public ApiResponse<PachinkoRewardResDto> getRewards(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         User user = userService.findByUserName(customUserDetails.getUsername());
         List<Long> userJewelList = pachinkoService.getRewards(user);
