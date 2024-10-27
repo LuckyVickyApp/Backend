@@ -42,6 +42,9 @@ public enum SuccessCode implements BaseCode {
     // Roulette
     ROULETTE_SUCCESS(HttpStatus.OK, "ROULETTE_2001", "룰렛 돌리기가 완료되었습니다."),
 
+    // Attendance
+    ATTENDANCE_SUCCESS(HttpStatus.OK, "ATTENDANCE_2001", "출석 처리가 완료되었습니다."),
+
     ;
 
 
