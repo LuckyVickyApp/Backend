@@ -3,7 +3,7 @@ package LuckyVicky.backend.roulette.controller;
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
 import LuckyVicky.backend.roulette.converter.RouletteConverter;
-import LuckyVicky.backend.roulette.dto.RouletteResultDto;
+import LuckyVicky.backend.roulette.dto.RouletteDto;
 import LuckyVicky.backend.roulette.service.RouletteService;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.jwt.CustomUserDetails;
@@ -32,10 +32,10 @@ public class RouletteController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ROULETTE_2001", description = "룰렛 결과 반환")
     })
     @GetMapping("/spin")
-    public ApiResponse<RouletteResultDto> spinRoulette(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ApiResponse<RouletteDto.RouletteResultDto> spinRoulette(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User user = userService.findByUserName(customUserDetails.getUsername());
-        RouletteResultDto resultDto = rouletteService.spinRoulette(user);
-        RouletteResultDto convertedResult = rouletteConverter.convertToDto(resultDto.getMessage(), resultDto.getJewelCount());
+        RouletteDto.RouletteResultDto resultDto = rouletteService.spinRoulette(user);
+        RouletteDto.RouletteResultDto convertedResult = rouletteConverter.convertToDto(resultDto.getMessage(), resultDto.getJewelCount());
         return ApiResponse.onSuccess(SuccessCode.ROULETTE_SUCCESS, convertedResult);
     }
 }

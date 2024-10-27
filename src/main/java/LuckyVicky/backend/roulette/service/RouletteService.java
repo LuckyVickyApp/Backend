@@ -3,7 +3,7 @@ package LuckyVicky.backend.roulette.service;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
-import LuckyVicky.backend.roulette.dto.RouletteResultDto;
+import LuckyVicky.backend.roulette.dto.RouletteDto;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
@@ -25,10 +25,10 @@ public class RouletteService {
     private final UserRepository userRepository;
 
     @Transactional
-    public RouletteResultDto spinRoulette(User user) {
+    public RouletteDto.RouletteResultDto spinRoulette(User user) {
         LocalDateTime now = LocalDateTime.now();
 
-        // 현재 시간과 rouletteAvailableTime을 비교
+
         log.info("현재 시간: {}", now);
         log.info("사용자의 룰렛 가능 시간: {}", user.getRouletteAvailableTime());
 
@@ -41,7 +41,6 @@ public class RouletteService {
         String message;
         int jewelCount;
 
-        // 룰렛 결과 판단
         if (randomValue.compareTo(BigDecimal.valueOf(0.30)) < 0) {
             message = "꽝";
             jewelCount = 0;
@@ -73,7 +72,7 @@ public class RouletteService {
 
         userRepository.save(user);
 
-        return new RouletteResultDto(message, jewelCount);
+        return new RouletteDto.RouletteResultDto(message, jewelCount);
     }
 
     private void addJewel(User user, String jewelType, int count) {
