@@ -95,7 +95,7 @@ public class User extends BaseEntity {
     public void setRouletteAvailableTime(LocalDateTime nextAvailableTime) {
         this.rouletteAvailableTime = nextAvailableTime;
     }
-    
+
     public void setAttendanceDate(Integer attendanceDate) {
         this.attendanceDate = attendanceDate;
     }
