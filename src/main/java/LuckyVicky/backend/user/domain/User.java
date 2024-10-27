@@ -6,6 +6,7 @@ import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Integer attendanceDate;
 
+    @Column
+    private LocalDate lastAttendanceDate;
+
     @Column(nullable = false, unique = true)
     private String inviteCode;
 
@@ -90,6 +94,18 @@ public class User extends BaseEntity {
 
     public void setRouletteAvailableTime(LocalDateTime nextAvailableTime) {
         this.rouletteAvailableTime = nextAvailableTime;
+    }
+    
+    public void setAttendanceDate(Integer attendanceDate) {
+        this.attendanceDate = attendanceDate;
+    }
+
+    public void setLastAttendanceDate(LocalDate lastAttendanceDate) {
+        this.lastAttendanceDate = lastAttendanceDate;
+    }
+
+    public LocalDate getLastAttendanceDate() {
+        return lastAttendanceDate;
     }
 }
 
