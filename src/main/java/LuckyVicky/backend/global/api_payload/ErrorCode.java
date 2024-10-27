@@ -46,6 +46,9 @@ public enum ErrorCode implements BaseCode {
 
     // Roulette 관련 예외
     ROULETTE_COOLDOWN(HttpStatus.BAD_REQUEST, "ROULETTE_4001", "룰렛은 10분에 한 번만 돌릴 수 있습니다."),
+
+    // Attendance 에러
+    ATTENDANCE_ALREADY_CHECKED(HttpStatus.BAD_REQUEST, "ATTENDANCE_4001", "이미 출석 체크를 완료한 상태입니다."),
     ;
 
     private final HttpStatus httpStatus;
