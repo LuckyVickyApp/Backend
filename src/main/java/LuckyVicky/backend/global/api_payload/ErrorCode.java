@@ -18,6 +18,10 @@ public enum ErrorCode implements BaseCode {
     ALREADY_USED_NICKNAME(HttpStatus.FORBIDDEN, "USER_4031", "이미 사용중인 닉네임입니다."),
     USER_ADDRESS_NULL(HttpStatus.BAD_REQUEST, "USER_4001", "주소값이 비었거나 NULL입니다."),
 
+    // User Jewel
+    USER_JEWEL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "USER_5001", "회원의 보석함 정보가 DB에서 일부 혹은 전체가 사라졌습니다."),
+    USER_JEWEL_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_4041", "회원의 보석함이 없습니다."),
+
     // Jwt
     WRONG_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "JWT_4041", "일치하는 리프레시 토큰이 없습니다."),
     TOKEN_INVALID(HttpStatus.FORBIDDEN, "JWT_4032", "유효하지 않은 토큰입니다."),
@@ -44,11 +48,20 @@ public enum ErrorCode implements BaseCode {
     ENHANCE_JEWEL_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "ENHANCE_4001", "강화를 위한 보석 개수가 부족합니다."),
     ENHANCE_RATE_NOT_FOUND(HttpStatus.NOT_FOUND, "ENHANCE_4042", "존재하지 않는 강화 확률 입니다."),
 
-    // Roulette 관련 예외
+    // Roulette
     ROULETTE_COOLDOWN(HttpStatus.BAD_REQUEST, "ROULETTE_4001", "룰렛은 10분에 한 번만 돌릴 수 있습니다."),
 
     // Attendance 에러
     ATTENDANCE_ALREADY_CHECKED(HttpStatus.BAD_REQUEST, "ATTENDANCE_4001", "이미 출석 체크를 완료한 상태입니다."),
+    // Pachinko
+    USER_PACHINKO_NOT_FOUND(HttpStatus.NOT_FOUND, "PACHINKO_4041", "유저가 해당 빠칭코 판에 참여한적이 없습니다."),
+    PACHINKO_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, "PACHINKO_4001", "빠칭코 칸의 범위(1~36)를 넘어섰습니다."),
+    PACHINKO_NO_MORE_CHANCE(HttpStatus.BAD_REQUEST, "PACHINKO_4002", "이미 세칸을 고르셨습니다."),
+    PACHINKO_NO_REWARD(HttpStatus.NOT_FOUND, "PACHINKO_4042", "해당 보석 종류에 대한 보상 레코드가 없습니다."),
+    PACHINKO_NO_PREVIOUS_ROUND(HttpStatus.NOT_FOUND, "PACHINKO_4043", "사용자가 빠칭코 게임을 한 전적이 없어 보상 반환이 불가합니다."),
+
+    // Ranking
+    RANKING_WEEK_ITEM_LIST_EMPTY(HttpStatus.BAD_REQUEST, "RANKING_4001", "해당 주차에 강화한 상품이 없습니다."),
     ;
 
     private final HttpStatus httpStatus;

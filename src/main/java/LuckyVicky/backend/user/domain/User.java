@@ -1,8 +1,9 @@
 package LuckyVicky.backend.user.domain;
 
+import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import LuckyVicky.backend.global.entity.BaseEntity;
 import LuckyVicky.backend.invitation.domain.Invitation;
-import LuckyVicky.backend.enhance.domain.EnhanceItem;
+import LuckyVicky.backend.pachinko.domain.UserPachinko;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -43,7 +44,7 @@ public class User extends BaseEntity {
 
     private String address;
 
-    private String phoneNumber; // ?
+    private String phoneNumber;
 
     private String profileImage;
 
@@ -56,6 +57,10 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String inviteCode;
 
+    @Column(nullable = false)
+    private Long previousPachinkoRound;
+
+    @Setter
     @Column(nullable = false)
     private LocalDateTime rouletteAvailableTime;
 
@@ -70,6 +75,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "owner")
     private List<Invitation> acceptorList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<UserPachinko> userPachinkoList = new ArrayList<>();
 
     public User(String username, String nickname, String email, String provider) {
         this.username = username;
@@ -88,8 +96,8 @@ public class User extends BaseEntity {
 
     public void updateAddress(String address) { this.address = address; }
 
-    public LocalDateTime getRouletteAvailableTime() {
-        return this.rouletteAvailableTime;
+    public void updatePreviousPachinkoRound(Long round){
+        this.previousPachinkoRound = round;
     }
 
     public void setRouletteAvailableTime(LocalDateTime nextAvailableTime) {
@@ -100,12 +108,4 @@ public class User extends BaseEntity {
         this.attendanceDate = attendanceDate;
     }
 
-    public void setLastAttendanceDate(LocalDate lastAttendanceDate) {
-        this.lastAttendanceDate = lastAttendanceDate;
-    }
-
-    public LocalDate getLastAttendanceDate() {
-        return lastAttendanceDate;
-    }
 }
-

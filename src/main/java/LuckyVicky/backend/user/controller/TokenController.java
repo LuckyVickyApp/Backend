@@ -10,6 +10,7 @@ import LuckyVicky.backend.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "토큰", description = "access token 관련 api 입니다.")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/token")
 public class TokenController {
 
@@ -59,9 +61,5 @@ public class TokenController {
         }
 
         return ApiResponse.onSuccess(SuccessCode.USER_LOGIN_SUCCESS, UserConverter.jwtDto(accessToken, refreshToken, signIn));
-    }
-
-    public TokenController(UserService userService) {
-        this.userService = userService;
     }
 }

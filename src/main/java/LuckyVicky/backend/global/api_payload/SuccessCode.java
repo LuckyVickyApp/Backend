@@ -32,6 +32,11 @@ public enum SuccessCode implements BaseCode {
     ITEM_UNLIKE_SUCCESS(HttpStatus.OK, "ITEM_2002", "상품 좋아요가 취소되었습니다."),
     ITEM_ENHANCE_SUCCESS(HttpStatus.OK, "ITEM_2003", "상품 강화 화면에 필요한 요소들이 반환 완료되었습니다."),
 
+    // Pachinko
+    PACHINKO_GET_SQUARES_SUCCESS(HttpStatus.OK, "PACHINKO_2001", "빠칭코 선택 완료된 칸들을 반환 완료되었습니다."),
+    PACHINKO_START_SUCCESS(HttpStatus.OK, "PACHINKO_2002", "빠칭코 첫 게임의 각 칸에 대한 보상이 정해졌습니다."),
+    PACHINKO_REWARD_SHOW_SUCCESS(HttpStatus.OK, "PACHINKO_2003", "빠칭코 게임 종료 후, 각 사용자가 받는 보상을 반환 완료했습니다."),
+
     // Invitation
     INVITE_ACCEPT_SUCCESS(HttpStatus.OK, "INVITE_2011", "초대 수락이 완료되었습니다."),
 
@@ -44,6 +49,10 @@ public enum SuccessCode implements BaseCode {
 
     // Attendance
     ATTENDANCE_SUCCESS(HttpStatus.OK, "ATTENDANCE_2001", "출석 처리가 완료되었습니다."),
+    // Ranking
+    RANKING_CURRENT_WEEK_SUCCESS(HttpStatus.OK, "RANKING_2001", "현재 주차 상품 별 랭킹을 반환이 완료되었습니다."),
+    RANKING_PREVIOUS_WEEK_SUCCESS(HttpStatus.OK, "RANKING_2002", "이전 주차 상품 별 랭킹을 반환이 완료되었습니다."),
+    RANKING_NEXT_WEEK_SUCCESS(HttpStatus.OK, "RANKING_2003", "다음 주차 상품 별 랭킹을 반환이 완료되었습니다."),
 
     ;
 

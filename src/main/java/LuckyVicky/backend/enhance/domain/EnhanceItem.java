@@ -29,6 +29,9 @@ public class EnhanceItem {
     // 현재 강화 레벨 도달 시간
     private LocalDateTime enhanceLevelReachedAt;
 
+    // 수령 가능 여부
+    private Boolean isGet;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
@@ -54,6 +57,10 @@ public class EnhanceItem {
     public void destroyItem() {
         this.enhanceLevel = 1;
         this.attemptCount++;
+    }
+
+    public void updateIsGet(int availableQuantity) {
+        this.isGet = this.ranking <= availableQuantity;
     }
 
     public void updateEnhanceLevelReachedAt() {

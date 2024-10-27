@@ -3,5 +3,6 @@ package LuckyVicky.backend.enhance.domain;
 public enum JewelType {
     B,
     A,
-    S
+    S,
+    F
 }

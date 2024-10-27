@@ -35,7 +35,7 @@ public class Item {
     private LocalDate enhanceEndDate;
 
     @Column(nullable = true)
-    private String quantity;
+    private Integer quantity;
 
     @Column(nullable = true)
     private String imageUrl;
