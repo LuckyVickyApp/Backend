@@ -175,10 +175,22 @@ public class UserService {
         if (userAddressReqDto.getStreetAddress() == null) {
             throw GeneralException.of(ErrorCode.USER_ADDRESS_NULL);
         }
-        user.updateDeliveryInformation(userAddressReqDto.getRecipientName(), userAddressReqDto.getPhoneNumber(),
-                userAddressReqDto.getStreetAddress(), userAddressReqDto.getDetailedAddress());
+
+        String phoneNumber = userAddressReqDto.getPhoneNumber();
+        if (!phoneNumber.matches("\\d{3}-\\d{4}-\\d{4}")) {
+            throw GeneralException.of(ErrorCode.INVALID_PHONE_NUMBER_FORMAT);
+        }
+
+        user.updateDeliveryInformation(
+                userAddressReqDto.getRecipientName(),
+                phoneNumber,
+                userAddressReqDto.getStreetAddress(),
+                userAddressReqDto.getDetailedAddress()
+        );
+
         userRepository.save(user);
     }
+
 
     @Transactional
     public void updateProfileImage(MultipartFile file, User user) throws IOException {
