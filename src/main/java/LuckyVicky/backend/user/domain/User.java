@@ -104,7 +104,10 @@ public class User extends BaseEntity {
         this.profileImage = profileImage;
     }
 
-    public void updateAddress(String streetAddress, String detailedAddress) {
+    public void updateDeliveryInformation(String recipientName, String phoneNumber, String streetAddress,
+                                          String detailedAddress) {
+        this.recipientName = recipientName;
+        this.phoneNumber = phoneNumber;
         this.streetAddress = streetAddress;
         this.detailedAddress = detailedAddress;
     }

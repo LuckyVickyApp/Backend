@@ -171,12 +171,13 @@ public class UserService {
     }
 
     @Transactional
-    public void updateAddress(User user, UserRequestDto.UserAddressDto userUpdateAddressDto) {
-        if (userUpdateAddressDto.getStreetAddress() == null) {
+    public void updateDeliveryInformation(User user, UserRequestDto.UserAddressReqDto userAddressReqDto) {
+        if (userAddressReqDto.getStreetAddress() == null) {
             throw GeneralException.of(ErrorCode.USER_ADDRESS_NULL);
         }
-
-        user.updateAddress(userUpdateAddressDto.getStreetAddress(), userUpdateAddressDto.getDetailedAddress());
+        user.updateDeliveryInformation(userAddressReqDto.getRecipientName(), userAddressReqDto.getPhoneNumber(),
+                userAddressReqDto.getStreetAddress(), userAddressReqDto.getDetailedAddress());
+        userRepository.save(user);
     }
 
     @Transactional

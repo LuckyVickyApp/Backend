@@ -39,12 +39,19 @@ public class UserRequestDto {
 
     }
 
+    @Schema(description = "UserAddressReqDto")
     @Getter
     @Setter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UserAddressDto {
+    public static class UserAddressReqDto {
+        @Schema(description = "수령자 이름")
+        private String recipientName;
+
+        @Schema(description = "전화번호")
+        private String phoneNumber;
+
         @Schema(description = "도로명 주소")
         private String streetAddress;
 
