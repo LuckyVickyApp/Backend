@@ -1,7 +1,11 @@
 package LuckyVicky.backend.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 public class UserRequestDto {
@@ -41,7 +45,10 @@ public class UserRequestDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class UserAddressDto {
-        @Schema(description = "주소")
-        private String address;
+        @Schema(description = "도로명 주소")
+        private String streetAddress;
+
+        @Schema(description = "상세 주소")
+        private String detailedAddress;
     }
 }

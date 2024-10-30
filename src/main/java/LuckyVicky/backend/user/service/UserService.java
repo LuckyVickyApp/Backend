@@ -1,5 +1,7 @@
 package LuckyVicky.backend.user.service;
 
+import static org.apache.logging.log4j.util.Strings.isEmpty;
+
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.entity.Uuid;
@@ -18,6 +20,9 @@ import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -25,11 +30,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
-
-import static org.apache.logging.log4j.util.Strings.isEmpty;
 
 @Slf4j
 @Service
@@ -42,7 +42,8 @@ public class UserService {
     private final AmazonS3Manager amazonS3Manager;
     private final UuidRepository uuidRepository;
     private final UserJewelRepository userJewelRepository;
-    public User findByUserName(String userName){
+
+    public User findByUserName(String userName) {
         return userRepository.findByUsername(userName)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND_BY_USERNAME));
     }
@@ -70,7 +71,7 @@ public class UserService {
     }
 
     @Transactional
-    public JwtDto jwtMakeSave(String username){
+    public JwtDto jwtMakeSave(String username) {
 
         // JWT 생성 - access & refresh
         UserDetails details
@@ -79,7 +80,6 @@ public class UserService {
         JwtDto jwt = jwtTokenUtils.generateToken(details); //2. access, refresh token 생성 및 발급
         log.info("accessToken: {}", jwt.getAccessToken());
         log.info("refreshToken: {} ", jwt.getRefreshToken());
-
 
         // DB에 저장된 해당 사용자의 리프레시 토큰을 업데이트
         Optional<RefreshToken> existingToken = refreshTokenRepository.findById(username);
@@ -172,11 +172,11 @@ public class UserService {
 
     @Transactional
     public void updateAddress(User user, UserRequestDto.UserAddressDto userUpdateAddressDto) {
-        if (userUpdateAddressDto.getAddress() == null || userUpdateAddressDto.getAddress().isEmpty()) {
+        if (userUpdateAddressDto.getStreetAddress() == null) {
             throw GeneralException.of(ErrorCode.USER_ADDRESS_NULL);
         }
 
-        user.updateAddress(userUpdateAddressDto.getAddress());
+        user.updateAddress(userUpdateAddressDto.getStreetAddress(), userUpdateAddressDto.getDetailedAddress());
     }
 
     @Transactional
@@ -191,7 +191,8 @@ public class UserService {
             }
 
             MediaType mediaType = amazonS3Manager.contentType(Objects.requireNonNull(file.getOriginalFilename()));
-            if (mediaType == null || !(mediaType.equals(MediaType.IMAGE_PNG) || mediaType.equals(MediaType.IMAGE_JPEG))) {
+            if (mediaType == null || !(mediaType.equals(MediaType.IMAGE_PNG) || mediaType.equals(
+                    MediaType.IMAGE_JPEG))) {
                 throw GeneralException.of(ErrorCode.ITEM_IMAGE_UPLOAD_FAILED);
             }
 

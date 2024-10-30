@@ -4,11 +4,22 @@ import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import LuckyVicky.backend.global.entity.BaseEntity;
 import LuckyVicky.backend.invitation.domain.Invitation;
 import LuckyVicky.backend.pachinko.domain.UserPachinko;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -17,7 +28,8 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "user")
 public class User extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -32,16 +44,18 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String provider;
 
-//    @Column(nullable = false)
     private String sex;
 
-//    @Column(nullable = false)
     private String birth;
 
     @Column(nullable = false)
     private String signInDate;
 
-    private String address;
+    private String recipientName;
+
+    private String streetAddress;
+
+    private String detailedAddress;
 
     private String phoneNumber;
 
@@ -82,17 +96,20 @@ public class User extends BaseEntity {
         this.provider = provider;
     }
 
-    public void updateNickname(String nickname){
+    public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
 
-    public void updateProfileImage(String profileImage){
+    public void updateProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
 
-    public void updateAddress(String address) { this.address = address; }
+    public void updateAddress(String streetAddress, String detailedAddress) {
+        this.streetAddress = streetAddress;
+        this.detailedAddress = detailedAddress;
+    }
 
-    public void updatePreviousPachinkoRound(Long round){
+    public void updatePreviousPachinkoRound(Long round) {
         this.previousPachinkoRound = round;
     }
 
