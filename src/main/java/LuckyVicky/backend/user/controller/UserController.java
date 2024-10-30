@@ -7,7 +7,9 @@ import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.dto.JwtDto;
 import LuckyVicky.backend.user.dto.UserRequestDto.UserAddressReqDto;
 import LuckyVicky.backend.user.dto.UserRequestDto.UserNicknameReqDto;
-import LuckyVicky.backend.user.dto.UserResponseDto;
+import LuckyVicky.backend.user.dto.UserResponseDto.UserDeliveryInformationResDto;
+import LuckyVicky.backend.user.dto.UserResponseDto.UserInformationResDto;
+import LuckyVicky.backend.user.dto.UserResponseDto.UserMyPageResDto;
 import LuckyVicky.backend.user.jwt.CustomUserDetails;
 import LuckyVicky.backend.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,7 +73,7 @@ public class UserController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER_2004", description = "닉네임 생성이 완료되었습니다.")
     })
-    @PostMapping(value = "/nickname")
+    @PostMapping(value = "/nickname/update")
     public ApiResponse<Boolean> nickname(
             @RequestBody UserNicknameReqDto nicknameReqDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
@@ -85,7 +87,7 @@ public class UserController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2007", description = "프로필 사진 추가/수정 완료")
     })
-    @PutMapping(value = "/profile-image", consumes = {"multipart/form-data"})
+    @PutMapping(value = "/profile-image/update", consumes = {"multipart/form-data"})
     public ApiResponse<String> updateProfileImage(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestPart("profileImage") MultipartFile profileImage) throws IOException {
@@ -98,24 +100,50 @@ public class UserController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2008", description = "배송지 정보(수령자 이름, 주소, 전화번호)가 저장되었습니다."),
     })
-    @PostMapping("/delivery-information")
-    public ApiResponse<String> saveAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                           @RequestBody UserAddressReqDto userAddressReqDto
+    @PostMapping("/delivery-information/update")
+    public ApiResponse<Boolean> saveDeliveryInformation(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                        @RequestBody UserAddressReqDto userAddressReqDto
     ) {
         User user = userService.findByUserName(customUserDetails.getUsername());
         userService.updateDeliveryInformation(user, userAddressReqDto);
-        return ApiResponse.onSuccess(SuccessCode.USER_DELIVERY_INFORMATION_UPDATE_SUCCESS, "배송지 정보가 성공적으로 저장되었습니다.");
+        return ApiResponse.onSuccess(SuccessCode.USER_DELIVERY_INFORMATION_UPDATE_SUCCESS, true);
     }
+
+    @Operation(summary = "배송지 정보 조회", description = "사용자의 배송지 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2009", description = "배송지 정보(수령자 이름, 주소, 전화번호)가 조회되었습니다."),
+    })
+    @GetMapping("/delivery-information")
+    public ApiResponse<UserDeliveryInformationResDto> getDeliveryInformation(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        User user = userService.findByUserName(customUserDetails.getUsername());
+        return ApiResponse.onSuccess(SuccessCode.USER_DELIVERY_INFORMATION_VIEW_SUCCESS,
+                UserConverter.userDeliveryResDto(user));
+    }
+
 
     @Operation(summary = "회원 정보 조회", description = "현재 로그인한 회원의 정보를 조회합니다.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원 정보 조회 완료")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2006", description = "회원 정보 조회 완료")
     })
     @GetMapping("/info")
-    public ApiResponse<UserResponseDto.MyPageUserDto> getUserInfo(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ApiResponse<UserInformationResDto> getUserInfo(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
         User user = userService.findByUserName(customUserDetails.getUsername());
-        UserResponseDto.MyPageUserDto userResponseDto = UserConverter.toUserDTO(user);
-        return ApiResponse.onSuccess(SuccessCode.USER_INFO_VIEW_SUCCESS, userResponseDto);
+        return ApiResponse.onSuccess(SuccessCode.USER_INFO_VIEW_SUCCESS, UserConverter.userInformationResDto(user));
+    }
+
+    @Operation(summary = "마이페이지 정보 조회", description = "현재 로그인한 회원의 닉네임과 사진을 조회합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2010", description = "마이페이지 정보 조회 완료")
+    })
+    @GetMapping("/mypage")
+    public ApiResponse<UserMyPageResDto> getUserMypage(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        User user = userService.findByUserName(customUserDetails.getUsername());
+        return ApiResponse.onSuccess(SuccessCode.USER_MYPAGE_VIEW_SUCCESS, UserConverter.userMyPageResDto(user));
     }
 }
