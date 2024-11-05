@@ -5,9 +5,9 @@ import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.dto.JwtDto;
 import LuckyVicky.backend.user.dto.UserRequestDto;
 import LuckyVicky.backend.user.dto.UserResponseDto;
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class UserConverter {
@@ -39,14 +39,27 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDto.MyPageUserDto toUserDTO(User user) {
-        return UserResponseDto.MyPageUserDto.builder()
-                .profileImage(user.getProfileImage())
-                .nickname(user.getNickname())
+    public static UserResponseDto.UserDeliveryInformationResDto userDeliveryResDto(User user) {
+        return UserResponseDto.UserDeliveryInformationResDto.builder()
+                .recipientName(user.getRecipientName())
+                .phoneNumber(user.getPhoneNumber())
+                .streetAddress(user.getStreetAddress())
+                .detailedAddress(user.getDetailedAddress())
+                .build();
+    }
+
+    public static UserResponseDto.UserInformationResDto userInformationResDto(User user) {
+        return UserResponseDto.UserInformationResDto.builder()
                 .email(user.getEmail())
-                .address(user.getAddress())
                 .signInDate(user.getSignInDate())
                 .inviteCode(user.getInviteCode())
+                .build();
+    }
+
+    public static UserResponseDto.UserMyPageResDto userMyPageResDto(User user) {
+        return UserResponseDto.UserMyPageResDto.builder()
+                .nickname(user.getNickname())
+                .profileImage(user.getProfileImage())
                 .build();
     }
 }

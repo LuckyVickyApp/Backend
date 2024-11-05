@@ -6,6 +6,8 @@ import LuckyVicky.backend.pachinko.service.PachinkoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,9 +27,11 @@ public class DevController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PACHINKO_2011", description = "빠칭코 선택완료 칸 확인 성공"),
     })
     @PostMapping("/pachinko/set-update")
-    public ApiResponse<Long> updateSet(){
+    public ApiResponse<Map<Long, Set<Integer>>> updateSet() {
         Long round = pachinkoService.updateSelectedSquaresSet();
-        return ApiResponse.onSuccess(SuccessCode.OK, round);
+        Set<Integer> chosenSquares = pachinkoService.getSelectedSquares();
+        Map<Long, Set<Integer>> result = Map.of(round, chosenSquares);
+        return ApiResponse.onSuccess(SuccessCode.OK, result);
     }
 
 }

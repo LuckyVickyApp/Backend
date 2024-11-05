@@ -264,6 +264,7 @@ public class PachinkoService {
             selectedSquares.clear();
         }
         else{
+            selectedSquares.clear();
             currentRound = userpachinkoRepository.findCurrentRound();
 
             List<UserPachinko> userPachinkoList = userpachinkoRepository.findByRound(currentRound);

@@ -7,10 +7,23 @@ import LuckyVicky.backend.pachinko.domain.UserPachinko;
 import jakarta.persistence.*;
 import lombok.*;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -36,10 +49,21 @@ public class User extends BaseEntity {
     private String provider;
 
     private String sex;
+
     private String birth;
+
+    @Column(nullable = false)
     private String signInDate;
     private String address;
+
+    private String recipientName;
+
+    private String streetAddress;
+
+    private String detailedAddress;
+
     private String phoneNumber;
+
     private String profileImage;
 
     // 출석 관련 필드
@@ -48,7 +72,6 @@ public class User extends BaseEntity {
 
     @Column(nullable = true)
     private LocalDate lastAttendanceDate;
-
 
     @Column(nullable = false, unique = true)
     private String inviteCode;
@@ -90,21 +113,28 @@ public class User extends BaseEntity {
         this.profileImage = profileImage;
     }
 
-    public void updateAddress(String address) {
-        this.address = address;
+
+    public void updateDeliveryInformation (String recipientName, String phoneNumber, String streetAddress,
+                String detailedAddress){
+        this.recipientName = recipientName;
+        this.phoneNumber = phoneNumber;
+        this.streetAddress = streetAddress;
+        this.detailedAddress = detailedAddress;
+        }
+
+        public void updatePreviousPachinkoRound (Long round){
+            this.previousPachinkoRound = round;
+        }
+
+        public void setRouletteAvailableTime (LocalDateTime nextAvailableTime){
+            this.rouletteAvailableTime = nextAvailableTime;
+        }
+
+        // 출석을 증가시키고 마지막 출석 날짜를 업데이트하는 메서드
+        public void incrementAttendance () {
+            this.attendanceDate += 1;
+            this.lastAttendanceDate = LocalDate.now();
+        }
     }
 
-    public void updatePreviousPachinkoRound(Long round) {
-        this.previousPachinkoRound = round;
-    }
 
-    public void setRouletteAvailableTime(LocalDateTime nextAvailableTime) {
-        this.rouletteAvailableTime = nextAvailableTime;
-    }
-
-    // 출석을 증가시키고 마지막 출석 날짜를 업데이트하는 메서드
-    public void incrementAttendance() {
-        this.attendanceDate += 1;
-        this.lastAttendanceDate = LocalDate.now();
-    }
-}
