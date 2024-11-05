@@ -6,14 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class AttendanceDto {
+public class AttendanceResponseDto {
 
     @Schema(description = "출석 보상 결과 DTO")
     @Getter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class AttendanceRewardDto {
+    public static class AttendanceRewardResDto {
         @Schema(description = "보상 메시지", example = "B급 보석 1개")
         private String rewardMessage;
 

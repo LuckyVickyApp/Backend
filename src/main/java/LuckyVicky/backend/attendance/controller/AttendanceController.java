@@ -1,6 +1,5 @@
 package LuckyVicky.backend.attendance.controller;
-
-import LuckyVicky.backend.attendance.dto.AttendanceDto;
+import LuckyVicky.backend.attendance.dto.AttendanceResponseDto;
 import LuckyVicky.backend.attendance.service.AttendanceService;
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
@@ -28,9 +27,11 @@ public class AttendanceController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ATTENDANCE_2001", description = "출석 처리 완료 및 보상 반환")
     })
     @PostMapping("/check-in")
-    public ApiResponse<AttendanceDto.AttendanceRewardDto> checkIn(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ApiResponse<AttendanceResponseDto.AttendanceRewardResDto> checkIn(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User user = attendanceService.findUserByUsername(customUserDetails.getUsername());
-        AttendanceDto.AttendanceRewardDto rewardDto = attendanceService.processAttendance(user);
+        AttendanceResponseDto.AttendanceRewardResDto rewardDto = attendanceService.processAttendance(user);
         return ApiResponse.onSuccess(SuccessCode.ATTENDANCE_SUCCESS, rewardDto);
     }
+
+
 }

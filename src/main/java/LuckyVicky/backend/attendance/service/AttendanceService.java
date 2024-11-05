@@ -1,9 +1,8 @@
 package LuckyVicky.backend.attendance.service;
 
-import LuckyVicky.backend.attendance.converter.AttendanceConverter;
-import LuckyVicky.backend.attendance.dto.AttendanceDto;
-import LuckyVicky.backend.attendance.domain.AttendanceRecord;
-import LuckyVicky.backend.attendance.repository.AttendanceRepository;
+import LuckyVicky.backend.attendance.dto.AttendanceResponseDto;
+import LuckyVicky.backend.attendance.domain.AttendanceReward;
+import LuckyVicky.backend.attendance.repository.AttendanceRewardRepository;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
@@ -21,62 +20,41 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class AttendanceService {
 
-    private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
     private final UserJewelRepository userJewelRepository;
-    private final AttendanceConverter attendanceConverter;
-
-    private static final String[] REWARD_MESSAGES = {
-            "B급 보석 1개", "B급 보석 1개", "B급 보석 1개",
-            "A급 보석 1개", "B급 보석 2개", "B급 보석 2개",
-            "B급 보석 2개", "A급 보석 2개", "B급 보석 3개",
-            "B급 보석 3개", "B급 보석 3개", "A급 보석 3개"
-    };
-
-    private static final int[] REWARD_COUNTS = {
-            1, 1, 1,
-            1, 2, 2,
-            2, 2, 3,
-            3, 3, 3
-    };
-
-    private static final String[] JEWEL_TYPES = {
-            "B", "B", "B",
-            "A", "B", "B",
-            "B", "A", "B",
-            "B", "B", "A"
-    };
+    private final AttendanceRewardRepository attendanceRewardRepository;
 
     @Transactional
-    public AttendanceDto.AttendanceRewardDto processAttendance(User user) {
+    public AttendanceResponseDto.AttendanceRewardResDto processAttendance(User user) {
         LocalDate today = LocalDate.now();
 
-        if (attendanceRepository.findByUserAndAttendanceDate(user, today).isPresent()) {
+        // 오늘 이미 출석 체크를 했는지 확인
+        if (user.getLastAttendanceDate() != null && user.getLastAttendanceDate().isEqual(today)) {
             throw new GeneralException(ErrorCode.ATTENDANCE_ALREADY_CHECKED);
         }
 
-        AttendanceRecord attendanceRecord = AttendanceRecord.builder()
-                .user(user)
-                .attendanceDate(today)
-                .build();
-        attendanceRepository.save(attendanceRecord);
+        // 출석 일자에 따른 보상 정보 조회
+        int attendanceDay = user.getAttendanceDate() % 12 + 1;
+        AttendanceReward reward = attendanceRewardRepository.findByDay(attendanceDay)
+                .orElseThrow(() -> new GeneralException(ErrorCode.ATTENDANCE_REWARD_NOT_FOUND));
 
-        int attendanceDay = user.getAttendanceDate() % 12;
-        String rewardMessage = REWARD_MESSAGES[attendanceDay];
-        int jewelCount = REWARD_COUNTS[attendanceDay];
-        String jewelType = JEWEL_TYPES[attendanceDay];
+        // 보석 추가
+        addJewel(user, reward.getJewelType(), reward.getJewelCount());
 
-        addJewel(user, jewelType, jewelCount);
-        user.setAttendanceDate(user.getAttendanceDate() + 1);
+        // 출석 증가 및 마지막 출석 날짜 업데이트
+        user.incrementAttendance();
         userRepository.save(user);
 
-        return attendanceConverter.convertToDto(rewardMessage, jewelCount);
+        return AttendanceResponseDto.AttendanceRewardResDto.builder()
+                .rewardMessage(reward.getRewardMessage())
+                .jewelCount(reward.getJewelCount())
+                .build();
     }
 
-    private void addJewel(User user, String jewelType, int count) {
-        UserJewel jewel = userJewelRepository.findFirstByUserAndJewelType(user, JewelType.valueOf(jewelType));
+    private void addJewel(User user, JewelType jewelType, int count) {
+        UserJewel jewel = userJewelRepository.findFirstByUserAndJewelType(user, jewelType);
         if (jewel == null) {
-            throw new GeneralException(ErrorCode.ENHANCE_JEWEL_NOT_FOUND);
+            throw new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND);
         }
         jewel.increaseCount(count);
         userJewelRepository.save(jewel);
