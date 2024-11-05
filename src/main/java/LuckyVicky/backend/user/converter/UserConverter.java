@@ -23,7 +23,7 @@ public class UserConverter {
                 .nickname(nick)
                 .provider(userReqDto.getProvider())
                 .signInDate(todayDate)
-                .attendanceDate(1)
+                .attendanceDate(0)
                 .inviteCode(Uuid.generateUuid().getUuid())
                 .previousPachinkoRound(0L)
                 .rouletteAvailableTime(today)

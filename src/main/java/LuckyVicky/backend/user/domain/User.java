@@ -6,6 +6,7 @@ import LuckyVicky.backend.invitation.domain.Invitation;
 import LuckyVicky.backend.pachinko.domain.UserPachinko;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "user")
 public class User extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -33,26 +35,20 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String provider;
 
-//    @Column(nullable = false)
     private String sex;
-
-//    @Column(nullable = false)
     private String birth;
-
-    @Column(nullable = false)
     private String signInDate;
-
     private String address;
-
     private String phoneNumber;
-
     private String profileImage;
 
+    // 출석 관련 필드
     @Column(nullable = false)
-    private Integer attendanceDate;
+    private Integer attendanceDate = -1;  // 누적 출석 횟수 초기값 0
 
-    @Column
+    @Column(nullable = true)
     private LocalDate lastAttendanceDate;
+
 
     @Column(nullable = false, unique = true)
     private String inviteCode;
@@ -86,17 +82,19 @@ public class User extends BaseEntity {
         this.provider = provider;
     }
 
-    public void updateNickname(String nickname){
+    public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
 
-    public void updateProfileImage(String profileImage){
+    public void updateProfileImage(String profileImage) {
         this.profileImage = profileImage;
     }
 
-    public void updateAddress(String address) { this.address = address; }
+    public void updateAddress(String address) {
+        this.address = address;
+    }
 
-    public void updatePreviousPachinkoRound(Long round){
+    public void updatePreviousPachinkoRound(Long round) {
         this.previousPachinkoRound = round;
     }
 
@@ -104,8 +102,9 @@ public class User extends BaseEntity {
         this.rouletteAvailableTime = nextAvailableTime;
     }
 
-    public void setAttendanceDate(Integer attendanceDate) {
-        this.attendanceDate = attendanceDate;
+    // 출석을 증가시키고 마지막 출석 날짜를 업데이트하는 메서드
+    public void incrementAttendance() {
+        this.attendanceDate += 1;
+        this.lastAttendanceDate = LocalDate.now();
     }
-
 }
