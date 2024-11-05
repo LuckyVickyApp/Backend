@@ -32,4 +32,8 @@ public class ApiResponse<T> {
         return new ApiResponse<>(false, code, message, data);
     }
 
+    public static <T> ApiResponse<T> onSuccess(BaseCode code, String customMessage, T result) {
+        return new ApiResponse<>(true, code.getReason().getCode(), customMessage, result);
+    }
+
 }
