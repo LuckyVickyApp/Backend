@@ -48,11 +48,15 @@ public enum ErrorCode implements BaseCode {
     ENHANCE_JEWEL_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "ENHANCE_4001", "강화를 위한 보석 개수가 부족합니다."),
     ENHANCE_RATE_NOT_FOUND(HttpStatus.NOT_FOUND, "ENHANCE_4042", "존재하지 않는 강화 확률 입니다."),
 
+
     // Roulette
     ROULETTE_COOLDOWN(HttpStatus.BAD_REQUEST, "ROULETTE_4001", "룰렛은 10분에 한 번만 돌릴 수 있습니다."),
+    ROULETTE_INVALID_JEWEL_TYPE(HttpStatus.BAD_REQUEST, "ROULETTE_4002", "유효하지 않은 보석 유형입니다."),
 
-    // Attendance 에러
+    // Attendance
     ATTENDANCE_ALREADY_CHECKED(HttpStatus.BAD_REQUEST, "ATTENDANCE_4001", "이미 출석 체크를 완료한 상태입니다."),
+    ATTENDANCE_REWARD_NOT_FOUND(HttpStatus.NOT_FOUND, "ATTENDANCE_4041", "해당 출석 보상이 존재하지 않습니다."),
+
     // Pachinko
     USER_PACHINKO_NOT_FOUND(HttpStatus.NOT_FOUND, "PACHINKO_4041", "유저가 해당 빠칭코 판에 참여한적이 없습니다."),
     PACHINKO_OUT_OF_BOUND(HttpStatus.BAD_REQUEST, "PACHINKO_4001", "빠칭코 칸의 범위(1~36)를 넘어섰습니다."),
