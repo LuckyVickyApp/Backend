@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EnhanceItemService {
     private static final int DEFAULT_ENHANCE_LEVEL = 1;
-    private static final String ENHANCE_ITEM_COUNT_ERROR_MESSAGE = "Item count exceeds Integer limit.";
-
     private final EnhanceItemRepository enhanceItemRepository;
 
     public EnhanceItem findByUserAndItem(User user, Item item) {
