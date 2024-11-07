@@ -47,7 +47,6 @@ public class EnhanceResponseDto {
         private List<UserJewelResDto> userJewelResDtoList;
     }
 
-
     @Schema(description = "EnhanceExecuteResDto")
     @Getter
     @Builder
@@ -59,6 +58,9 @@ public class EnhanceResponseDto {
 
         @Schema(description = "현재 유저 랭킹")
         private Integer userRanking;
+
+        @Schema(description = "유저 랭킹 변화 수치")
+        private Integer userRankingChange;
 
         @Schema(description = "현재 강화 레벨")
         private Integer enhanceLevel;

@@ -1,8 +1,6 @@
 package LuckyVicky.backend.enhance.converter;
 
 import LuckyVicky.backend.enhance.dto.EnhanceResponseDto.EnhanceExecuteResDto;
-import LuckyVicky.backend.enhance.repository.EnhanceItemRepository;
-import LuckyVicky.backend.enhance.service.EnhanceItemService;
 import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.enhance.domain.EnhanceResult;
 import LuckyVicky.backend.enhance.domain.EnhanceItem;
@@ -20,12 +18,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class EnhanceConverter {
-    private final EnhanceItemService enhanceItemService;
 
-    public  ItemForEnhanceResDto itemForEnhanceResDto(User user, Item item) {
-
-        Integer enhanceLevel = enhanceItemService.findByUserAndItem(user, item).getEnhanceLevel();
-
+    public static ItemForEnhanceResDto itemForEnhanceResDto(User user, Item item, Integer enhanceLevel) {
         return ItemForEnhanceResDto.builder()
                 .itemId(item.getId())
                 .itemName(item.getName())
@@ -42,28 +36,19 @@ public class EnhanceConverter {
                 .build();
     }
 
-    public ItemEnhanceResDto itemEnhanceResDto(User user, List<Item> itemList) {
-
-        List<ItemForEnhanceResDto> itemForEnhanceResDtoList
-                = itemList.stream()
-                .map(item -> itemForEnhanceResDto(user, item))
-                .toList();
-
-        List<UserJewelResDto> userJewelResDtoList
-                = user.getUserJewelList().stream()
-                .map(EnhanceConverter::userJewelResDto)
-                .toList();
-
+    public static ItemEnhanceResDto itemEnhanceResDto(List<ItemForEnhanceResDto> itemForEnhanceResDtoList,
+                                                      List<UserJewelResDto> userJewelResDtoList) {
         return ItemEnhanceResDto.builder()
                 .itemForEnhanceResDtoList(itemForEnhanceResDtoList)
                 .userJewelResDtoList(userJewelResDtoList)
                 .build();
     }
 
-    public static EnhanceExecuteResDto itemEnhanceExecuteResDto(EnhanceItem enhanceItem, EnhanceResult enhanceResult) {
+    public static EnhanceExecuteResDto itemEnhanceExecuteResDto(EnhanceItem enhanceItem, EnhanceResult enhanceResult, Integer userRankingChange) {
         return EnhanceExecuteResDto.builder()
                 .enhanceResult(enhanceResult)
                 .userRanking(enhanceItem.getRanking())
+                .userRankingChange(userRankingChange)
                 .enhanceLevel(enhanceItem.getEnhanceLevel())
                 .image(enhanceItem.getItem().getImageUrl())
                 .build();

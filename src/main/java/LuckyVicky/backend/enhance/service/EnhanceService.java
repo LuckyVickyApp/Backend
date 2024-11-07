@@ -124,7 +124,6 @@ public class EnhanceService {
         }
     }
 
-
     // 해당 상품 랭킹 갱신
     private void updateUserRanking(EnhanceItem enhanceItem) {
 
@@ -155,5 +154,4 @@ public class EnhanceService {
             throw GeneralException.of(ErrorCode.ENHANCE_JEWEL_NOT_ENOUGH);
         }
     }
-
 }
