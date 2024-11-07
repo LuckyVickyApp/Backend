@@ -48,6 +48,7 @@ public enum ErrorCode implements BaseCode {
     ENHANCE_JEWEL_NOT_FOUND(HttpStatus.NOT_FOUND, "ENHANCE_4041", "존재하지 않는 보석 종류입니다."),
     ENHANCE_JEWEL_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "ENHANCE_4001", "강화를 위한 보석 개수가 부족합니다."),
     ENHANCE_RATE_NOT_FOUND(HttpStatus.NOT_FOUND, "ENHANCE_4042", "존재하지 않는 강화 확률 입니다."),
+    ENHANCE_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "ENHANCE_4043", "존재하지 않는 강화 상품 입니다."),
 
     // Roulette
     ROULETTE_COOLDOWN(HttpStatus.BAD_REQUEST, "ROULETTE_4001", "룰렛은 10분에 한 번만 돌릴 수 있습니다."),

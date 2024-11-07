@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EnhanceConverter {
 
-    public static ItemForEnhanceResDto itemForEnhanceResDto(User user, Item item, Integer enhanceLevel) {
+    public static ItemForEnhanceResDto itemForEnhanceResDto(Item item, Integer enhanceLevel) {
         return ItemForEnhanceResDto.builder()
                 .itemId(item.getId())
                 .itemName(item.getName())
@@ -54,13 +54,13 @@ public class EnhanceConverter {
                 .build();
     }
 
-    public static EnhanceItem createEnhanceItem(User user, Item item) {
+    public static EnhanceItem createEnhanceItem(User user, Item item, Integer lastRanking) {
         return EnhanceItem.builder()
                 .user(user)
                 .item(item)
                 .attemptCount(0)
                 .enhanceLevel(1)
-                .ranking(0)
+                .ranking(lastRanking)
                 .enhanceLevelReachedAt(LocalDateTime.now())
                 .build();
     }

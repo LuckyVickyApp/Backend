@@ -71,13 +71,10 @@ public class EnhanceController {
             @RequestBody ItemEnhanceReqDto itemEnhanceReqDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        System.out.println(itemEnhanceReqDto.getItemId());
-        System.out.println(itemEnhanceReqDto.getJewelType());
-
         // 강화할 Entity 찾기
         User user = userService.findByUserName(customUserDetails.getUsername());
         Item item = itemService.findById(itemEnhanceReqDto.getItemId());
-        EnhanceItem enhanceItem = enhanceItemService.findByUserAndItem(user, item);
+        EnhanceItem enhanceItem = enhanceItemService.findByUserAndItemOrCreateEnhanceItem(user, item);
 
         // 강화 전 랭킹
         Integer previousRanking = enhanceItem.getRanking();
