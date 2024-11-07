@@ -87,10 +87,6 @@ public class EnhanceService {
 
     // 결과에 따른 강화 아이템 상태 및 랭킹 갱신
     private EnhanceResult updateEnhanceItem(EnhanceItem enhanceItem, EnhanceResult result) {
-
-        // 강화 레벨 도달 시간 갱신
-        enhanceItem.updateEnhanceLevelReachedAt();
-
         // 레벨 & 시도 횟수 갱신
         switch (result) {
             case UP:
@@ -124,7 +120,6 @@ public class EnhanceService {
         }
     }
 
-
     // 해당 상품 랭킹 갱신
     private void updateUserRanking(EnhanceItem enhanceItem) {
 
@@ -155,5 +150,4 @@ public class EnhanceService {
             throw GeneralException.of(ErrorCode.ENHANCE_JEWEL_NOT_ENOUGH);
         }
     }
-
 }

@@ -41,11 +41,13 @@ public class EnhanceItem {
     private User user;
 
     public void upEnhanceItem() {
+        updateEnhanceLevelReachedAt();
         this.enhanceLevel++;
         this.attemptCount++;
     }
 
     public void downEnhanceItem() {
+        updateEnhanceLevelReachedAt();
         this.enhanceLevel--;
         this.attemptCount++;
     }
@@ -55,6 +57,7 @@ public class EnhanceItem {
     }
 
     public void destroyItem() {
+        updateEnhanceLevelReachedAt();
         this.enhanceLevel = 1;
         this.attemptCount++;
     }
@@ -63,7 +66,7 @@ public class EnhanceItem {
         this.isGet = this.ranking <= availableQuantity;
     }
 
-    public void updateEnhanceLevelReachedAt() {
+    private void updateEnhanceLevelReachedAt() {
         this.enhanceLevelReachedAt = LocalDateTime.now();
     }
 
