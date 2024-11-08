@@ -1,12 +1,21 @@
 package LuckyVicky.backend.item.domain;
 
 import LuckyVicky.backend.enhance.domain.EnhanceItem;
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -23,8 +32,9 @@ public class Item {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = true)
-    private String description;
+    private String descriptionKey;
+
+    private String descriptionValue;
 
     // 상품 강화 시작일
     @Column(nullable = false)

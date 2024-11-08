@@ -2,12 +2,15 @@ package LuckyVicky.backend.item.converter;
 
 import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.item.dto.ItemRequestDto;
-import LuckyVicky.backend.item.dto.ItemResponseDto;
+import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDescriptionResDto;
+import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDescriptionResListDto;
+import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDetailResDto;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
@@ -20,7 +23,6 @@ public class ItemConverter {
 
         return Item.builder()
                 .name(requestDto.getItemName())
-                .description(requestDto.getItemDescription())
                 .enhanceStartDate(availableDate)
                 .quantity(requestDto.getQuantity())
                 .imageUrl(imageUrl)
@@ -28,24 +30,43 @@ public class ItemConverter {
                 .build();
     }
 
-    public ItemResponseDto toDto(Item item) {
-        return ItemResponseDto.builder()
+    public ItemDetailResDto toDto(Item item) {
+        return ItemDetailResDto.builder()
                 .id(item.getId())
                 .name(item.getName())
-                .description(item.getDescription())
                 .enhanceStartDate(item.getEnhanceStartDate())
                 .quantity(item.getQuantity())
                 .imageUrl(item.getImageUrl())
                 .build();
     }
 
-    public static ItemRequestDto itemRequestDto(String itemName, String itemDescription, String availableDate, Integer quantity, MultipartFile imageFile) {
+    public static ItemRequestDto itemRequestDto(String itemName, String itemDescription, String availableDate,
+                                                Integer quantity, MultipartFile imageFile) {
         return ItemRequestDto.builder()
                 .itemName(itemName)
                 .itemDescription(itemDescription)
                 .availableDate(availableDate)
                 .quantity(quantity)  // 문자열로 처리
                 .imageFile(imageFile)
+                .build();
+    }
+
+    public static ItemDescriptionResListDto itemDescriptionResListDto(List<String> keys, List<String> values) {
+        List<ItemDescriptionResDto> itemDescriptionResDtoList = new ArrayList<>();
+
+        int size = Math.min(keys.size(), values.size());
+
+        for (int i = 0; i < size; i++) {
+            itemDescriptionResDtoList.add(
+                    ItemDescriptionResDto.builder()
+                            .key(keys.get(i))
+                            .value(values.get(i))
+                            .build()
+            );
+        }
+
+        return ItemDescriptionResListDto.builder()
+                .itemDescriptionResDtoList(itemDescriptionResDtoList)
                 .build();
     }
 }
