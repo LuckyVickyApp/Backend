@@ -32,13 +32,9 @@ public class RouletteController {
         User user = userService.findByUserName(customUserDetails.getUsername());
         RouletteResponseDto.RouletteAvailableDto availability = rouletteService.checkRouletteAvailability(user);
 
-        String message = availability.isAvailable() ? "룰렛 돌리기가 가능합니다" : "룰렛 돌리기를 위해 기다려야 합니다";
-
-        return ApiResponse.onSuccess(SuccessCode.ROULETTE_SUCCESS, message, availability);
+        // 메시지를 반환하지 않고 DTO만 반환
+        return ApiResponse.onSuccess(SuccessCode.ROULETTE_AVAILABILITY_SUCCESS, availability);
     }
-
-
-
 
     @Operation(summary = "룰렛 결과 저장", description = "프론트엔드에서 받은 룰렛 결과를 서버에 저장합니다.")
     @ApiResponses(value = {
@@ -49,7 +45,7 @@ public class RouletteController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestParam("jewelType") String jewelType,
             @RequestParam("jewelCount") int jewelCount
-    )  {
+    ) {
         User user = userService.findByUserName(customUserDetails.getUsername());
         rouletteService.saveRouletteResult(user, jewelType, jewelCount);
         return ApiResponse.onSuccess(SuccessCode.ROULETTE_SUCCESS, "ok");
