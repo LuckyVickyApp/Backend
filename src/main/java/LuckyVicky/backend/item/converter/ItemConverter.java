@@ -51,7 +51,8 @@ public class ItemConverter {
                 .build();
     }
 
-    public static ItemDescriptionResListDto itemDescriptionResListDto(List<String> keys, List<String> values) {
+    public static ItemDescriptionResListDto itemDescriptionResListDto(Item item, List<String> keys,
+                                                                      List<String> values) {
         List<ItemDescriptionResDto> itemDescriptionResDtoList = new ArrayList<>();
 
         int size = Math.min(keys.size(), values.size());
@@ -66,6 +67,9 @@ public class ItemConverter {
         }
 
         return ItemDescriptionResListDto.builder()
+                .image(item.getImageUrl())
+                .name(item.getName())
+                .price(item.getPrice())
                 .itemDescriptionResDtoList(itemDescriptionResDtoList)
                 .build();
     }
