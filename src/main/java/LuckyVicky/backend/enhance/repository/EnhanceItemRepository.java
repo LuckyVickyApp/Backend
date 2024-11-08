@@ -16,4 +16,5 @@ public interface EnhanceItemRepository extends JpaRepository<EnhanceItem, Long> 
     @Query("SELECT e FROM EnhanceItem e WHERE e.item = :item ORDER BY e.enhanceLevel DESC, e.enhanceLevelReachedAt ASC")
     List<EnhanceItem> findEnhanceItemsByItemOrderByEnhanceLevelAndReachedTime(@Param("item") Item item);
 
+    Integer countByItem(Item item);
 }

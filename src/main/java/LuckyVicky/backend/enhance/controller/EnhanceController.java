@@ -36,8 +36,7 @@ public class EnhanceController {
     private final UserService userService;
     private final ItemService itemService;
     private final EnhanceItemService enhanceItemService;
-    private final EnhanceService itemEnhanceService;
-    private final EnhanceConverter enhanceConverter;
+    private final EnhanceService enhanceService;
 
     @Operation(summary = "강화 화면 요소 반환 메서드", description = "강화 화면에 필요한 요소들을 반환하는 메서드입니다.")
     @ApiResponses(value = {
@@ -52,11 +51,18 @@ public class EnhanceController {
         // 현재 강화 가능한 상품 리스트
         List<Item> itemList = itemService.getEnhanceItemList();
 
-        return ApiResponse.onSuccess(SuccessCode.ENHANCE_LIST_SUCCESS, enhanceConverter.itemEnhanceResDto(user, itemList));
+        ItemEnhanceResDto itemEnhanceResDto = enhanceItemService.getItemEnhanceResDto(user, itemList);
+
+        return ApiResponse.onSuccess(SuccessCode.ENHANCE_LIST_SUCCESS,itemEnhanceResDto);
 
     }
 
-    @Operation(summary = "강화 시도 메서드", description = "강화 시도 후, 결과를 반환하는 메서드입니다.")
+    @Operation(summary = "강화 시도 메서드",
+            description = "강화 시도 후, 결과를 반환하는 메서드입니다. "
+            + "[ UP: 강화 성공 (강화 레벨 1 증가), "
+            + "DOWN: 강화 실패 (강화 레벨 1 감소), "
+            + "DESTROY: 강화 파괴 (강화 레벨 1로 변경), "
+            + "KEEP: 강화 유지 (강화 레벨 변화 X) ]")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ENHANCE_2002", description = "강화 시도 후, 결과 반환이 완료되었습니다.")
     })
@@ -65,18 +71,24 @@ public class EnhanceController {
             @RequestBody ItemEnhanceReqDto itemEnhanceReqDto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        System.out.println(itemEnhanceReqDto.getItemId());
-        System.out.println(itemEnhanceReqDto.getJewelType());
-
         // 강화할 Entity 찾기
         User user = userService.findByUserName(customUserDetails.getUsername());
         Item item = itemService.findById(itemEnhanceReqDto.getItemId());
-        EnhanceItem enhanceItem = enhanceItemService.findByUserAndItem(user, item);
+        EnhanceItem enhanceItem = enhanceItemService.findByUserAndItemOrCreateEnhanceItem(user, item);
+
+        // 강화 전 랭킹
+        Integer previousRanking = enhanceItem.getRanking();
 
         // 강화
-        EnhanceResult enhanceResult = itemEnhanceService.getItemEnhanceResult(enhanceItem, itemEnhanceReqDto.getJewelType());
+        EnhanceResult enhanceResult = enhanceService.getItemEnhanceResult(enhanceItem, itemEnhanceReqDto.getJewelType());
 
-        return ApiResponse.onSuccess(SuccessCode.ENHANCE_RESULT_SUCCESS, EnhanceConverter.itemEnhanceExecuteResDto(enhanceItem, enhanceResult));
+        // 강화 후 랭킹
+        Integer afterRanking = enhanceItem.getRanking();
+
+        // 랭킹 변화 수치
+        Integer rankingChange = previousRanking - afterRanking;
+
+        return ApiResponse.onSuccess(SuccessCode.ENHANCE_RESULT_SUCCESS, EnhanceConverter.itemEnhanceExecuteResDto(enhanceItem, enhanceResult, rankingChange));
 
     }
 
