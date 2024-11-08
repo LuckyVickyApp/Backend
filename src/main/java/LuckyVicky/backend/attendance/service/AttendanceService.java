@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-
 @Service
 @RequiredArgsConstructor
 public class AttendanceService {
@@ -28,20 +27,16 @@ public class AttendanceService {
     public AttendanceResponseDto.AttendanceRewardResDto processAttendance(User user) {
         LocalDate today = LocalDate.now();
 
-        // 오늘 이미 출석 체크를 했는지 확인
         if (user.getLastAttendanceDate() != null && user.getLastAttendanceDate().isEqual(today)) {
             throw new GeneralException(ErrorCode.ATTENDANCE_ALREADY_CHECKED);
         }
 
-        // 출석 일자에 따른 보상 정보 조회
         int attendanceDay = user.getAttendanceDate() % 12 + 1;
         AttendanceReward reward = attendanceRewardRepository.findByDay(attendanceDay)
                 .orElseThrow(() -> new GeneralException(ErrorCode.ATTENDANCE_REWARD_NOT_FOUND));
 
-        // 보석 추가
         addJewel(user, reward.getJewelType(), reward.getJewelCount());
 
-        // 출석 증가 및 마지막 출석 날짜 업데이트
         user.incrementAttendance();
         userRepository.save(user);
 
