@@ -1,18 +1,16 @@
 package LuckyVicky.backend.item.service;
 
+import static LuckyVicky.backend.global.util.Parser.parseString;
+
 import LuckyVicky.backend.global.api_payload.ErrorCode;
+import LuckyVicky.backend.global.exception.GeneralException;
+import LuckyVicky.backend.global.s3.AmazonS3Manager;
 import LuckyVicky.backend.item.converter.ItemConverter;
 import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.item.dto.ItemRequestDto;
-import LuckyVicky.backend.item.dto.ItemResponseDto;
+import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDescriptionResListDto;
+import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDetailResDto;
 import LuckyVicky.backend.item.repository.ItemRepository;
-import LuckyVicky.backend.global.exception.GeneralException;
-import LuckyVicky.backend.global.s3.AmazonS3Manager;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -21,6 +19,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +63,7 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemResponseDto createItem(ItemRequestDto requestDto) throws IOException {
+    public ItemDetailResDto createItem(ItemRequestDto requestDto) throws IOException {
         String uploadFileUrl = null;
 
         if (requestDto.getImageFile() != null) {
@@ -74,13 +76,13 @@ public class ItemService {
         return itemConverter.toDto(item);
     }
 
-    public List<ItemResponseDto> getAllItems() {
+    public List<ItemDetailResDto> getAllItems() {
         return itemRepository.findAll().stream()
                 .map(itemConverter::toDto)
                 .collect(Collectors.toList());
     }
 
-    public ItemResponseDto getItemByName(String name) {
+    public ItemDetailResDto getItemByName(String name) {
         Item item = itemRepository.findByName(name)
                 .orElseThrow(() -> new GeneralException(ErrorCode.ITEM_NOT_FOUND));
         return itemConverter.toDto(item);
@@ -100,5 +102,18 @@ public class ItemService {
         return amazonS3Manager.putS3(amazonS3Manager.convert(imageFile)
                         .orElseThrow(() -> new IllegalArgumentException("파일 변환 실패")),
                 AmazonS3Manager.generateFileName(imageFile));
+    }
+
+    public ItemDescriptionResListDto getItemDescription(Long id) {
+        Item item = itemRepository.findItemById(id)
+                .orElseThrow(() -> new GeneralException(ErrorCode.ITEM_NOT_FOUND));
+
+        String descriptionKey = item.getDescriptionKey();
+        String descriptionValue = item.getDescriptionValue();
+
+        List<String> keys = parseString(descriptionKey);
+        List<String> values = parseString(descriptionValue);
+
+        return ItemConverter.itemDescriptionResListDto(keys, values);
     }
 }
