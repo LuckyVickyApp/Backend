@@ -1,5 +1,6 @@
 package LuckyVicky.backend.user.service;
 
+import static LuckyVicky.backend.global.util.Constant.PHONE_NUMBER_PATTERN;
 import static org.apache.logging.log4j.util.Strings.isEmpty;
 
 import LuckyVicky.backend.enhance.domain.JewelType;
@@ -177,7 +178,7 @@ public class UserService {
         }
 
         String phoneNumber = userAddressReqDto.getPhoneNumber();
-        if (!phoneNumber.matches("\\d{3}-\\d{4}-\\d{4}")) {
+        if (!phoneNumber.matches(PHONE_NUMBER_PATTERN)) {
             throw GeneralException.of(ErrorCode.INVALID_PHONE_NUMBER_FORMAT);
         }
 
