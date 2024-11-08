@@ -43,6 +43,15 @@ public class ItemResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ItemDescriptionResListDto {
+        @Schema(description = "제품 사진")
+        private String image;
+
+        @Schema(description = "제품 이름")
+        private String name;
+
+        @Schema(description = "제품 가격")
+        private String price;
+
         @Schema(description = "제품 설명")
         private List<ItemDescriptionResDto> itemDescriptionResDtoList;
     }
