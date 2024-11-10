@@ -39,6 +39,9 @@ public class SmsService {
 
         try {
             SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
+            if (response == null) {
+                throw new IllegalStateException("Response cannot be null");
+            }
             System.out.println("메시지 전송 성공: " + response.getMessageId());
         } catch (Exception e) {
             System.err.println("메시지 전송 실패: " + e.getMessage());
