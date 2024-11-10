@@ -114,6 +114,6 @@ public class ItemService {
         List<String> keys = parseString(descriptionKey);
         List<String> values = parseString(descriptionValue);
 
-        return ItemConverter.itemDescriptionResListDto(keys, values);
+        return ItemConverter.itemDescriptionResListDto(item, keys, values);
     }
 }

@@ -3,77 +3,48 @@ package LuckyVicky.backend.roulette.service;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
-import LuckyVicky.backend.roulette.dto.RouletteResultDto;
+import LuckyVicky.backend.roulette.dto.RouletteResponseDto;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import lombok.extern.slf4j.Slf4j;
-
 import jakarta.transaction.Transactional;
-import java.math.BigDecimal;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j // 로그를 추가하기 위해 사용
+@Slf4j
 public class RouletteService {
 
     private final UserJewelRepository userJewelRepository;
     private final UserRepository userRepository;
 
     @Transactional
-    public RouletteResultDto spinRoulette(User user) {
+    public RouletteResponseDto.RouletteAvailableDto checkRouletteAvailability(User user) {
         LocalDateTime now = LocalDateTime.now();
+        LocalDateTime availableTime = user.getRouletteAvailableTime();
 
-        // 현재 시간과 rouletteAvailableTime을 비교
-        log.info("현재 시간: {}", now);
-        log.info("사용자의 룰렛 가능 시간: {}", user.getRouletteAvailableTime());
-
-        if (user.getRouletteAvailableTime() != null && now.isBefore(user.getRouletteAvailableTime())) {
-            log.warn("룰렛은 10분 내 재시도 불가.");
-            throw new GeneralException(ErrorCode.ROULETTE_COOLDOWN); // 10분 제한 예외
+        if (availableTime != null && now.isBefore(availableTime)) {
+            int remainingTime = (int) Duration.between(now, availableTime).getSeconds();
+            return new RouletteResponseDto.RouletteAvailableDto(false, remainingTime);
         }
 
-        BigDecimal randomValue = BigDecimal.valueOf(Math.random());
-        String message;
-        int jewelCount;
+        return new RouletteResponseDto.RouletteAvailableDto(true, 0);
+    }
 
-        // 룰렛 결과 판단
-        if (randomValue.compareTo(BigDecimal.valueOf(0.30)) < 0) {
-            message = "꽝";
-            jewelCount = 0;
-        } else if (randomValue.compareTo(BigDecimal.valueOf(0.70)) < 0) {
-            message = "B급 보석 1개";
-            addJewel(user, "B", 1);
-            jewelCount = 1;
-        } else if (randomValue.compareTo(BigDecimal.valueOf(0.80)) < 0) {
-            message = "B급 보석 2개";
-            addJewel(user, "B", 2);
-            jewelCount = 2;
-        } else if (randomValue.compareTo(BigDecimal.valueOf(0.90)) < 0) {
-            message = "B급 보석 3개";
-            addJewel(user, "B", 3);
-            jewelCount = 3;
-        } else if (randomValue.compareTo(BigDecimal.valueOf(0.99)) < 0) {
-            message = "A급 보석 1개";
-            addJewel(user, "A", 1);
-            jewelCount = 1;
-        } else {
-            message = "A급 보석 2개";
-            addJewel(user, "A", 2);
-            jewelCount = 2;
-        }
+    @Transactional
+    public void saveRouletteResult(User user, String jewelType, int jewelCount) {
+        log.info("사용자 {}에게 {} 보석 {}개 추가", user.getUsername(), jewelType, jewelCount);
+        addJewel(user, jewelType, jewelCount);
 
-        // 10분 후에 룰렛을 다시 돌릴 수 있도록 설정
-        user.setRouletteAvailableTime(now.plusMinutes(10));
-        log.info("다음 룰렛 가능 시간: {}", user.getRouletteAvailableTime());
-
+        // 10분 후 다시 룰렛 사용 가능
+        user.setRouletteAvailableTime(LocalDateTime.now().plusMinutes(10));
         userRepository.save(user);
-
-        return new RouletteResultDto(message, jewelCount);
     }
 
     private void addJewel(User user, String jewelType, int count) {
