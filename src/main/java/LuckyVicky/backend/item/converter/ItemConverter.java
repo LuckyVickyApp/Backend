@@ -8,13 +8,12 @@ import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDetailResDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-@Component
-@RequiredArgsConstructor
 public class ItemConverter {
+    private ItemConverter() {
+        throw new UnsupportedOperationException("Converter class는 인스턴스화가 불가능합니다.");
+    }
 
     public Item toEntity(ItemRequestDto requestDto, String imageUrl) {
         LocalDate availableDate = (requestDto.getAvailableDate() != null)
