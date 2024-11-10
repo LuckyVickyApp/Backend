@@ -45,10 +45,7 @@ public class SmsController {
     public ApiResponse<String> verifyCode(@RequestParam(name = "inputCode") String inputCode,
                                           @RequestParam(name = "correctCode") String correctCode
     ) {
-        String result = "Success";
-        if (!inputCode.equals(correctCode)) {
-            result = "Fail";
-        }
+        String result = smsService.verifyCode(inputCode, correctCode);
         return ApiResponse.onSuccess(SuccessCode.SMS_CERTIFICATE_SUCCESS, result);
     }
 }

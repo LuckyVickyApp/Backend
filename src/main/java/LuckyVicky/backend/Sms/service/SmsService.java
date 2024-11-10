@@ -26,13 +26,11 @@ public class SmsService {
     private String senderPhoneNumber;
 
     public String sendVerificationCode(String recipientPhoneNumber) {
-        // 6자리 랜덤 인증 번호 생성
         String verificationCode = generateVerificationCode();
 
         // COOLSMS API 클라이언트 생성
         var messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret, "https://api.coolsms.co.kr");
 
-        // 메시지 객체 생성 및 설정
         Message message = new Message();
         message.setFrom(senderPhoneNumber);
         message.setTo(recipientPhoneNumber);
@@ -47,13 +45,22 @@ public class SmsService {
             throw new RuntimeException("메시지 전송에 실패했습니다.");
         }
 
-        return verificationCode;  // 생성한 인증 코드를 반환하여 검증 시 사용
+        return verificationCode;
     }
 
     private String generateVerificationCode() {
         Random random = new Random();
-        int code = random.nextInt(900000) + 100000;  // 6자리 랜덤 숫자 생성
+        int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
+    }
+
+    public String verifyCode(String inputCode, String correctCode) {
+        String result = "Success";
+        if (!inputCode.equals(correctCode)) {
+            result = "Fail";
+        }
+
+        return result;
     }
 }
 
