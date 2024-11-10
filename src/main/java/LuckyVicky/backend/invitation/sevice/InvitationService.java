@@ -9,6 +9,7 @@ import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,17 +23,20 @@ public class InvitationService {
     private final UserJewelRepository jewelRepository;
     private final UserRepository userRepository;
 
-    public String acceptInvitation(User writer, String code){
+    public String acceptInvitation(User writer, String code) {
         User owner = userRepository.findByInviteCode(code).orElseThrow(()
                 -> new GeneralException(ErrorCode.INVITATION_NOT_FOUND));
 
-        // 이미 초대 수락 했다면, 또 못하도록
-        if (invitationRepository.findByWriter(writer.getUsername()).isPresent())
+        if (Objects.equals(owner.getInviteCode(), code)) {
+            throw new GeneralException(ErrorCode.INVITATION_MINE_INVALID);
+        }
+
+        if (invitationRepository.findByWriter(writer.getUsername()).isPresent()) {
             throw new GeneralException(ErrorCode.INVITATION_ALREADY_ACCEPTED);
+        }
 
         invitationRepository.save(Invitation.builder().owner(owner).writer(writer.getUsername()).build());
 
-        // 초대자는 s급 보석 하나 얻도록
         UserJewel sLevelJewel = jewelRepository.findFirstByUserAndJewelType(owner, JewelType.S);
         sLevelJewel.increaseCount(1);
         System.out.println(sLevelJewel.getCount());

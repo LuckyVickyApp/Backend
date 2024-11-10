@@ -42,7 +42,8 @@ public enum ErrorCode implements BaseCode {
 
     // Invitation
     INVITATION_NOT_FOUND(HttpStatus.NOT_FOUND, "INVITE_4041", "존재하지 않는 초대 코드입니다."),
-    INVITATION_ALREADY_ACCEPTED(HttpStatus.BAD_REQUEST, "INVITE_4001", "초대 수락을 이미 완료한 상태입니다."),
+    INVITATION_ALREADY_ACCEPTED(HttpStatus.FORBIDDEN, "INVITE_4031", "초대 수락을 이미 완료한 상태입니다."),
+    INVITATION_MINE_INVALID(HttpStatus.CONFLICT, "INVITE_4091", "자기 자신의 초대는 수락할 수 없습니다."),
 
     // Enhance
     ENHANCE_JEWEL_NOT_FOUND(HttpStatus.NOT_FOUND, "ENHANCE_4041", "존재하지 않는 보석 종류입니다."),
