@@ -58,7 +58,9 @@ public enum SuccessCode implements BaseCode {
     RANKING_PREVIOUS_WEEK_SUCCESS(HttpStatus.OK, "RANKING_2002", "이전 주차 상품 별 랭킹을 반환이 완료되었습니다."),
     RANKING_NEXT_WEEK_SUCCESS(HttpStatus.OK, "RANKING_2003", "다음 주차 상품 별 랭킹을 반환이 완료되었습니다."),
 
-    ;
+    // Sms
+    SMS_CERTIFICATE_SEND_SUCCESS(HttpStatus.OK, "SMS_2001", "인증 메시지 전송이 완료되었습니다."),
+    SMS_CERTIFICATE_SUCCESS(HttpStatus.OK, "SMS_2002", "문자 인증이 완료되었습니다.");
 
 
     private final HttpStatus httpStatus;

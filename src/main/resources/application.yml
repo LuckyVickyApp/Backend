@@ -30,6 +30,12 @@ jwt:
   accessExpirationTime: ${jwt.expiration}
   refreshExpirationTime: ${jwt.refresh.expiration}
 
+# 문자 발송 api key
+coolsms:
+  api-key: ${COOLSMS_API_KEY}
+  api-secret: ${COOLSMS_API_SECRET}
+  owner-phone-number: ${COOLSMS_PHONE_NUMBER}
+
 # swagger
 springdoc:
   swagger-ui:
