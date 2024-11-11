@@ -40,7 +40,13 @@ public class RouletteService {
     @Transactional
     public void saveRouletteResult(User user, String jewelType, int jewelCount) {
         log.info("사용자 {}에게 {} 보석 {}개 추가", user.getUsername(), jewelType, jewelCount);
-        addJewel(user, jewelType, jewelCount);
+
+        // F 보석인 경우에는 보상 저장을 건너뜀
+        if (JewelType.valueOf(jewelType) == JewelType.F) {
+            log.info("사용자 {}는 보상 없이 10분 타이머를 갱신합니다.", user.getUsername());
+        } else {
+            addJewel(user, jewelType, jewelCount);
+        }
 
         // 10분 후 다시 룰렛 사용 가능
         user.setRouletteAvailableTime(LocalDateTime.now().plusMinutes(10));
