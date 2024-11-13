@@ -32,6 +32,9 @@ public class EnhanceResponseDto {
 
         @Schema(description = "상품 좋아요 수")
         private Integer itemLikeCount;
+
+        @Schema(description = "상품 좋아요 여부")
+        private Boolean isLike;
     }
 
     @Schema(description = "ItemEnhanceResDto")

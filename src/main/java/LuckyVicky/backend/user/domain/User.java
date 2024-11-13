@@ -3,6 +3,7 @@ package LuckyVicky.backend.user.domain;
 import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import LuckyVicky.backend.global.entity.BaseEntity;
 import LuckyVicky.backend.invitation.domain.Invitation;
+import LuckyVicky.backend.item.domain.ItemLike;
 import LuckyVicky.backend.pachinko.domain.UserPachinko;
 import jakarta.persistence.*;
 import lombok.*;
@@ -88,6 +89,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<UserJewel> userJewelList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<ItemLike> itemLikeList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<EnhanceItem> enhanceItemList = new ArrayList<>();

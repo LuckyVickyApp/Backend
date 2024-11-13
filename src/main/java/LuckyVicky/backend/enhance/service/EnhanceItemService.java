@@ -8,6 +8,7 @@ import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import LuckyVicky.backend.enhance.repository.EnhanceItemRepository;
+import LuckyVicky.backend.item.domain.ItemLike;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.dto.UserJewelResponseDto.UserJewelResDto;
 import jakarta.transaction.Transactional;
@@ -45,7 +46,10 @@ public class EnhanceItemService {
     public ItemForEnhanceResDto getItemForEnhanceResDto(User user, Item item) {
         Integer enhanceLevel = getEnhanceLevel(user, item);
 
-        return EnhanceConverter.itemForEnhanceResDto(item, enhanceLevel);
+        Boolean isItemLike = user.getItemLikeList().stream()
+                .anyMatch(like -> like.getItem() == item);
+
+        return EnhanceConverter.itemForEnhanceResDto(item, enhanceLevel, isItemLike);
     }
 
     @Transactional
