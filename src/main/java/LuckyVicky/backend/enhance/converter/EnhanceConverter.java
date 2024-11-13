@@ -19,13 +19,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EnhanceConverter {
 
-    public static ItemForEnhanceResDto itemForEnhanceResDto(Item item, Integer enhanceLevel) {
+    public static ItemForEnhanceResDto itemForEnhanceResDto(Item item, Integer enhanceLevel, Boolean isItemLike) {
         return ItemForEnhanceResDto.builder()
                 .itemId(item.getId())
                 .itemName(item.getName())
                 .itemImage(item.getImageUrl())
                 .itemLikeCount(item.getLikeCount())
                 .itemEnhanceLevel(enhanceLevel)
+                .isLike(isItemLike)
                 .build();
     }
 
