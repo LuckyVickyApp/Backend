@@ -17,6 +17,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -103,7 +109,8 @@ public class UserController {
     @PostMapping("/delivery-information/update")
     public ApiResponse<Boolean> saveDeliveryInformation(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                         @RequestBody UserAddressReqDto userAddressReqDto
-    ) {
+    )
+            throws InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
         User user = userService.findByUserName(customUserDetails.getUsername());
         userService.updateDeliveryInformation(user, userAddressReqDto);
         return ApiResponse.onSuccess(SuccessCode.USER_DELIVERY_INFORMATION_UPDATE_SUCCESS, true);
