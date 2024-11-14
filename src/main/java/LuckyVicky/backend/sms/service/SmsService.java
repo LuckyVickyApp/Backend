@@ -1,4 +1,4 @@
-package LuckyVicky.backend.Sms.service;
+package LuckyVicky.backend.sms.service;
 
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
