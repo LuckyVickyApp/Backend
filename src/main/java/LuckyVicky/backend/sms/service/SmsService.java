@@ -1,5 +1,9 @@
 package LuckyVicky.backend.sms.service;
 
+import static LuckyVicky.backend.global.util.Constant.PHONE_NUMBER_PATTERN;
+
+import LuckyVicky.backend.global.api_payload.ErrorCode;
+import LuckyVicky.backend.global.exception.GeneralException;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +30,10 @@ public class SmsService {
     private String senderPhoneNumber;
 
     public String sendVerificationCode(String recipientPhoneNumber) {
+        if (!recipientPhoneNumber.matches(PHONE_NUMBER_PATTERN)) {
+            throw GeneralException.of(ErrorCode.INVALID_PHONE_NUMBER_FORMAT);
+        }
+
         String verificationCode = generateVerificationCode();
 
         // COOLSMS API 클라이언트 생성
