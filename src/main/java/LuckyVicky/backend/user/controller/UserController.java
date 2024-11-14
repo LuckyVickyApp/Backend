@@ -1,5 +1,6 @@
 package LuckyVicky.backend.user.controller;
 
+import LuckyVicky.backend.aes.service.AesDecryptService;
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
 import LuckyVicky.backend.user.converter.UserConverter;
@@ -42,6 +43,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final AesDecryptService aesDecryptService;
 
     @Operation(summary = "로그아웃", description = "로그아웃하는 메서드입니다.")
     @ApiResponses({
@@ -123,10 +125,11 @@ public class UserController {
     @GetMapping("/delivery-information")
     public ApiResponse<UserDeliveryInformationResDto> getDeliveryInformation(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ) {
+    ) throws Exception {
         User user = userService.findByUserName(customUserDetails.getUsername());
+        String decryptedPhoneNumber = aesDecryptService.decryptPhoneNumber(user.getPhoneNumber());
         return ApiResponse.onSuccess(SuccessCode.USER_DELIVERY_INFORMATION_VIEW_SUCCESS,
-                UserConverter.userDeliveryResDto(user));
+                UserConverter.userDeliveryResDto(user, decryptedPhoneNumber));
     }
 
 
