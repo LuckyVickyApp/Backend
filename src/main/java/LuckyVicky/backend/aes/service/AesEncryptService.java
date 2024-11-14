@@ -2,7 +2,6 @@ package LuckyVicky.backend.aes.service;
 
 import static LuckyVicky.backend.global.util.Constant.AES_PHONE_NUMBER_TRANSFORMATION;
 
-import LuckyVicky.backend.aes.dto.AesDto.EncryptedData;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -23,18 +22,16 @@ public class AesEncryptService {
     @Value("${aes.phone-number}")
     private String phoneNumberKey;
 
-    private EncryptedData generateInitializationVector() {
+    private SecretKeySpec generateAESKey() {
+        return new SecretKeySpec(phoneNumberKey.getBytes(), "AES");
+    }
+
+    private IvParameterSpec generateInitializationVector() {
         byte[] ivBytes = new byte[16];
         SecureRandom random = new SecureRandom();
         random.nextBytes(ivBytes);
 
-        IvParameterSpec ivSpec = new IvParameterSpec(ivBytes);
-
-        return new EncryptedData(ivSpec, ivBytes);
-    }
-
-    private SecretKeySpec generateAESKey() {
-        return new SecretKeySpec(phoneNumberKey.getBytes(), "AES");
+        return new IvParameterSpec(ivBytes);
     }
 
     private Cipher configureCipher(String transformation, SecretKeySpec secretKey, IvParameterSpec iv)
@@ -50,8 +47,7 @@ public class AesEncryptService {
 
         SecretKeySpec secretKey = generateAESKey();
 
-        EncryptedData encryptedData = generateInitializationVector();
-        IvParameterSpec iv = encryptedData.getIv();
+        IvParameterSpec iv = generateInitializationVector();
 
         Cipher cipher = configureCipher(AES_PHONE_NUMBER_TRANSFORMATION, secretKey, iv);
 

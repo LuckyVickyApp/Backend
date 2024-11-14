@@ -2,7 +2,7 @@ package LuckyVicky.backend.aes.service;
 
 import static LuckyVicky.backend.global.util.Constant.AES_PHONE_NUMBER_TRANSFORMATION;
 
-import LuckyVicky.backend.aes.dto.AesDto.EncryptedDataInByte;
+import LuckyVicky.backend.aes.dto.AesDto.EncryptedData;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -32,19 +32,19 @@ public class AesDecryptService {
         return cipher;
     }
 
-    private EncryptedDataInByte extractIVAndEncryptedPhoneNumber(String encryptedPhoneNumber) {
+    private EncryptedData extractIVAndEncryptedPhoneNumber(String encryptedPhoneNumber) {
         String[] parts = encryptedPhoneNumber.split(":");
 
         byte[] ivBytes = Base64.getDecoder().decode(parts[0]);
         byte[] encryptedBytes = Base64.getDecoder().decode(parts[1]);
 
-        return new EncryptedDataInByte(ivBytes, encryptedBytes);
+        return new EncryptedData(ivBytes, encryptedBytes);
     }
 
     public String decryptPhoneNumber(String encryptedPhoneNumber) throws Exception {
         SecretKeySpec secretKey = generateAESKey();
 
-        EncryptedDataInByte encryptedData = extractIVAndEncryptedPhoneNumber(encryptedPhoneNumber);
+        EncryptedData encryptedData = extractIVAndEncryptedPhoneNumber(encryptedPhoneNumber);
         byte[] ivBytes = encryptedData.getIv();
         byte[] encryptedPhoneNumberBytes = encryptedData.getEncryptedPhoneNumber();
 
