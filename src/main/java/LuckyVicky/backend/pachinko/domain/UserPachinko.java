@@ -33,4 +33,7 @@ public class UserPachinko {
         this.square3 = square3;
     }
 
+    public boolean canSelectMore() {
+        return square3 == null || square3 == 0; // 세 번째 칸이 비어 있으면 선택 가능
+    }
 }
