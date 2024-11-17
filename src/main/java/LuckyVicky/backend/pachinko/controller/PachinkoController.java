@@ -33,7 +33,7 @@ public class PachinkoController {
     private final PachinkoService pachinkoService;
     private final UserService userService;
 
-    @Operation(summary = "빠칭코 선택된칸 반환", description = "빠칭코에서 선택완료된 칸 반환하는 메서드입니다.")
+    @Operation(summary = "빠칭코 선택된 칸 반환", description = "빠칭코에서 선택 완료된 칸 반환하는 메서드입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PACHINKO_2001", description = "빠칭코 선택완료 칸 확인 성공"),
     })

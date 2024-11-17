@@ -78,6 +78,12 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         processSquareSelection(session, user, currentRound, selectedSquare);
     }
 
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        System.out.println("해당 세션 제거");
+        sessions.remove(session);
+    }
+
     private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) throws IOException {
         if (pachinkoService.selectSquare(user, currentRound, selectedSquare)) {
             broadcastMessage(user.getUsername() + "가 " + selectedSquare + "을 선택했습니다.");
@@ -145,14 +151,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        System.out.println("해당 세션 제거");
-        sessions.remove(session);
-    }
-
-
-    public void endGameForAll() {
+    /*public void endGameForAll() {
         List<WebSocketSession> sessionsCopy = new ArrayList<>(sessions);
         for (WebSocketSession session : sessionsCopy) {
             sendMessage(session, "해당 게임의 세션을 모두 종료합니다.");
@@ -163,6 +162,5 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
             }
         }
         sessions.clear();
-    }
-
+    }*/
 }
