@@ -2,10 +2,12 @@ package LuckyVicky.backend.pachinko.converter;
 
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.pachinko.domain.Pachinko;
+import LuckyVicky.backend.pachinko.domain.UserPachinko;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoChosenResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoRewardResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoSquareRewardResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoUserRewardResDto;
+import LuckyVicky.backend.user.domain.User;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,6 +21,16 @@ public class PachinkoConverter {
                 .square(squareNum)
                 .jewelType(jewelType)
                 .jewelNum(jewelNum)
+                .build();
+    }
+
+    public static UserPachinko saveUserPachinko(Long currentRound, User user) {
+        return UserPachinko.builder()
+                .round(currentRound)
+                .user(user)
+                .square1(0)
+                .square2(0)
+                .square3(0)
                 .build();
     }
 

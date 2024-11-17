@@ -113,40 +113,46 @@ public class PachinkoService {
     @Transactional
     public boolean selectSquare(User user, long currentRound, int squareNumber) {
         // 6*6 안의 칸인지 확인
-        if (squareNumber < MIN_PACHINKO_SQUARE_NUMBER || squareNumber > TOTAL_PACHINKO_SQUARE_COUNT) {
-            throw new GeneralException(ErrorCode.PACHINKO_OUT_OF_BOUND);
-        }
+        validateSquareNumber(squareNumber);
 
         // 이미 선택된 칸인지 확인
         if (selectedSquares.contains(squareNumber)) {
             return false;
         }
 
-        // 이미 한번 이상 선택했었다면
-        if (userpachinkoRepository.findByUserAndRound(user, currentRound).isPresent()) {
-            UserPachinko p = userpachinkoRepository.findByUserAndRound(user, currentRound)
-                    .orElseThrow(() -> new GeneralException(ErrorCode.USER_PACHINKO_NOT_FOUND));
+        // 사용자 Pachinko 상태 조회
+        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, currentRound)
+                .orElseGet(() -> initializeUserPachinko(user, currentRound));
 
-            if (p.getSquare2() == 0) {
-                p.setSquares(p.getSquare1(), squareNumber, 0);
-            } else if (p.getSquare3() == 0) {
-                p.setSquares(p.getSquare1(), p.getSquare2(), squareNumber);
-            } else {
-                return false;
-            }
-        } else { // 처음 선택한거라면
-            userpachinkoRepository.save(UserPachinko.builder()
-                    .round(currentRound).user(user).square1(squareNumber).square2(0).square3(0).build());
+        // 칸 추가 로직 & 더 이상 선택할 수 없는 경우 처리
+        if (!userPachinko.addSquare(squareNumber)) {
+            return false;
         }
 
-        // B급 보석 한개 차감
-        UserJewel userJewel = userJewelRepository.findByUserAndJewelType(user, JewelType.B)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
-        userJewel.decreaseCount(1);
-        userJewelRepository.save(userJewel);
+        // 보석 차감 로직
+        deductUserJewel(user);
 
         selectedSquares.add(squareNumber);
+
         return true;
+    }
+
+    private void deductUserJewel(User user) {
+        UserJewel userJewel = userJewelRepository.findByUserAndJewelType(user, PACHINKO_NEED_JEWEL_TYPE)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
+        userJewel.decreaseCount(PACHINKO_NEED_JEWEL_COUNT);
+        userJewelRepository.save(userJewel);
+    }
+
+    private UserPachinko initializeUserPachinko(User user, long currentRound) {
+        UserPachinko newUserPachinko = PachinkoConverter.saveUserPachinko(currentRound, user);
+        return userpachinkoRepository.save(newUserPachinko);
+    }
+
+    private void validateSquareNumber(int squareNumber) {
+        if (squareNumber < MIN_PACHINKO_SQUARE_NUMBER || squareNumber > TOTAL_PACHINKO_SQUARE_COUNT) {
+            throw new GeneralException(ErrorCode.PACHINKO_OUT_OF_BOUND);
+        }
     }
 
     public boolean isGameOver() {
