@@ -33,11 +33,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PachinkoService {
     private static final int TOTAL_PACHINKO_SQUARE_COUNT = 36;
+    private static final int MIN_PACHINKO_SQUARE_NUMBER = 1;
     private static final String REWARD_S1 = "S1";
     private static final String REWARD_A1 = "A1";
     private static final String REWARD_B2 = "B2";
     private static final String REWARD_B1 = "B1";
     private static final String REWARD_F = "F";
+    private static final JewelType PACHINKO_NEED_JEWEL_TYPE = JewelType.B;
+    private static final int PACHINKO_NEED_JEWEL_COUNT = 1;
 
     private final PachinkoRepository pachinkoRepository;
     private final UserPachinkoRepository userpachinkoRepository;
@@ -93,24 +96,24 @@ public class PachinkoService {
 
     @Transactional
     public boolean noMoreJewel(User user) {
-        UserJewel userJewelB = userJewelRepository.findByUserAndJewelType(user, JewelType.B)
+        UserJewel userJewel = userJewelRepository.findByUserAndJewelType(user, PACHINKO_NEED_JEWEL_TYPE)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
 
-        return userJewelB.getCount() <= 0;
+        return userJewel.getCount() < PACHINKO_NEED_JEWEL_COUNT;
     }
 
     @Transactional
     public boolean canSelectMore(User user, Long round) {
         // Optional로 조회하여 값이 없으면 true 반환, 있으면 조건에 맞게 처리
         return userpachinkoRepository.findByUserAndRound(user, round)
-                .map(userPachinko -> userPachinko.getSquare3() == 0)  // 존재할 때 조건에 맞게 처리
+                .map(UserPachinko::canSelectMore) // 존재할 때 조건에 맞게 처리
                 .orElse(true);  // 존재하지 않으면 true 반환
     }
 
     @Transactional
     public boolean selectSquare(User user, long currentRound, int squareNumber) {
         // 6*6 안의 칸인지 확인
-        if (squareNumber < 1 || squareNumber > TOTAL_PACHINKO_SQUARE_COUNT) {
+        if (squareNumber < MIN_PACHINKO_SQUARE_NUMBER || squareNumber > TOTAL_PACHINKO_SQUARE_COUNT) {
             throw new GeneralException(ErrorCode.PACHINKO_OUT_OF_BOUND);
         }
 
