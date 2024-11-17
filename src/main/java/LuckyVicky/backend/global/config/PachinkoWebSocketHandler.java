@@ -24,7 +24,10 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     private final UserService userService;
     private final JwtTokenUtils jwtTokenUtils;
 
+    // Json 데이터를 처리(파싱)하는 객체
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    // 현재 연결된 모든 WebSocket 세션을 저장하는 리스트
     private final List<WebSocketSession> sessions = new ArrayList<>();
 
     @Override
@@ -45,44 +48,64 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
                 String username = jwtTokenUtils.getUsernameFromToken(token);
                 User user = userService.findByUserName(username);
                 session.getAttributes().put("user", user);
-
             } else {
-                session.sendMessage(new TextMessage("JWT 검증 실패하여 연결 종료합니다."));
+                sendMessage(session, "JWT 검증 실패하여 연결 종료합니다.");
                 session.close();
                 return;
             }
         }
 
         // 칸 선택 처리 (JWT 검증이 완료된 후)
-        if (node.has("square")) {
-            int selectedSquare = node.get("square").asInt();
-            User user = (User) session.getAttributes().get("user");
+        if (!node.has("square")) {
+            sendMessage(session, "Invalid message format: 'square' 필드에 값이 없습니다.");
+            return;
+        }
 
-            if (user != null) {
-                long currentRound = pachinkoService.getCurrentRound();
+        int selectedSquare = node.get("square").asInt();
+        User user = (User) session.getAttributes().get("user");
 
-                if(!pachinkoService.noMoreJewel(user)) {
-                    if(pachinkoService.canSelectMore(user, currentRound)) {
-                        if (pachinkoService.selectSquare(user, currentRound, selectedSquare)) {
-                            for (WebSocketSession webSocketSession : sessions) {
-                                webSocketSession.sendMessage(new TextMessage(user.getUsername() + "가 " + selectedSquare + "을 선택했습니다."));
-                            }
-                            checkGameStatusAndCloseSessionsIfNeeded();
-                        } else {
-                            session.sendMessage(new TextMessage( selectedSquare + "번째 칸은 이미 다른 사용자에 의해 선택되었습니다."));
-                        }
-                    } else {
-                        session.sendMessage(new TextMessage("이미 3칸을 선택하셔서 더 이상 칸을 선택할 수 없습니다."));
-                    }
-                } else {
-                    session.sendMessage(new TextMessage("칸을 선택할때 필요한 B급 보석이 부족합니다."));
-                }
+        if (user == null) {
+            sendMessage(session, "유저가 인증되지 않았습니다.");
+            return;
+        }
 
-            } else {
-                session.sendMessage(new TextMessage("유저가 인증되지 않았습니다."));
-            }
+        long currentRound = pachinkoService.getCurrentRound();
+
+        if (!validateUserState(session, user, currentRound)) {
+            return;
+        }
+
+        processSquareSelection(session, user, currentRound, selectedSquare);
+    }
+
+    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) throws IOException {
+        if (pachinkoService.selectSquare(user, currentRound, selectedSquare)) {
+            broadcastMessage(user.getUsername() + "가 " + selectedSquare + "을 선택했습니다.");
+            checkGameStatusAndCloseSessionsIfNeeded();
         } else {
-            session.sendMessage(new TextMessage("Invalid message format: 'square' 필드에 값이 없습니다."));
+            sendMessage(session, selectedSquare + "번째 칸은 이미 다른 사용자에 의해 선택되었습니다.");
+        }
+    }
+
+    private boolean validateUserState(WebSocketSession session, User user, long currentRound) throws IOException {
+        if (pachinkoService.noMoreJewel(user)) {
+            sendMessage(session, "칸을 선택할때 필요한 보석이 부족합니다.");
+            return false;
+        }
+
+        if (!pachinkoService.canSelectMore(user, currentRound)) {
+            sendMessage(session, "이미 3칸을 선택하셔서 더 이상 칸을 선택할 수 없습니다.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void sendMessage(WebSocketSession session, String message) {
+        try {
+            session.sendMessage(new TextMessage(message));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -118,11 +141,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
 
     private void broadcastMessage(String message) {
         for (WebSocketSession session : sessions) {
-            try {
-                session.sendMessage(new TextMessage(message));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            sendMessage(session, message);
         }
     }
 
@@ -136,8 +155,8 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     public void endGameForAll() {
         List<WebSocketSession> sessionsCopy = new ArrayList<>(sessions);
         for (WebSocketSession session : sessionsCopy) {
+            sendMessage(session, "해당 게임의 세션을 모두 종료합니다.");
             try {
-                session.sendMessage(new TextMessage("해당 게임의 세션을 모두 종료합니다."));
                 session.close(CloseStatus.NORMAL);
             } catch (IOException e) {
                 e.printStackTrace();
