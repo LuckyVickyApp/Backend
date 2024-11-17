@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PachinkoService {
+    private static final int TOTAL_PACHINKO_SQUARE_COUNT = 36;
 
     private final PachinkoRepository pachinkoRepository;
     private final UserPachinkoRepository userpachinkoRepository;
@@ -103,7 +104,7 @@ public class PachinkoService {
     @Transactional
     public boolean selectSquare(User user, long currentRound, int squareNumber) {
         // 6*6 안의 칸인지 확인
-        if (squareNumber < 1 || squareNumber > 36) {
+        if (squareNumber < 1 || squareNumber > TOTAL_PACHINKO_SQUARE_COUNT) {
             throw new GeneralException(ErrorCode.PACHINKO_OUT_OF_BOUND);
         }
 
@@ -141,7 +142,7 @@ public class PachinkoService {
 
     public boolean isGameOver() {
         System.out.println("모든 칸 선택 되었나 확인중");
-        return selectedSquares.size() == 36;
+        return selectedSquares.size() == TOTAL_PACHINKO_SQUARE_COUNT;
     }
 
     @Transactional
@@ -205,7 +206,7 @@ public class PachinkoService {
             rewards.add("B1");
         }
         for (int i = 0;
-             i < 36 - (s1.getSquareCount() + a1.getSquareCount() + b2.getSquareCount() + b1.getSquareCount()); i++) {
+             i < TOTAL_PACHINKO_SQUARE_COUNT - (s1.getSquareCount() + a1.getSquareCount() + b2.getSquareCount() + b1.getSquareCount()); i++) {
             rewards.add("F");
         }
 
@@ -213,7 +214,7 @@ public class PachinkoService {
         Collections.shuffle(rewards, secureRandom);
 
         // db에 넣기
-        for (int i = 1; i <= 36; i++) {
+        for (int i = 1; i <= TOTAL_PACHINKO_SQUARE_COUNT; i++) {
             JewelType jewelType;
             int jewelNum;
             if (Objects.equals(rewards.get(i - 1), "S1")) {
@@ -281,7 +282,7 @@ public class PachinkoService {
     @PostConstruct
     public Long updateSelectedSquaresSet() {
 
-        if (selectedSquares.size() == 36) {
+        if (selectedSquares.size() == TOTAL_PACHINKO_SQUARE_COUNT) {
             currentRound = userpachinkoRepository.findCurrentRound() + 1;
             selectedSquares.clear();
         } else {
