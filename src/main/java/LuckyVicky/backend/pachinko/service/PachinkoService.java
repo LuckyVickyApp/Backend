@@ -3,6 +3,7 @@ package LuckyVicky.backend.pachinko.service;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
+import LuckyVicky.backend.pachinko.converter.PachinkoConverter;
 import LuckyVicky.backend.pachinko.domain.Pachinko;
 import LuckyVicky.backend.pachinko.domain.PachinkoReward;
 import LuckyVicky.backend.pachinko.domain.UserPachinko;
@@ -32,6 +33,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PachinkoService {
     private static final int TOTAL_PACHINKO_SQUARE_COUNT = 36;
+    private static final String REWARD_S1 = "S1";
+    private static final String REWARD_A1 = "A1";
+    private static final String REWARD_B2 = "B2";
+    private static final String REWARD_B1 = "B1";
+    private static final String REWARD_F = "F";
 
     private final PachinkoRepository pachinkoRepository;
     private final UserPachinkoRepository userpachinkoRepository;
@@ -193,40 +199,41 @@ public class PachinkoService {
         PachinkoReward b1 = pachinkoRewardRepository.findByJewelTypeAndJewelNum(JewelType.B, 1)
                 .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
 
+        int fSquareCount = TOTAL_PACHINKO_SQUARE_COUNT - (s1.getSquareCount() + a1.getSquareCount() + b2.getSquareCount() + b1.getSquareCount());
+
         for (int i = 0; i < s1.getSquareCount(); i++) {
-            rewards.add("S1");
+            rewards.add(REWARD_S1);
         }
         for (int i = 0; i < a1.getSquareCount(); i++) {
-            rewards.add("A1");
+            rewards.add(REWARD_A1);
         }
         for (int i = 0; i < b2.getSquareCount(); i++) {
-            rewards.add("B2");
+            rewards.add(REWARD_B2);
         }
         for (int i = 0; i < b1.getSquareCount(); i++) {
-            rewards.add("B1");
+            rewards.add(REWARD_B1);
         }
-        for (int i = 0;
-             i < TOTAL_PACHINKO_SQUARE_COUNT - (s1.getSquareCount() + a1.getSquareCount() + b2.getSquareCount() + b1.getSquareCount()); i++) {
-            rewards.add("F");
+        for (int i = 0; i < fSquareCount; i++) {
+            rewards.add(REWARD_F);
         }
 
         SecureRandom secureRandom = new SecureRandom();
         Collections.shuffle(rewards, secureRandom);
 
         // db에 넣기
-        for (int i = 1; i <= TOTAL_PACHINKO_SQUARE_COUNT; i++) {
+        for (int i = 0; i < TOTAL_PACHINKO_SQUARE_COUNT; i++) {
             JewelType jewelType;
             int jewelNum;
-            if (Objects.equals(rewards.get(i - 1), "S1")) {
+            if (Objects.equals(rewards.get(i), REWARD_S1)) {
                 jewelType = JewelType.S;
                 jewelNum = 1;
-            } else if (Objects.equals(rewards.get(i - 1), "A1")) {
+            } else if (Objects.equals(rewards.get(i), REWARD_A1)) {
                 jewelType = JewelType.A;
                 jewelNum = 1;
-            } else if (Objects.equals(rewards.get(i - 1), "B2")) {
+            } else if (Objects.equals(rewards.get(i), REWARD_B2)) {
                 jewelType = JewelType.B;
                 jewelNum = 2;
-            } else if (Objects.equals(rewards.get(i - 1), "B1")) {
+            } else if (Objects.equals(rewards.get(i), REWARD_B1)) {
                 jewelType = JewelType.B;
                 jewelNum = 1;
             } else {
@@ -234,8 +241,8 @@ public class PachinkoService {
                 jewelNum = 0;
             }
 
-            pachinkoRepository.save(Pachinko.builder()
-                    .round(currentRound).square(i).jewelType(jewelType).jewelNum(jewelNum).build());
+            Pachinko newPachinco = PachinkoConverter.savePachinko(currentRound, i, jewelType, jewelNum);
+            pachinkoRepository.save(newPachinco);
             System.out.println("각각의 칸에 보상 설정 완료");
         }
     }

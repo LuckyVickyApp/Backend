@@ -1,5 +1,6 @@
 package LuckyVicky.backend.pachinko.converter;
 
+import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.pachinko.domain.Pachinko;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoChosenResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoRewardResDto;
@@ -12,6 +13,14 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class PachinkoConverter {
+    public static Pachinko savePachinko(Long currentRound, Integer squareNum, JewelType jewelType, Integer jewelNum) {
+        return Pachinko.builder()
+                .round(currentRound)
+                .square(squareNum)
+                .jewelType(jewelType)
+                .jewelNum(jewelNum)
+                .build();
+    }
 
     public static PachinkoChosenResDto pachinkoChosenResDto(Set<Integer> meChosen, Set<Integer> chosenSquares){
         chosenSquares.removeAll(meChosen);
