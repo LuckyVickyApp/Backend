@@ -63,6 +63,7 @@ public class EnhanceConverter {
                 .enhanceLevel(1)
                 .ranking(lastRanking)
                 .enhanceLevelReachedAt(LocalDateTime.now())
+                .isGet(lastRanking <= item.getQuantity())
                 .build();
     }
 }

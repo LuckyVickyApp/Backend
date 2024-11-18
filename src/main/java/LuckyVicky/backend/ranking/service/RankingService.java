@@ -44,7 +44,7 @@ public class RankingService {
         List<EnhanceItem> enhanceItemList =
                 enhanceItemRepository.findEnhanceItemsByItemOrderByEnhanceLevelAndReachedTime(item);
 
-        Integer myRanking = enhanceItemService.findByUserAndItem(user, item).getRanking();
+        Integer myRanking = enhanceItemService.findByUserAndItemOrCreateEnhanceItem(user, item).getRanking();
 
         List<UserRankingResDto> userRankingResDtoList
                 = enhanceItemList.stream()
