@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -63,4 +64,15 @@ public class AttendanceService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
     }
+
+    @Transactional(readOnly = true)
+    public List<AttendanceRewardResDto> getAllAttendanceRewards() {
+        List<AttendanceReward> rewards = attendanceRewardRepository.findAll();
+
+        // Converter를 사용하여 Entity를 DTO로 변환
+        return rewards.stream()
+                .map(reward -> attendanceConverter.convertToDto(reward.getRewardMessage(), reward.getJewelCount()))
+                .toList();
+    }
+
 }
