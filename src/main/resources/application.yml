@@ -36,6 +36,9 @@ coolsms:
   api-secret: ${COOLSMS_API_SECRET}
   owner-phone-number: ${COOLSMS_PHONE_NUMBER}
 
+aes:
+  phone-number: ${AES_PHONE_NUMBER_KEY}
+
 # swagger
 springdoc:
   swagger-ui:
