@@ -1,10 +1,12 @@
 package LuckyVicky.backend.attendance.converter;
 
+import static LuckyVicky.backend.global.util.Constant.CONVERTER_INSTANTIATION_NOT_ALLOWED;
+
 import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
 
 public class AttendanceConverter {
     private AttendanceConverter() {
-        throw new UnsupportedOperationException("Converter class는 인스턴스화가 불가능합니다.");
+        throw new UnsupportedOperationException(CONVERTER_INSTANTIATION_NOT_ALLOWED);
     }
 
     public AttendanceRewardResDto convertToDto(String rewardMessage, int jewelCount) {

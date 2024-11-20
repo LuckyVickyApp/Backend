@@ -1,5 +1,7 @@
 package LuckyVicky.backend.ranking.converter;
 
+import static LuckyVicky.backend.global.util.Constant.CONVERTER_INSTANTIATION_NOT_ALLOWED;
+
 import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.CurrentItemRankingResDto;
@@ -11,7 +13,7 @@ import java.util.List;
 
 public class RankingConverter {
     private RankingConverter() {
-        throw new UnsupportedOperationException("Converter class는 인스턴스화가 불가능합니다.");
+        throw new UnsupportedOperationException(CONVERTER_INSTANTIATION_NOT_ALLOWED);
     }
 
     public static UserRankingResDto userRankingResDto(EnhanceItem enhanceItem) {
@@ -43,7 +45,8 @@ public class RankingConverter {
                 .build();
     }
 
-    public static CurrentItemRankingResDto currentItemRankingResDto(Item item, List<UserRankingResDto> userRankingResDtoList,
+    public static CurrentItemRankingResDto currentItemRankingResDto(Item item,
+                                                                    List<UserRankingResDto> userRankingResDtoList,
                                                                     EnhanceItem enhanceItem) {
         return CurrentItemRankingResDto.builder()
                 .itemName(item.getName())

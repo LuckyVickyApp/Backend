@@ -1,5 +1,7 @@
 package LuckyVicky.backend.pachinko.converter;
 
+import static LuckyVicky.backend.global.util.Constant.CONVERTER_INSTANTIATION_NOT_ALLOWED;
+
 import LuckyVicky.backend.pachinko.domain.Pachinko;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoChosenResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoRewardResDto;
@@ -11,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class PachinkoConverter {
     private PachinkoConverter() {
-        throw new UnsupportedOperationException("Converter class는 인스턴스화가 불가능합니다.");
+        throw new UnsupportedOperationException(CONVERTER_INSTANTIATION_NOT_ALLOWED);
     }
 
     public static PachinkoChosenResDto pachinkoChosenResDto(Set<Integer> meChosen, Set<Integer> chosenSquares) {
