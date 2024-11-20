@@ -89,7 +89,6 @@ public class EnhanceController {
         Integer rankingChange = previousRanking - afterRanking;
 
         return ApiResponse.onSuccess(SuccessCode.ENHANCE_RESULT_SUCCESS, EnhanceConverter.itemEnhanceExecuteResDto(enhanceItem, enhanceResult, rankingChange));
-
     }
 
 }

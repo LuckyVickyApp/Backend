@@ -8,6 +8,7 @@ import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.item.repository.ItemRepository;
 import LuckyVicky.backend.ranking.converter.RankingConverter;
+import LuckyVicky.backend.ranking.dto.RankingResponseDto.CurrentItemRankingResDto;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.ItemRankingResDto;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.UserRankingResDto;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.WeekRankingResDto;
@@ -43,7 +44,7 @@ public class RankingService {
         List<EnhanceItem> enhanceItemList =
                 enhanceItemRepository.findEnhanceItemsByItemOrderByEnhanceLevelAndReachedTime(item);
 
-        Integer myRanking = enhanceItemService.findByUserAndItem(user, item).getRanking();
+        Integer myRanking = enhanceItemService.findByUserAndItemOrCreateEnhanceItem(user, item).getRanking();
 
         List<UserRankingResDto> userRankingResDtoList
                 = enhanceItemList.stream()
@@ -67,5 +68,17 @@ public class RankingService {
         LocalDate enhanceEndDate = weekItemList.get(0).getEnhanceEndDate();
 
         return RankingConverter.weekRankingResDto(enhanceMonthWeek, itemRankingResDtoList, enhanceStartDate, enhanceEndDate);
+    }
+
+    public CurrentItemRankingResDto getCurrentItemRankingResDto(Item item, EnhanceItem enhanceItem) {
+        List<EnhanceItem> enhanceItemList =
+                enhanceItemRepository.findEnhanceItemsByItemOrderByEnhanceLevelAndReachedTime(item);
+
+        List<UserRankingResDto> userRankingResDtoList
+                 = enhanceItemList.stream()
+                .map(RankingConverter::userRankingResDto)
+                .toList();
+
+        return RankingConverter.currentItemRankingResDto(item, userRankingResDtoList, enhanceItem);
     }
 }

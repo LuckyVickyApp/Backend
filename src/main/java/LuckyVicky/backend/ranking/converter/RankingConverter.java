@@ -2,6 +2,7 @@ package LuckyVicky.backend.ranking.converter;
 
 import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import LuckyVicky.backend.item.domain.Item;
+import LuckyVicky.backend.ranking.dto.RankingResponseDto.CurrentItemRankingResDto;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.ItemRankingResDto;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.UserRankingResDto;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.WeekRankingResDto;
@@ -41,4 +42,15 @@ public class RankingConverter {
                 .enhanceEndDate(enhanceEndDate)
                 .build();
     }
+
+    public static CurrentItemRankingResDto currentItemRankingResDto(Item item, List<UserRankingResDto> userRankingResDtoList,
+                                                                    EnhanceItem enhanceItem) {
+        return CurrentItemRankingResDto.builder()
+                .itemName(item.getName())
+                .enhanceEndDate(item.getEnhanceEndDate())
+                .myRanking(enhanceItem.getRanking())
+                .userRankingResDtoList(userRankingResDtoList)
+                .build();
+    }
+
 }

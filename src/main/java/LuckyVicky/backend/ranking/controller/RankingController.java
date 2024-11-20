@@ -1,10 +1,12 @@
 package LuckyVicky.backend.ranking.controller;
 
+import LuckyVicky.backend.enhance.domain.EnhanceItem;
+import LuckyVicky.backend.enhance.service.EnhanceItemService;
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
 import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.item.service.ItemService;
-import LuckyVicky.backend.ranking.converter.RankingConverter;
+import LuckyVicky.backend.ranking.dto.RankingResponseDto.CurrentItemRankingResDto;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.WeekRankingResDto;
 import LuckyVicky.backend.ranking.service.RankingService;
 import LuckyVicky.backend.user.domain.User;
@@ -33,10 +35,11 @@ public class RankingController {
     private final UserService userService;
     private final RankingService rankingService;
     private final ItemService itemService;
+    private final EnhanceItemService enhanceItemService;
 
     @Operation(summary = "현재 주차 상품 별 랭킹 반환 매서드", description = "현재 주차 상품 별 랭킹을 반환하는 매서드입니다.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "RANKING_2001", description = "현재 주차 상품 별 랭킹을 반환이 완료되었습니다.")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "RANKING_2001", description = "현재 주차 상품 별 랭킹 반환이 완료되었습니다.")
     })
     @GetMapping("/week/current")
     public ApiResponse<WeekRankingResDto> getCurrentWeekItemRanking(
@@ -48,13 +51,14 @@ public class RankingController {
 
         List<Item> currentWeekItemList = itemService.getWeekItemList(localDate);
 
-        return ApiResponse.onSuccess(SuccessCode.RANKING_CURRENT_WEEK_SUCCESS, rankingService.getWeekRankingResDto(user, currentWeekItemList, localDate));
+        return ApiResponse.onSuccess(SuccessCode.RANKING_CURRENT_WEEK_SUCCESS,
+                rankingService.getWeekRankingResDto(user, currentWeekItemList, localDate));
 
     }
 
     @Operation(summary = "이전 주차 상품 별 랭킹 반환 매서드", description = "이전 주차 상품 별 랭킹을 반환하는 매서드입니다.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "RANKING_2002", description = "이전 주차 상품 별 랭킹을 반환이 완료되었습니다.")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "RANKING_2002", description = "이전 주차 상품 별 랭킹 반환이 완료되었습니다.")
     })
     @Parameters({
             @Parameter(name = "enhanceStartDate", description = "특정 주차의 강화 시작일 (예시: 2024-10-26)")
@@ -70,13 +74,14 @@ public class RankingController {
 
         List<Item> weekItemList = itemService.getWeekItemList(previousWeekDate);
 
-        return ApiResponse.onSuccess(SuccessCode.RANKING_PREVIOUS_WEEK_SUCCESS, rankingService.getWeekRankingResDto(user, weekItemList, previousWeekDate));
+        return ApiResponse.onSuccess(SuccessCode.RANKING_PREVIOUS_WEEK_SUCCESS,
+                rankingService.getWeekRankingResDto(user, weekItemList, previousWeekDate));
 
     }
 
     @Operation(summary = "다음 주차 상품 별 랭킹 반환 매서드", description = "다음 주차 상품 별 랭킹을 반환하는 매서드입니다.")
     @ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "RANKING_2003", description = "다음 주차 상품 별 랭킹을 반환이 완료되었습니다.")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "RANKING_2003", description = "다음 주차 상품 별 랭킹 반환이 완료되었습니다.")
     })
     @Parameters({
             @Parameter(name = "enhanceStartDate", description = "특정 주차의 강화 시작일 (예시: 2024-10-26)")
@@ -92,7 +97,31 @@ public class RankingController {
 
         List<Item> weekItemList = itemService.getWeekItemList(nextWeekDate);
 
-        return ApiResponse.onSuccess(SuccessCode.RANKING_NEXT_WEEK_SUCCESS, rankingService.getWeekRankingResDto(user, weekItemList, nextWeekDate));
+        return ApiResponse.onSuccess(SuccessCode.RANKING_NEXT_WEEK_SUCCESS,
+                rankingService.getWeekRankingResDto(user, weekItemList, nextWeekDate));
+
+    }
+
+    @Operation(summary = "현재 특정 상품 랭킹 반환 매서드", description = "현재 특정 상품 랭킹을 반환하는 매서드입니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "RANKING_2004", description = "현재 특정 상품 랭킹 반환이 완료되었습니다.")
+    })
+    @Parameters({
+            @Parameter(name = "itemId", description = "특정 상품 id")
+    })
+    @GetMapping("/item")
+    public ApiResponse<CurrentItemRankingResDto> getCurrentItemRanking(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam(name = "itemId") Long itemId
+    ) {
+        User user = userService.findByUserName(customUserDetails.getUsername());
+        Item item = itemService.findById(itemId);
+        EnhanceItem enhanceItem = enhanceItemService.findByUserAndItemOrCreateEnhanceItem(user, item);
+
+        CurrentItemRankingResDto currentItemRankingResDto = rankingService.getCurrentItemRankingResDto(item,
+                enhanceItem);
+
+        return ApiResponse.onSuccess(SuccessCode.RANKING_CURRENT_ITEM_SUCCESS, currentItemRankingResDto);
 
     }
 

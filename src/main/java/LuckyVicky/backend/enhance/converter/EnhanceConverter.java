@@ -1,30 +1,32 @@
 package LuckyVicky.backend.enhance.converter;
 
-import LuckyVicky.backend.enhance.domain.EnhanceItem;
-import LuckyVicky.backend.enhance.domain.EnhanceResult;
 import LuckyVicky.backend.enhance.dto.EnhanceResponseDto.EnhanceExecuteResDto;
-import LuckyVicky.backend.enhance.dto.EnhanceResponseDto.ItemEnhanceResDto;
-import LuckyVicky.backend.enhance.dto.EnhanceResponseDto.ItemForEnhanceResDto;
 import LuckyVicky.backend.item.domain.Item;
+import LuckyVicky.backend.enhance.domain.EnhanceResult;
+import LuckyVicky.backend.enhance.domain.EnhanceItem;
+import LuckyVicky.backend.enhance.dto.EnhanceResponseDto.ItemForEnhanceResDto;
+import LuckyVicky.backend.enhance.dto.EnhanceResponseDto.ItemEnhanceResDto;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.dto.UserJewelResponseDto.UserJewelResDto;
 import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 
+@Component
+@RequiredArgsConstructor
 public class EnhanceConverter {
 
-    private EnhanceConverter() {
-        throw new UnsupportedOperationException("Converter class는 인스턴스화가 불가능합니다.");
-    }
-
-    public static ItemForEnhanceResDto itemForEnhanceResDto(Item item, Integer enhanceLevel) {
+    public static ItemForEnhanceResDto itemForEnhanceResDto(Item item, Integer enhanceLevel, Boolean isItemLike) {
         return ItemForEnhanceResDto.builder()
                 .itemId(item.getId())
                 .itemName(item.getName())
                 .itemImage(item.getImageUrl())
                 .itemLikeCount(item.getLikeCount())
                 .itemEnhanceLevel(enhanceLevel)
+                .isLike(isItemLike)
                 .build();
     }
 
@@ -43,8 +45,7 @@ public class EnhanceConverter {
                 .build();
     }
 
-    public static EnhanceExecuteResDto itemEnhanceExecuteResDto(EnhanceItem enhanceItem, EnhanceResult enhanceResult,
-                                                                Integer userRankingChange) {
+    public static EnhanceExecuteResDto itemEnhanceExecuteResDto(EnhanceItem enhanceItem, EnhanceResult enhanceResult, Integer userRankingChange) {
         return EnhanceExecuteResDto.builder()
                 .enhanceResult(enhanceResult)
                 .userRanking(enhanceItem.getRanking())
@@ -62,6 +63,7 @@ public class EnhanceConverter {
                 .enhanceLevel(1)
                 .ranking(lastRanking)
                 .enhanceLevelReachedAt(LocalDateTime.now())
+                .isGet(lastRanking <= item.getQuantity())
                 .build();
     }
 }
