@@ -39,7 +39,6 @@ coolsms:
 aes:
   phone-number: ${AES_PHONE_NUMBER_KEY}
 
-
 # swagger
 springdoc:
   swagger-ui:

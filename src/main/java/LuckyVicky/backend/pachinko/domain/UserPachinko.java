@@ -33,4 +33,21 @@ public class UserPachinko {
         this.square3 = square3;
     }
 
+    public boolean addSquare(int squareNumber) {
+        if (square1 == null || square1 == 0) {
+            square1 = squareNumber;
+            return true;
+        } else if (square2 == null || square2 == 0) {
+            square2 = squareNumber;
+            return true;
+        } else if (square3 == null || square3 == 0) {
+            square3 = squareNumber;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean canSelectMore() {
+        return square3 == null || square3 == 0; // 세 번째 칸이 비어 있으면 선택 가능
+    }
 }
