@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AttendanceConverter {
+
     public AttendanceRewardResDto convertToDto(AttendanceReward reward) {
         return AttendanceRewardResDto.builder()
                 .day(reward.getDay())

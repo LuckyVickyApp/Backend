@@ -1,16 +1,16 @@
 package LuckyVicky.backend.attendance.service;
 
-import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
-import LuckyVicky.backend.attendance.domain.AttendanceReward;
-import LuckyVicky.backend.attendance.repository.AttendanceRewardRepository;
 import LuckyVicky.backend.attendance.converter.AttendanceConverter;
+import LuckyVicky.backend.attendance.domain.AttendanceReward;
+import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
+import LuckyVicky.backend.attendance.repository.AttendanceRewardRepository;
 import LuckyVicky.backend.enhance.domain.JewelType;
+import LuckyVicky.backend.global.api_payload.ErrorCode;
+import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
-import LuckyVicky.backend.global.api_payload.ErrorCode;
-import LuckyVicky.backend.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +27,9 @@ public class AttendanceService {
     private final AttendanceRewardRepository attendanceRewardRepository;
     private final AttendanceConverter attendanceConverter;
 
+    /**
+     * 출석 체크 처리
+     */
     @Transactional
     public AttendanceRewardResDto processAttendance(User user) {
         LocalDate today = LocalDate.now();
@@ -51,6 +54,9 @@ public class AttendanceService {
         return attendanceConverter.convertToDto(reward);
     }
 
+    /**
+     * 보석 추가 처리
+     */
     private void addJewel(User user, JewelType jewelType, int count) {
         UserJewel jewel = userJewelRepository.findFirstByUserAndJewelType(user, jewelType);
         if (jewel == null) {
@@ -60,18 +66,24 @@ public class AttendanceService {
         userJewelRepository.save(jewel);
     }
 
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
-    }
-
+    /**
+     * 출석 보상 목록 조회
+     */
     @Transactional(readOnly = true)
     public List<AttendanceRewardResDto> getAllAttendanceRewards() {
         List<AttendanceReward> rewards = attendanceRewardRepository.findAll();
 
-
+        // Converter를 사용하여 Entity를 DTO로 변환
         return rewards.stream()
                 .map(attendanceConverter::convertToDto)
                 .toList();
+    }
+
+    /**
+     * 유저 검색
+     */
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
     }
 }
