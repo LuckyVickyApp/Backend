@@ -3,7 +3,7 @@ package LuckyVicky.backend.attendance.service;
 import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
 import LuckyVicky.backend.attendance.domain.AttendanceReward;
 import LuckyVicky.backend.attendance.repository.AttendanceRewardRepository;
-import LuckyVicky.backend.attendance.converter.AttendanceConverter; // 추가된 부분
+import LuckyVicky.backend.attendance.converter.AttendanceConverter;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
@@ -25,7 +25,7 @@ public class AttendanceService {
     private final UserRepository userRepository;
     private final UserJewelRepository userJewelRepository;
     private final AttendanceRewardRepository attendanceRewardRepository;
-    private final AttendanceConverter attendanceConverter; // 추가된 부분
+    private final AttendanceConverter attendanceConverter;
 
     @Transactional
     public AttendanceRewardResDto processAttendance(User user) {
@@ -48,7 +48,7 @@ public class AttendanceService {
         userRepository.save(user);
 
         // Converter를 사용하여 DTO 반환
-        return attendanceConverter.convertToDto(reward.getRewardMessage(), reward.getJewelCount());
+        return attendanceConverter.convertToDto(reward);
     }
 
     private void addJewel(User user, JewelType jewelType, int count) {
@@ -69,10 +69,9 @@ public class AttendanceService {
     public List<AttendanceRewardResDto> getAllAttendanceRewards() {
         List<AttendanceReward> rewards = attendanceRewardRepository.findAll();
 
-        // Converter를 사용하여 Entity를 DTO로 변환
+
         return rewards.stream()
-                .map(reward -> attendanceConverter.convertToDto(reward.getRewardMessage(), reward.getJewelCount()))
+                .map(attendanceConverter::convertToDto)
                 .toList();
     }
-
 }
