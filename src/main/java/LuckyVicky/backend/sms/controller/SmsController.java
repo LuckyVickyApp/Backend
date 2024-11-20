@@ -1,8 +1,8 @@
-package LuckyVicky.backend.Sms.controller;
+package LuckyVicky.backend.sms.controller;
 
-import LuckyVicky.backend.Sms.service.SmsService;
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
+import LuckyVicky.backend.sms.service.SmsService;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.jwt.CustomUserDetails;
 import LuckyVicky.backend.user.service.UserService;

@@ -1,5 +1,6 @@
 package LuckyVicky.backend.user.controller;
 
+import LuckyVicky.backend.aes.service.AesDecryptService;
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
 import LuckyVicky.backend.user.converter.UserConverter;
@@ -17,6 +18,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,6 +43,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final AesDecryptService aesDecryptService;
 
     @Operation(summary = "로그아웃", description = "로그아웃하는 메서드입니다.")
     @ApiResponses({
@@ -103,7 +111,8 @@ public class UserController {
     @PostMapping("/delivery-information/update")
     public ApiResponse<Boolean> saveDeliveryInformation(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                         @RequestBody UserAddressReqDto userAddressReqDto
-    ) {
+    )
+            throws InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
         User user = userService.findByUserName(customUserDetails.getUsername());
         userService.updateDeliveryInformation(user, userAddressReqDto);
         return ApiResponse.onSuccess(SuccessCode.USER_DELIVERY_INFORMATION_UPDATE_SUCCESS, true);
@@ -116,10 +125,11 @@ public class UserController {
     @GetMapping("/delivery-information")
     public ApiResponse<UserDeliveryInformationResDto> getDeliveryInformation(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ) {
+    ) throws Exception {
         User user = userService.findByUserName(customUserDetails.getUsername());
+        String decryptedPhoneNumber = aesDecryptService.decryptPhoneNumber(user.getPhoneNumber());
         return ApiResponse.onSuccess(SuccessCode.USER_DELIVERY_INFORMATION_VIEW_SUCCESS,
-                UserConverter.userDeliveryResDto(user));
+                UserConverter.userDeliveryResDto(user, decryptedPhoneNumber));
     }
 
 

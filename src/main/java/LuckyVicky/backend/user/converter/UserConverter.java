@@ -39,10 +39,11 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDto.UserDeliveryInformationResDto userDeliveryResDto(User user) {
+    public static UserResponseDto.UserDeliveryInformationResDto userDeliveryResDto(User user,
+                                                                                   String decryptedPhoneNumber) {
         return UserResponseDto.UserDeliveryInformationResDto.builder()
                 .recipientName(user.getRecipientName())
-                .phoneNumber(user.getPhoneNumber())
+                .phoneNumber(decryptedPhoneNumber)
                 .streetAddress(user.getStreetAddress())
                 .detailedAddress(user.getDetailedAddress())
                 .build();
