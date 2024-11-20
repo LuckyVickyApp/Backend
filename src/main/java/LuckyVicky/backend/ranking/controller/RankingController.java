@@ -6,7 +6,6 @@ import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
 import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.item.service.ItemService;
-import LuckyVicky.backend.ranking.converter.RankingConverter;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.CurrentItemRankingResDto;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.WeekRankingResDto;
 import LuckyVicky.backend.ranking.service.RankingService;
@@ -52,7 +51,8 @@ public class RankingController {
 
         List<Item> currentWeekItemList = itemService.getWeekItemList(localDate);
 
-        return ApiResponse.onSuccess(SuccessCode.RANKING_CURRENT_WEEK_SUCCESS, rankingService.getWeekRankingResDto(user, currentWeekItemList, localDate));
+        return ApiResponse.onSuccess(SuccessCode.RANKING_CURRENT_WEEK_SUCCESS,
+                rankingService.getWeekRankingResDto(user, currentWeekItemList, localDate));
 
     }
 
@@ -74,7 +74,8 @@ public class RankingController {
 
         List<Item> weekItemList = itemService.getWeekItemList(previousWeekDate);
 
-        return ApiResponse.onSuccess(SuccessCode.RANKING_PREVIOUS_WEEK_SUCCESS, rankingService.getWeekRankingResDto(user, weekItemList, previousWeekDate));
+        return ApiResponse.onSuccess(SuccessCode.RANKING_PREVIOUS_WEEK_SUCCESS,
+                rankingService.getWeekRankingResDto(user, weekItemList, previousWeekDate));
 
     }
 
@@ -96,7 +97,8 @@ public class RankingController {
 
         List<Item> weekItemList = itemService.getWeekItemList(nextWeekDate);
 
-        return ApiResponse.onSuccess(SuccessCode.RANKING_NEXT_WEEK_SUCCESS, rankingService.getWeekRankingResDto(user, weekItemList, nextWeekDate));
+        return ApiResponse.onSuccess(SuccessCode.RANKING_NEXT_WEEK_SUCCESS,
+                rankingService.getWeekRankingResDto(user, weekItemList, nextWeekDate));
 
     }
 
@@ -116,7 +118,8 @@ public class RankingController {
         Item item = itemService.findById(itemId);
         EnhanceItem enhanceItem = enhanceItemService.findByUserAndItemOrCreateEnhanceItem(user, item);
 
-        CurrentItemRankingResDto currentItemRankingResDto = rankingService.getCurrentItemRankingResDto(item, enhanceItem);
+        CurrentItemRankingResDto currentItemRankingResDto = rankingService.getCurrentItemRankingResDto(item,
+                enhanceItem);
 
         return ApiResponse.onSuccess(SuccessCode.RANKING_CURRENT_ITEM_SUCCESS, currentItemRankingResDto);
 

@@ -1,5 +1,7 @@
 package LuckyVicky.backend.pachinko.converter;
 
+import static LuckyVicky.backend.global.util.Constant.CONVERTER_INSTANTIATION_NOT_ALLOWED;
+
 import LuckyVicky.backend.pachinko.domain.Pachinko;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoChosenResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoRewardResDto;
@@ -8,12 +10,13 @@ import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoUserRewardRes
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 public class PachinkoConverter {
+    private PachinkoConverter() {
+        throw new UnsupportedOperationException(CONVERTER_INSTANTIATION_NOT_ALLOWED);
+    }
 
-    public static PachinkoChosenResDto pachinkoChosenResDto(Set<Integer> meChosen, Set<Integer> chosenSquares){
+    public static PachinkoChosenResDto pachinkoChosenResDto(Set<Integer> meChosen, Set<Integer> chosenSquares) {
         chosenSquares.removeAll(meChosen);
 
         return PachinkoChosenResDto.builder()
@@ -22,7 +25,7 @@ public class PachinkoConverter {
                 .build();
     }
 
-    public static PachinkoUserRewardResDto pachinkoUserRewardResDto(List<Long> userJewelList){
+    public static PachinkoUserRewardResDto pachinkoUserRewardResDto(List<Long> userJewelList) {
 
         return PachinkoUserRewardResDto.builder()
                 .jewelS(userJewelList.get(0))
@@ -32,7 +35,7 @@ public class PachinkoConverter {
 
     }
 
-    public static List<PachinkoSquareRewardResDto> pachinkoSquareRewardResDto(List<Pachinko> pachinkoList){
+    public static List<PachinkoSquareRewardResDto> pachinkoSquareRewardResDto(List<Pachinko> pachinkoList) {
         return pachinkoList.stream()
                 .map(pachinko -> PachinkoSquareRewardResDto.builder()
                         .squareNum(pachinko.getSquare())
@@ -42,7 +45,7 @@ public class PachinkoConverter {
                 .collect(Collectors.toList());
     }
 
-    public static PachinkoRewardResDto pachinkoRewardResDto(List<Long> userJewelList, List<Pachinko> pachinkoList){
+    public static PachinkoRewardResDto pachinkoRewardResDto(List<Long> userJewelList, List<Pachinko> pachinkoList) {
         return PachinkoRewardResDto.builder()
                 .pachinkoUserRewardResDto(pachinkoUserRewardResDto(userJewelList))
                 .pachinkoSquareRewardResDtoList(pachinkoSquareRewardResDto(pachinkoList))
