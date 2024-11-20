@@ -29,6 +29,9 @@ public class RankingResponseDto {
 
         @Schema(description = "상품 수령 여부")
         private Boolean isGet;
+
+        @Schema(description = "유저 프로필 사진")
+        private String profile;
     }
 
     // 상품별 랭킹 정보

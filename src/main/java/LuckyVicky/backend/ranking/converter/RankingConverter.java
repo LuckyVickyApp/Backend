@@ -22,6 +22,7 @@ public class RankingConverter {
                 .ranking(enhanceItem.getRanking())
                 .enhanceLevel(enhanceItem.getEnhanceLevel())
                 .isGet(enhanceItem.getIsGet())
+                .profile(enhanceItem.getUser().getProfileImage())
                 .build();
     }
 
