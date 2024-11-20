@@ -1,14 +1,13 @@
 package LuckyVicky.backend.enhance.service;
 
 import LuckyVicky.backend.enhance.converter.EnhanceConverter;
+import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import LuckyVicky.backend.enhance.dto.EnhanceResponseDto.ItemEnhanceResDto;
 import LuckyVicky.backend.enhance.dto.EnhanceResponseDto.ItemForEnhanceResDto;
+import LuckyVicky.backend.enhance.repository.EnhanceItemRepository;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.item.domain.Item;
-import LuckyVicky.backend.enhance.domain.EnhanceItem;
-import LuckyVicky.backend.enhance.repository.EnhanceItemRepository;
-import LuckyVicky.backend.item.domain.ItemLike;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.dto.UserJewelResponseDto.UserJewelResDto;
 import jakarta.transaction.Transactional;
@@ -24,7 +23,7 @@ public class EnhanceItemService {
 
     public EnhanceItem findByUserAndItem(User user, Item item) {
         return enhanceItemRepository.findByUserAndItem(user, item)
-                .orElseThrow(()-> new GeneralException(ErrorCode.ENHANCE_ITEM_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(ErrorCode.ENHANCE_ITEM_NOT_FOUND));
     }
 
     public EnhanceItem findByUserAndItemOrCreateEnhanceItem(User user, Item item) {
