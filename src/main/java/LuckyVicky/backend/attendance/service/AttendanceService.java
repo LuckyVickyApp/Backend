@@ -1,21 +1,20 @@
 package LuckyVicky.backend.attendance.service;
 
-import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
+import LuckyVicky.backend.attendance.converter.AttendanceConverter;
 import LuckyVicky.backend.attendance.domain.AttendanceReward;
+import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
 import LuckyVicky.backend.attendance.repository.AttendanceRewardRepository;
-import LuckyVicky.backend.attendance.converter.AttendanceConverter; // 추가된 부분
 import LuckyVicky.backend.enhance.domain.JewelType;
+import LuckyVicky.backend.global.api_payload.ErrorCode;
+import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
-import LuckyVicky.backend.global.api_payload.ErrorCode;
-import LuckyVicky.backend.global.exception.GeneralException;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class AttendanceService {
     private final UserRepository userRepository;
     private final UserJewelRepository userJewelRepository;
     private final AttendanceRewardRepository attendanceRewardRepository;
-    private final AttendanceConverter attendanceConverter; // 추가된 부분
+    private final AttendanceConverter attendanceConverter;
 
     @Transactional
     public AttendanceRewardResDto processAttendance(User user) {
