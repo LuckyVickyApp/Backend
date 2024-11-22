@@ -112,15 +112,12 @@ public class PachinkoService {
 
     @Transactional
     public boolean selectSquare(User user, long currentRound, int squareNumber) {
-        // 6*6 안의 칸인지 확인
         validateSquareNumber(squareNumber);
 
-        // 이미 선택된 칸인지 확인
         if (selectedSquares.contains(squareNumber)) {
             return false;
         }
 
-        // 사용자 Pachinko 상태 조회
         UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, currentRound)
                 .orElseGet(() -> initializeUserPachinko(user, currentRound));
 
@@ -208,7 +205,9 @@ public class PachinkoService {
         PachinkoReward b1 = pachinkoRewardRepository.findByJewelTypeAndJewelNum(JewelType.B, 1)
                 .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
 
-        int fSquareCount = TOTAL_PACHINKO_SQUARE_COUNT - (s1.getSquareCount() + a1.getSquareCount() + b2.getSquareCount() + b1.getSquareCount());
+        int fSquareCount =
+                TOTAL_PACHINKO_SQUARE_COUNT - (s1.getSquareCount() + a1.getSquareCount() + b2.getSquareCount()
+                        + b1.getSquareCount());
 
         for (int i = 0; i < s1.getSquareCount(); i++) {
             rewards.add(REWARD_S1);

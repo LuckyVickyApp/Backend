@@ -6,15 +6,16 @@ import LuckyVicky.backend.user.jwt.JwtTokenUtils;
 import LuckyVicky.backend.user.service.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -79,21 +80,21 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+    public void afterConnectionClosed(@NotNull WebSocketSession session, @NotNull CloseStatus status) {
         System.out.println("해당 세션 제거");
         sessions.remove(session);
     }
 
-    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) throws IOException {
+    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) {
         if (pachinkoService.selectSquare(user, currentRound, selectedSquare)) {
             broadcastMessage(user.getUsername() + "가 " + selectedSquare + "을 선택했습니다.");
-            checkGameStatusAndCloseSessionsIfNeeded();
+            checkGameStatusAndFinishGameIfNeeded();
         } else {
             sendMessage(session, selectedSquare + "번째 칸은 이미 다른 사용자에 의해 선택되었습니다.");
         }
     }
 
-    private boolean validateUserState(WebSocketSession session, User user, long currentRound) throws IOException {
+    private boolean validateUserState(WebSocketSession session, User user, long currentRound) {
         if (pachinkoService.noMoreJewel(user)) {
             sendMessage(session, "칸을 선택할때 필요한 보석이 부족합니다.");
             return false;
@@ -115,7 +116,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    private void checkGameStatusAndCloseSessionsIfNeeded() {
+    private void checkGameStatusAndFinishGameIfNeeded() {
         if (pachinkoService.isGameOver()) {
             System.out.println("게임 끝남 확인. 보상 전달 시작");
             broadcastMessage("해당 판이 종료되었습니다. 10초 후 새로운 판이 시작됩니다.");
