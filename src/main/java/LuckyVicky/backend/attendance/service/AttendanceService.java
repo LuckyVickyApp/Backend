@@ -1,5 +1,7 @@
 package LuckyVicky.backend.attendance.service;
 
+import static LuckyVicky.backend.global.util.Constant.ATTENDANCE_CYCLE_DAYS;
+
 import LuckyVicky.backend.attendance.converter.AttendanceConverter;
 import LuckyVicky.backend.attendance.domain.AttendanceReward;
 import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
@@ -14,9 +16,11 @@ import LuckyVicky.backend.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AttendanceService {
@@ -29,31 +33,47 @@ public class AttendanceService {
     public AttendanceRewardResDto processAttendance(User user) {
         LocalDate today = LocalDate.now();
 
-        // 오늘 이미 출석 체크를 했는지 확인
-        if (user.getLastAttendanceDate() != null && user.getLastAttendanceDate().isEqual(today)) {
-            throw new GeneralException(ErrorCode.ATTENDANCE_ALREADY_CHECKED);
-        }
+        validateAttendanceEligibility(today, user);
 
-        int attendanceDay = user.getAttendanceDate() % 12 + 1;
-        AttendanceReward reward = attendanceRewardRepository.findByDay(attendanceDay)
-                .orElseThrow(() -> new GeneralException(ErrorCode.ATTENDANCE_REWARD_NOT_FOUND));
+        int attendanceDay = calculateAttendanceDay(user);
 
-        // 보석 추가
-        addJewel(user, reward.getJewelType(), reward.getJewelCount());
+        AttendanceReward reward = getAttendanceReward(attendanceDay, user);
 
-        // 출석 증가 및 마지막 출석 날짜 업데이트
-        user.incrementAttendance();
-        userRepository.save(user);
+        updateAttendance(today, user);
 
-        // Converter를 사용하여 DTO 반환
         return AttendanceConverter.convertToDto(reward);
     }
 
-    private void addJewel(User user, JewelType jewelType, int count) {
+    private void validateAttendanceEligibility(LocalDate today, User user) {
+        if (user.getLastAttendanceDate().isEqual(today)) {
+            throw new GeneralException(ErrorCode.ATTENDANCE_ALREADY_CHECKED);
+        }
+    }
+
+    private int calculateAttendanceDay(User user) {
+        return (user.getLastAttendanceCheckedDay() % ATTENDANCE_CYCLE_DAYS) + 1;
+    }
+
+    private AttendanceReward getAttendanceReward(int attendanceDay, User user) {
+        AttendanceReward reward = attendanceRewardRepository.findByDay(attendanceDay)
+                .orElseThrow(() -> new GeneralException(ErrorCode.ATTENDANCE_REWARD_NOT_FOUND));
+
+        updateUserJewel(user, reward.getJewelType(), reward.getJewelCount());
+
+        return reward;
+    }
+
+    private void updateAttendance(LocalDate today, User user) {
+        user.updateUserAttendance(today);
+        userRepository.save(user);
+    }
+
+    private void updateUserJewel(User user, JewelType jewelType, int count) {
         UserJewel jewel = userJewelRepository.findFirstByUserAndJewelType(user, jewelType);
         if (jewel == null) {
             throw new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND);
         }
+
         jewel.increaseCount(count);
         userJewelRepository.save(jewel);
     }
