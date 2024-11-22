@@ -18,6 +18,7 @@ public enum ErrorCode implements BaseCode {
     ALREADY_USED_NICKNAME(HttpStatus.FORBIDDEN, "USER_4031", "이미 사용중인 닉네임입니다."),
     USER_ADDRESS_NULL(HttpStatus.BAD_REQUEST, "USER_4001", "주소값이 비었거나 NULL입니다."),
     INVALID_PHONE_NUMBER_FORMAT(HttpStatus.BAD_REQUEST, "USER_4002", "전화번호 형식은 연속된 숫자 11개여야 합니다."),
+    SMS_CODE_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "USER_4003", "전화번호 인증 코드가 틀렸습니다"),
 
     // User Jewel
     USER_JEWEL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "USER_5001", "회원의 보석함 정보가 DB에서 일부 혹은 전체가 사라졌습니다."),
