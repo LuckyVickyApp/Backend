@@ -9,8 +9,10 @@ import LuckyVicky.backend.user.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,5 +34,15 @@ public class AttendanceController {
         User user = attendanceService.findUserByUsername(customUserDetails.getUsername());
         AttendanceRewardResDto rewardDto = attendanceService.processAttendance(user);
         return ApiResponse.onSuccess(SuccessCode.ATTENDANCE_SUCCESS, rewardDto);
+    }
+
+    @Operation(summary = "출석 보상 목록 조회", description = "사용 가능한 모든 출석 보상 정보를 반환합니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ATTENDANCE_2002", description = "출석 보상 목록 반환 완료")
+    })
+    @GetMapping("/rewards")
+    public ApiResponse<List<AttendanceRewardResDto>> getAllAttendanceRewards() {
+        List<AttendanceRewardResDto> rewards = attendanceService.getAllAttendanceRewards();
+        return ApiResponse.onSuccess(SuccessCode.ATTENDANCE_REWARDS_SUCCESS, rewards);
     }
 }
