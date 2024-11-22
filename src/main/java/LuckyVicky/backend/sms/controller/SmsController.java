@@ -30,11 +30,13 @@ public class SmsController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2001", description = "문자 인증 번호 전송 성공")
     })
     @PostMapping("/send-certificate")
-    public ApiResponse<String> sendVerificationCode(@AuthenticationPrincipal CustomUserDetails customUserDetails
+    public ApiResponse<String> sendVerificationCode(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam(name = "phoneNumber") String phoneNumber
     ) {
         User user = userService.findByUserName(customUserDetails.getUsername());
-        String code = smsService.sendVerificationCode(user.getPhoneNumber());
-        return ApiResponse.onSuccess(SuccessCode.SMS_CERTIFICATE_SEND_SUCCESS, "문자인증 코드: " + code);
+        String code = smsService.sendVerificationCode(phoneNumber);
+        return ApiResponse.onSuccess(SuccessCode.SMS_CERTIFICATE_SEND_SUCCESS, code);
     }
 
     @Operation(summary = "인증 번호 유효 판단", description = "입력한 인증 번호가 옳은지 판단하는 API입니다.")
@@ -42,8 +44,9 @@ public class SmsController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2002", description = "문자 인증 성공")
     })
     @PostMapping("/verify")
-    public ApiResponse<String> verifyCode(@RequestParam(name = "inputCode") String inputCode,
-                                          @RequestParam(name = "correctCode") String correctCode
+    public ApiResponse<String> verifyCode(
+            @RequestParam(name = "inputCode") String inputCode,
+            @RequestParam(name = "correctCode") String correctCode
     ) {
         String result = smsService.verifyCode(inputCode, correctCode);
         return ApiResponse.onSuccess(SuccessCode.SMS_CERTIFICATE_SUCCESS, result);
