@@ -34,7 +34,7 @@ public class SmsController {
     ) {
         User user = userService.findByUserName(customUserDetails.getUsername());
         String code = smsService.sendVerificationCode(user.getPhoneNumber());
-        return ApiResponse.onSuccess(SuccessCode.SMS_CERTIFICATE_SEND_SUCCESS, "문자인증 코드: " + code);
+        return ApiResponse.onSuccess(SuccessCode.SMS_CERTIFICATE_SEND_SUCCESS, code);
     }
 
     @Operation(summary = "인증 번호 유효 판단", description = "입력한 인증 번호가 옳은지 판단하는 API입니다.")
