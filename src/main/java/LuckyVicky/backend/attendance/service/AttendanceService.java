@@ -45,7 +45,11 @@ public class AttendanceService {
     }
 
     private void validateAttendanceEligibility(LocalDate today, User user) {
-        if (user.getLastAttendanceDate().isEqual(today)) {
+        LocalDate lastAttendanceDate = user.getLastAttendanceDate() != null
+                ? user.getLastAttendanceDate()
+                : LocalDate.MIN;
+
+        if (lastAttendanceDate.isEqual(today)) {
             throw new GeneralException(ErrorCode.ATTENDANCE_ALREADY_CHECKED);
         }
     }
