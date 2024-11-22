@@ -53,6 +53,8 @@ public enum SuccessCode implements BaseCode {
 
     // Attendance
     ATTENDANCE_SUCCESS(HttpStatus.OK, "ATTENDANCE_2001", "출석 처리가 완료되었습니다."),
+    ATTENDANCE_REWARDS_SUCCESS(HttpStatus.OK, "ATTENDANCE_2002", "출석 보상 목록 반환 성공"),
+
     // Ranking
     RANKING_CURRENT_WEEK_SUCCESS(HttpStatus.OK, "RANKING_2001", "현재 주차 상품 별 랭킹을 반환이 완료되었습니다."),
     RANKING_PREVIOUS_WEEK_SUCCESS(HttpStatus.OK, "RANKING_2002", "이전 주차 상품 별 랭킹을 반환이 완료되었습니다."),

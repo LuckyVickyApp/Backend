@@ -1,5 +1,6 @@
 package LuckyVicky.backend.attendance.dto;
 
+import LuckyVicky.backend.enhance.domain.JewelType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,10 +15,13 @@ public class AttendanceResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class AttendanceRewardResDto {
-        @Schema(description = "보상 메시지", example = "B급 보석 1개")
-        private String rewardMessage;
+        @Schema(description = "출석 일차", example = "1")
+        private int day;
 
-        @Schema(description = "획득한 보석 개수", example = "1")
+        @Schema(description = "보석 종류", example = "B")
+        private JewelType jewelType;
+
+        @Schema(description = "보석 개수", example = "1")
         private int jewelCount;
     }
 }
