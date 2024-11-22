@@ -1,6 +1,11 @@
 package LuckyVicky.backend.global.util;
 
+import java.time.format.DateTimeFormatter;
+
 public class Constant {
+    // Log
+    public static final String LOG_DIRECTORY = "logs/"; // 로그 파일 디렉토리
+    public static final DateTimeFormatter LOG_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     // Phone
     public static final String PHONE_NUMBER_PATTERN = "^\\d{11}$";
