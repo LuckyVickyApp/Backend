@@ -48,8 +48,9 @@ public class RouletteService {
             addJewel(user, jewelType, jewelCount);
         }
 
-        // 10분 후 다시 룰렛 사용 가능
-        user.setRouletteAvailableTime(LocalDateTime.now().plusMinutes(10));
+        // 10초호 다시 룰렛 사용 가능
+        user.setRouletteAvailableTime(LocalDateTime.now().plusSeconds(10));
+
         userRepository.save(user);
     }
 

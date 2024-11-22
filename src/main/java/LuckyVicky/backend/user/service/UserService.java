@@ -3,6 +3,7 @@ package LuckyVicky.backend.user.service;
 import static LuckyVicky.backend.global.util.Constant.PHONE_NUMBER_PATTERN;
 import static org.apache.logging.log4j.util.Strings.isEmpty;
 
+import LuckyVicky.backend.aes.service.AesEncryptService;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.entity.Uuid;
@@ -22,8 +23,14 @@ import LuckyVicky.backend.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 import java.util.Optional;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -43,6 +50,7 @@ public class UserService {
     private final AmazonS3Manager amazonS3Manager;
     private final UuidRepository uuidRepository;
     private final UserJewelRepository userJewelRepository;
+    private final AesEncryptService aesEncryptService;
 
     public User findByUserName(String userName) {
         return userRepository.findByUsername(userName)
@@ -172,7 +180,8 @@ public class UserService {
     }
 
     @Transactional
-    public void updateDeliveryInformation(User user, UserRequestDto.UserAddressReqDto userAddressReqDto) {
+    public void updateDeliveryInformation(User user, UserRequestDto.UserAddressReqDto userAddressReqDto)
+            throws InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
         if (userAddressReqDto.getStreetAddress() == null) {
             throw GeneralException.of(ErrorCode.USER_ADDRESS_NULL);
         }
@@ -182,16 +191,17 @@ public class UserService {
             throw GeneralException.of(ErrorCode.INVALID_PHONE_NUMBER_FORMAT);
         }
 
+        String encryptedPhoneNumber = aesEncryptService.encryptPhoneNumberWithAES(phoneNumber);
+
         user.updateDeliveryInformation(
                 userAddressReqDto.getRecipientName(),
-                phoneNumber,
+                encryptedPhoneNumber,
                 userAddressReqDto.getStreetAddress(),
                 userAddressReqDto.getDetailedAddress()
         );
 
         userRepository.save(user);
     }
-
 
     @Transactional
     public void updateProfileImage(MultipartFile file, User user) throws IOException {

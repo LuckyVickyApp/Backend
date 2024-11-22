@@ -8,13 +8,16 @@ import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDetailResDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ItemConverter {
+/*    private ItemConverter() {
+        throw new UnsupportedOperationException(CONVERTER_INSTANTIATION_NOT_ALLOWED);
+    }*/
 
     public Item toEntity(ItemRequestDto requestDto, String imageUrl) {
         LocalDate availableDate = (requestDto.getAvailableDate() != null)
