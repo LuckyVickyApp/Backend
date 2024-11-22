@@ -44,6 +44,10 @@ public class AttendanceService {
         return AttendanceConverter.convertToDto(reward);
     }
 
+    public int getLastAttendanceDay(User user) {
+        return user.getLastAttendanceCheckedDay() % ATTENDANCE_CYCLE_DAYS;
+    }
+
     private void validateAttendanceEligibility(LocalDate today, User user) {
         LocalDate lastAttendanceDate = user.getLastAttendanceDate() != null
                 ? user.getLastAttendanceDate()
