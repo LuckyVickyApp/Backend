@@ -65,13 +65,10 @@ public class SmsService {
         return String.valueOf(code);
     }
 
-    public String verifyCode(String inputCode, String correctCode) {
-        String result = "Success";
+    public void verifyCode(String inputCode, String correctCode) {
         if (!inputCode.equals(correctCode)) {
-            result = "Fail";
+            throw new GeneralException(ErrorCode.SMS_CODE_NOT_VERIFIED);
         }
-
-        return result;
     }
 }
 
