@@ -4,6 +4,8 @@ import static LuckyVicky.backend.global.util.Constant.CONVERTER_INSTANTIATION_NO
 
 import LuckyVicky.backend.attendance.domain.AttendanceReward;
 import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
+import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResponseDto;
+import java.util.List;
 
 public class AttendanceConverter {
 
@@ -16,6 +18,14 @@ public class AttendanceConverter {
                 .day(reward.getDay())
                 .jewelType(reward.getJewelType())
                 .jewelCount(reward.getJewelCount())
+                .build();
+    }
+
+    public static AttendanceRewardResponseDto attendanceRewardResponseDto(List<AttendanceRewardResDto> rewards,
+                                                                          int lastAttendanceDay) {
+        return AttendanceRewardResponseDto.builder()
+                .lastAttendanceCheckedDay(lastAttendanceDay)
+                .attendanceRewardResDtoList(rewards)
                 .build();
     }
 }

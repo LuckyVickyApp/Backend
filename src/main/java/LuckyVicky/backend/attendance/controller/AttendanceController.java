@@ -1,6 +1,8 @@
 package LuckyVicky.backend.attendance.controller;
 
+import LuckyVicky.backend.attendance.converter.AttendanceConverter;
 import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
+import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResponseDto;
 import LuckyVicky.backend.attendance.service.AttendanceService;
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
@@ -30,7 +32,9 @@ public class AttendanceController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ATTENDANCE_2001", description = "출석 처리 완료 및 보상 반환")
     })
     @PostMapping("/check-in")
-    public ApiResponse<AttendanceRewardResDto> checkIn(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ApiResponse<AttendanceRewardResDto> checkIn(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
         User user = attendanceService.findUserByUsername(customUserDetails.getUsername());
         AttendanceRewardResDto rewardDto = attendanceService.processAttendance(user);
         return ApiResponse.onSuccess(SuccessCode.ATTENDANCE_SUCCESS, rewardDto);
@@ -41,8 +45,14 @@ public class AttendanceController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ATTENDANCE_2002", description = "출석 보상 목록 반환 완료")
     })
     @GetMapping("/rewards")
-    public ApiResponse<List<AttendanceRewardResDto>> getAllAttendanceRewards() {
+    public ApiResponse<AttendanceRewardResponseDto> getAllAttendanceRewards(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        User user = attendanceService.findUserByUsername(customUserDetails.getUsername());
         List<AttendanceRewardResDto> rewards = attendanceService.getAllAttendanceRewards();
-        return ApiResponse.onSuccess(SuccessCode.ATTENDANCE_REWARDS_SUCCESS, rewards);
+        int lastAttendanceDay = attendanceService.getLastAttendanceDay(user);
+        AttendanceRewardResponseDto attendanceRewardResponseDto = AttendanceConverter.attendanceRewardResponseDto(
+                rewards, lastAttendanceDay);
+        return ApiResponse.onSuccess(SuccessCode.ATTENDANCE_REWARDS_SUCCESS, attendanceRewardResponseDto);
     }
 }
