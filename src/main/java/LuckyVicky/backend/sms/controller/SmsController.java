@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,13 +44,13 @@ public class SmsController {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "2002", description = "문자 인증 성공")
     })
-    @PostMapping("/verify")
+    @GetMapping("/verify")
     public ApiResponse<String> verifyCode(
             @RequestParam(name = "inputCode") String inputCode,
             @RequestParam(name = "correctCode") String correctCode
     ) {
-        String result = smsService.verifyCode(inputCode, correctCode);
-        return ApiResponse.onSuccess(SuccessCode.SMS_CERTIFICATE_SUCCESS, result);
+        smsService.verifyCode(inputCode, correctCode);
+        return ApiResponse.onSuccess(SuccessCode.SMS_CERTIFICATE_SUCCESS, "Success");
     }
 }
 
