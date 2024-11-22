@@ -11,12 +11,11 @@ import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +24,6 @@ public class AttendanceService {
     private final UserRepository userRepository;
     private final UserJewelRepository userJewelRepository;
     private final AttendanceRewardRepository attendanceRewardRepository;
-    private final AttendanceConverter attendanceConverter;
 
     @Transactional
     public AttendanceRewardResDto processAttendance(User user) {
@@ -48,7 +46,7 @@ public class AttendanceService {
         userRepository.save(user);
 
         // Converter를 사용하여 DTO 반환
-        return attendanceConverter.convertToDto(reward);
+        return AttendanceConverter.convertToDto(reward);
     }
 
     private void addJewel(User user, JewelType jewelType, int count) {
@@ -64,9 +62,8 @@ public class AttendanceService {
     public List<AttendanceRewardResDto> getAllAttendanceRewards() {
         List<AttendanceReward> rewards = attendanceRewardRepository.findAll();
 
-        // Converter를 사용하여 Entity를 DTO로 변환
         return rewards.stream()
-                .map(attendanceConverter::convertToDto)
+                .map(AttendanceConverter::convertToDto)
                 .toList();
     }
 

@@ -1,16 +1,17 @@
 package LuckyVicky.backend.attendance.converter;
 
-import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
-import LuckyVicky.backend.attendance.domain.AttendanceReward;
-import org.springframework.stereotype.Component;
+import static LuckyVicky.backend.global.util.Constant.CONVERTER_INSTANTIATION_NOT_ALLOWED;
 
-@Component
+import LuckyVicky.backend.attendance.domain.AttendanceReward;
+import LuckyVicky.backend.attendance.dto.AttendanceResponseDto.AttendanceRewardResDto;
+
 public class AttendanceConverter {
 
-    /**
-     * AttendanceReward를 AttendanceRewardResDto로 변환
-     */
-    public AttendanceRewardResDto convertToDto(AttendanceReward reward) {
+    private AttendanceConverter() {
+        throw new UnsupportedOperationException(CONVERTER_INSTANTIATION_NOT_ALLOWED);
+    }
+
+    public static AttendanceRewardResDto convertToDto(AttendanceReward reward) {
         return AttendanceRewardResDto.builder()
                 .day(reward.getDay()) // 출석 일차
                 .jewelType(reward.getJewelType()) // 보석 종류(enum)
