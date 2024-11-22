@@ -13,9 +13,9 @@ public class AttendanceConverter {
 
     public static AttendanceRewardResDto convertToDto(AttendanceReward reward) {
         return AttendanceRewardResDto.builder()
-                .day(reward.getDay()) // 출석 일차
-                .jewelType(reward.getJewelType()) // 보석 종류(enum)
-                .jewelCount(reward.getJewelCount()) // 보석 개수
+                .day(reward.getDay())
+                .jewelType(reward.getJewelType())
+                .jewelCount(reward.getJewelCount())
                 .build();
     }
 }

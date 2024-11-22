@@ -16,12 +16,12 @@ public class AttendanceResponseDto {
     @NoArgsConstructor
     public static class AttendanceRewardResDto {
         @Schema(description = "출석 일차", example = "1")
-        private int day; // 출석 일차
+        private int day;
 
         @Schema(description = "보석 종류", example = "B")
-        private JewelType jewelType; // 보석 종류(enum)
+        private JewelType jewelType;
 
         @Schema(description = "보석 개수", example = "1")
-        private int jewelCount; // 보석 개수
+        private int jewelCount;
     }
 }
