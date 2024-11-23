@@ -1,18 +1,20 @@
 <configuration>
-    <!-- RollingFileAppender 설정 -->
+
+    <property name="LOG_LEVEL" value="${logging.level.root:ERROR}"/>
+
+    <!-- 공통 설정 -->
     <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/${activeProfile}/error.log</file> <!-- 현재 로그 파일 -->
+        <file>src/main/resources/logs/error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/${activeProfile}/error-%d{yyyy-MM-dd}.log</fileNamePattern> <!-- 날짜별 로그 파일 -->
-            <maxHistory>30</maxHistory> <!-- 최대 30일 보관 -->
+            <fileNamePattern>src/main/resources/logs/error-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Root Logger -->
-    <root level="ERROR">
+    <root level="${LOG_LEVEL}">
         <appender-ref ref="ROLLING_FILE"/>
     </root>
 </configuration>
