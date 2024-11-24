@@ -47,6 +47,16 @@ springdoc:
     disabled: true
   use-fqn: true
 
+logging:
+  level:
+    root: ERROR
+  profiles:
+    local:
+      level: INFO
+    develop:
+      level: ERROR
+
+
 ---
 
 # local profile

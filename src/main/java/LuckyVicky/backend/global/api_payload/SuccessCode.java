@@ -11,6 +11,9 @@ public enum SuccessCode implements BaseCode {
     OK(HttpStatus.OK, "COMMON_200", "Success"),
     CREATED(HttpStatus.CREATED, "COMMON_201", "Created"),
 
+    // Log
+    ERROR_LOG_S3_UPLOADED(HttpStatus.OK, "LOG_2001", "로컬 서버에 있는 에러 로그를 S3에 업로드 완료되었습니다."),
+
     // User
     USER_LOGIN_SUCCESS(HttpStatus.CREATED, "USER_2011", "회원가입& 로그인이 완료되었습니다."),
     USER_LOGOUT_SUCCESS(HttpStatus.OK, "USER_2001", "로그아웃 되었습니다."),
@@ -64,7 +67,6 @@ public enum SuccessCode implements BaseCode {
     // Sms
     SMS_CERTIFICATE_SEND_SUCCESS(HttpStatus.OK, "SMS_2001", "인증 메시지 전송이 완료되었습니다."),
     SMS_CERTIFICATE_SUCCESS(HttpStatus.OK, "SMS_2002", "문자 인증이 완료되었습니다.");
-
 
     private final HttpStatus httpStatus;
     private final String code;

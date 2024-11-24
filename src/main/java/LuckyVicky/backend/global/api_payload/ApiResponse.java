@@ -25,10 +25,3 @@ public class ApiResponse<T> {
         return new ApiResponse<>(false, code, message, data);
     }
 }
-
-//public static <T> ApiResponse<Map<String, Object>> onSuccessWithCustomMessage(BaseCode code, String customMessage, T result) {
-//    Map<String, Object> responseMap = new HashMap<>();
-//    responseMap.put("message", customMessage);
-//   responseMap.put("data", result);
-//    return new ApiResponse<>(true, code.getReason().getCode(), code.getReason().getMessage(), responseMap);
-// }
