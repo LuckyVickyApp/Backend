@@ -1,4 +1,4 @@
-package LuckyVicky.backend.global.config;
+package LuckyVicky.backend.pachinko.handler;
 
 import LuckyVicky.backend.pachinko.service.PachinkoService;
 import LuckyVicky.backend.user.domain.User;
@@ -6,15 +6,15 @@ import LuckyVicky.backend.user.jwt.JwtTokenUtils;
 import LuckyVicky.backend.user.service.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -84,7 +84,8 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
     }
 
-    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) throws IOException {
+    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare)
+            throws IOException {
         if (pachinkoService.selectSquare(user, currentRound, selectedSquare)) {
             broadcastMessage(user.getUsername() + "가 " + selectedSquare + "을 선택했습니다.");
             checkGameStatusAndCloseSessionsIfNeeded();

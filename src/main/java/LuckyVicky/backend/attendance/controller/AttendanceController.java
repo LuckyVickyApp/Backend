@@ -8,6 +8,7 @@ import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.jwt.CustomUserDetails;
+import LuckyVicky.backend.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AttendanceController {
 
     private final AttendanceService attendanceService;
+    private final UserService userService;
 
     @Operation(summary = "출석 체크", description = "사용자가 출석 체크를 하여 보상을 받을 수 있습니다. 하루에 한 번만 출석 가능합니다.")
     @ApiResponses(value = {
@@ -35,7 +37,7 @@ public class AttendanceController {
     public ApiResponse<AttendanceRewardResDto> checkIn(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        User user = attendanceService.findUserByUsername(customUserDetails.getUsername());
+        User user = userService.findByUserName(customUserDetails.getUsername());
         AttendanceRewardResDto rewardDto = attendanceService.processAttendance(user);
         return ApiResponse.onSuccess(SuccessCode.ATTENDANCE_SUCCESS, rewardDto);
     }
@@ -48,7 +50,7 @@ public class AttendanceController {
     public ApiResponse<AttendanceRewardResponseDto> getAllAttendanceRewards(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        User user = attendanceService.findUserByUsername(customUserDetails.getUsername());
+        User user = userService.findByUserName(customUserDetails.getUsername());
         List<AttendanceRewardResDto> rewards = attendanceService.getAllAttendanceRewards();
         int lastAttendanceDay = attendanceService.getLastAttendanceDay(user);
         AttendanceRewardResponseDto attendanceRewardResponseDto = AttendanceConverter.attendanceRewardResponseDto(

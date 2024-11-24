@@ -10,6 +10,10 @@ public enum ErrorCode implements BaseCode {
     // Common
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON_400", "잘못된 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON_500", "서버 에러, 서버 개발자에게 문의하세요."),
+    INVALID_PARAMETER(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON_5002", "잘못된 DAY Parameter 가 들어왔습니다. "),
+
+    // Log
+    ERROR_LOG_NOT_FOUND(HttpStatus.NOT_FOUND, "LOG_4041", "에러 로그가 존재하지 않습니다. 서버 에러입니다."),
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_4041", "존재하지 않는 회원입니다."),
@@ -52,7 +56,6 @@ public enum ErrorCode implements BaseCode {
     ENHANCE_RATE_NOT_FOUND(HttpStatus.NOT_FOUND, "ENHANCE_4042", "존재하지 않는 강화 확률 입니다."),
     ENHANCE_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "ENHANCE_4043", "존재하지 않는 강화 상품 입니다."),
 
-
     // Roulette
     ROULETTE_COOLDOWN(HttpStatus.BAD_REQUEST, "ROULETTE_4001", "룰렛은 10분에 한 번만 돌릴 수 있습니다."),
     ROULETTE_INVALID_JEWEL_TYPE(HttpStatus.BAD_REQUEST, "ROULETTE_4002", "유효하지 않은 보석 유형입니다."),
@@ -69,9 +72,9 @@ public enum ErrorCode implements BaseCode {
     PACHINKO_NO_PREVIOUS_ROUND(HttpStatus.NOT_FOUND, "PACHINKO_4043", "사용자가 빠칭코 게임을 한 전적이 없어 보상 반환이 불가합니다."),
     PACHINKO_ALREADY_SELECT_SQUARE(HttpStatus.OK, "PACHINKO_4003", "해당 칸은 이미 다른 사용자에 의해 선택되었습니다."),
 
-
     // Ranking
     RANKING_WEEK_ITEM_LIST_EMPTY(HttpStatus.BAD_REQUEST, "RANKING_4001", "해당 주차에 강화한 상품이 없습니다."),
+
     ;
 
     private final HttpStatus httpStatus;

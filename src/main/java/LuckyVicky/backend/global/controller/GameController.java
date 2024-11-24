@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/dev")
-public class DevController {
+public class GameController {
 
     private final PachinkoService pachinkoService;
 

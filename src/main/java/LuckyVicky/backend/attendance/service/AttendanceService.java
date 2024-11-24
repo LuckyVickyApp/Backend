@@ -28,6 +28,19 @@ public class AttendanceService {
     private final UserRepository userRepository;
     private final UserJewelRepository userJewelRepository;
     private final AttendanceRewardRepository attendanceRewardRepository;
+ 
+    public int getLastAttendanceDay(User user) {
+        return user.getLastAttendanceCheckedDay() % ATTENDANCE_CYCLE_DAYS;
+    }
+
+    @Transactional(readOnly = true)
+    public List<AttendanceRewardResDto> getAllAttendanceRewards() {
+        List<AttendanceReward> rewards = attendanceRewardRepository.findAll();
+
+        return rewards.stream()
+                .map(AttendanceConverter::convertToDto)
+                .toList();
+    }
 
     @Transactional
     public AttendanceRewardResDto processAttendance(User user) {
@@ -42,10 +55,6 @@ public class AttendanceService {
         updateAttendance(today, user);
 
         return AttendanceConverter.convertToDto(reward);
-    }
-
-    public int getLastAttendanceDay(User user) {
-        return user.getLastAttendanceCheckedDay() % ATTENDANCE_CYCLE_DAYS;
     }
 
     private void validateAttendanceEligibility(LocalDate today, User user) {
@@ -84,19 +93,5 @@ public class AttendanceService {
 
         jewel.increaseCount(count);
         userJewelRepository.save(jewel);
-    }
-
-    @Transactional(readOnly = true)
-    public List<AttendanceRewardResDto> getAllAttendanceRewards() {
-        List<AttendanceReward> rewards = attendanceRewardRepository.findAll();
-
-        return rewards.stream()
-                .map(AttendanceConverter::convertToDto)
-                .toList();
-    }
-
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND));
     }
 }
