@@ -1,0 +1,149 @@
+2024-11-24 22:42:58 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2024-11-24 22:42:58 [main] INFO  L.backend.BackendApplication - Starting BackendApplication using Java 17.0.9 with PID 7516 (C:\Users\pss60\Desktop\Mine\항공대\3학년 2학기\프로젝트 X\Backend\out\production\classes started by pss60 in C:\Users\pss60\Desktop\Mine\항공대\3학년 2학기\프로젝트 X\Backend)
+2024-11-24 22:42:58 [main] INFO  L.backend.BackendApplication - The following 1 profile is active: "local"
+2024-11-24 22:43:00 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-11-24 22:43:00 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 84 ms. Found 13 JPA repository interfaces.
+2024-11-24 22:43:01 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-11-24 22:43:01 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-11-24 22:43:01 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-11-24 22:43:01 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.30]
+2024-11-24 22:43:01 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-11-24 22:43:01 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3082 ms
+2024-11-24 22:43:01 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-11-24 22:43:01 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.3.Final
+2024-11-24 22:43:01 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-11-24 22:43:02 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-11-24 22:43:02 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-11-24 22:43:02 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6870a76f
+2024-11-24 22:43:02 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-11-24 22:43:02 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-11-24 22:43:03 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-11-24 22:43:04 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-11-24 22:43:04 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-11-24 22:43:05 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-11-24 22:43:05 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name jpaUserDetailsManager
+2024-11-24 22:43:06 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-11-24 22:43:06 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2024-11-24 22:43:06 [main] INFO  L.backend.BackendApplication - Started BackendApplication in 8.065 seconds (process running for 8.558)
+2024-11-24 22:43:28 [SpringApplicationShutdownHook] INFO  L.b.g.l.InstanceShutdownHandler - Application is shutting down, uploading logs to S3...
+2024-11-24 22:43:34 [SpringApplicationShutdownHook] INFO  L.backend.global.s3.S3LogService - Merged S3 log content: logs/local/local-error-2024-11-24.log
+2024-11-24 22:43:34 [SpringApplicationShutdownHook] INFO  L.backend.global.s3.S3LogService - Merged local log content: error.log
+2024-11-24 22:43:34 [SpringApplicationShutdownHook] WARN  com.amazonaws.util.Base64 - JAXB is unavailable. Will fallback to SDK implementation which may be less performant.If you are using Java 9+, you will need to include javax.xml.bind:jaxb-api as a dependency.
+2024-11-24 22:43:36 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2024-11-24 22:43:36 [main] INFO  L.backend.BackendApplication - Starting BackendApplication using Java 17.0.9 with PID 30076 (C:\Users\pss60\Desktop\Mine\항공대\3학년 2학기\프로젝트 X\Backend\out\production\classes started by pss60 in C:\Users\pss60\Desktop\Mine\항공대\3학년 2학기\프로젝트 X\Backend)
+2024-11-24 22:43:36 [main] INFO  L.backend.BackendApplication - The following 1 profile is active: "local"
+2024-11-24 22:43:37 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-11-24 22:43:37 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 86 ms. Found 13 JPA repository interfaces.
+2024-11-24 22:43:37 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-11-24 22:43:37 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-11-24 22:43:37 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-11-24 22:43:37 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.30]
+2024-11-24 22:43:37 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-11-24 22:43:37 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1578 ms
+2024-11-24 22:43:37 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-11-24 22:43:37 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.3.Final
+2024-11-24 22:43:37 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-11-24 22:43:38 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-11-24 22:43:38 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-11-24 22:43:38 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@75d95b67
+2024-11-24 22:43:38 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-11-24 22:43:38 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-11-24 22:43:39 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-11-24 22:43:39 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-11-24 22:43:40 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-11-24 22:43:41 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-11-24 22:43:41 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name jpaUserDetailsManager
+2024-11-24 22:43:41 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-11-24 22:43:41 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2024-11-24 22:43:41 [main] INFO  L.backend.BackendApplication - Started BackendApplication in 6.027 seconds (process running for 6.501)
+2024-11-24 22:44:01 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-11-24 22:44:01 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-11-24 22:44:01 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2024-11-24 22:44:01 [http-nio-8080-exec-1] INFO  L.b.user.jwt.JwtValidationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-1] INFO  L.b.user.jwt.AuthCreationFilter - url : /swagger-ui/index.html
+2024-11-24 22:44:01 [http-nio-8080-exec-1] INFO  L.b.user.jwt.AuthCreationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-2] INFO  L.b.user.jwt.JwtValidationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-2] INFO  L.b.user.jwt.AuthCreationFilter - url : /swagger-ui/swagger-ui.css
+2024-11-24 22:44:01 [http-nio-8080-exec-2] INFO  L.b.user.jwt.AuthCreationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-3] INFO  L.b.user.jwt.JwtValidationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-3] INFO  L.b.user.jwt.AuthCreationFilter - url : /swagger-ui/index.css
+2024-11-24 22:44:01 [http-nio-8080-exec-3] INFO  L.b.user.jwt.AuthCreationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-4] INFO  L.b.user.jwt.JwtValidationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-4] INFO  L.b.user.jwt.AuthCreationFilter - url : /swagger-ui/swagger-ui-bundle.js
+2024-11-24 22:44:01 [http-nio-8080-exec-4] INFO  L.b.user.jwt.AuthCreationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-6] INFO  L.b.user.jwt.JwtValidationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-6] INFO  L.b.user.jwt.AuthCreationFilter - url : /swagger-ui/swagger-ui-standalone-preset.js
+2024-11-24 22:44:01 [http-nio-8080-exec-6] INFO  L.b.user.jwt.AuthCreationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-5] INFO  L.b.user.jwt.JwtValidationFilter - authHeader 확인: null
+2024-11-24 22:44:01 [http-nio-8080-exec-5] INFO  L.b.user.jwt.AuthCreationFilter - url : /swagger-ui/swagger-initializer.js
+2024-11-24 22:44:01 [http-nio-8080-exec-5] INFO  L.b.user.jwt.AuthCreationFilter - authHeader 확인: null
+2024-11-24 22:44:02 [http-nio-8080-exec-8] INFO  L.b.user.jwt.JwtValidationFilter - authHeader 확인: null
+2024-11-24 22:44:02 [http-nio-8080-exec-8] INFO  L.b.user.jwt.AuthCreationFilter - url : /v3/api-docs/swagger-config
+2024-11-24 22:44:02 [http-nio-8080-exec-8] INFO  L.b.user.jwt.AuthCreationFilter - authHeader 확인: null
+2024-11-24 22:44:02 [http-nio-8080-exec-7] INFO  L.b.user.jwt.JwtValidationFilter - authHeader 확인: null
+2024-11-24 22:44:02 [http-nio-8080-exec-7] INFO  L.b.user.jwt.AuthCreationFilter - url : /v3/api-docs/All
+2024-11-24 22:44:02 [http-nio-8080-exec-7] INFO  L.b.user.jwt.AuthCreationFilter - authHeader 확인: null
+2024-11-24 22:44:03 [http-nio-8080-exec-7] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 915 ms
+2024-11-24 22:44:11 [http-nio-8080-exec-9] INFO  L.b.user.jwt.JwtValidationFilter - authHeader 확인: null
+2024-11-24 22:44:11 [http-nio-8080-exec-9] INFO  L.b.user.jwt.AuthCreationFilter - url : /token/generate
+2024-11-24 22:44:11 [http-nio-8080-exec-9] INFO  L.b.user.jwt.AuthCreationFilter - authHeader 확인: null
+2024-11-24 22:44:11 [http-nio-8080-exec-9] INFO  L.backend.user.jwt.JwtTokenUtils - "string" jwt 발급
+2024-11-24 22:44:11 [http-nio-8080-exec-9] INFO  L.backend.user.service.UserService - accessToken: eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJzdHJpbmciLCJpYXQiOjE3MzI0NTU4NTEsImV4cCI6MTczMjU2Mzg1MSwiYXV0aG9yaXRpZXMiOiJVU0VSIn0.Yui1T30nrk2UWultFTyTICGH4oYYYZKxyM8EFXB5yR0ACYZ15dd45cWybr5rYlwI
+2024-11-24 22:44:11 [http-nio-8080-exec-9] INFO  L.backend.user.service.UserService - refreshToken: eyJhbGciOiJIUzM4NCJ9.eyJpYXQiOjE3MzI0NTU4NTEsImV4cCI6MTc0MzI1NTg1MX0.LWiBEjKCItmh0_Jy9quB6wghvoAqBqPsxjBU5XsTbDdJQhIKsioA3mCchA0siZUw 
+2024-11-24 22:44:38 [SpringApplicationShutdownHook] INFO  L.b.g.l.InstanceShutdownHandler - Application is shutting down, uploading logs to S3...
+2024-11-24 22:45:35 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2024-11-24 22:45:35 [main] INFO  L.backend.BackendApplication - Starting BackendApplication using Java 17.0.9 with PID 20984 (C:\Users\pss60\Desktop\Mine\항공대\3학년 2학기\프로젝트 X\Backend\out\production\classes started by pss60 in C:\Users\pss60\Desktop\Mine\항공대\3학년 2학기\프로젝트 X\Backend)
+2024-11-24 22:45:35 [main] INFO  L.backend.BackendApplication - The following 1 profile is active: "local"
+2024-11-24 22:45:36 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-11-24 22:45:36 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 88 ms. Found 13 JPA repository interfaces.
+2024-11-24 22:45:36 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-11-24 22:45:36 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-11-24 22:45:36 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-11-24 22:45:36 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.30]
+2024-11-24 22:45:36 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-11-24 22:45:36 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1644 ms
+2024-11-24 22:45:36 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-11-24 22:45:37 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.3.Final
+2024-11-24 22:45:37 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-11-24 22:45:37 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-11-24 22:45:37 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-11-24 22:45:37 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3dc4ed6f
+2024-11-24 22:45:37 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-11-24 22:45:37 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-11-24 22:45:38 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-11-24 22:45:39 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-11-24 22:45:39 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-11-24 22:45:40 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-11-24 22:45:40 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name jpaUserDetailsManager
+2024-11-24 22:45:41 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-11-24 22:45:41 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2024-11-24 22:45:41 [main] INFO  L.backend.BackendApplication - Started BackendApplication in 6.321 seconds (process running for 6.763)
+2024-11-24 22:46:01 [SpringApplicationShutdownHook] INFO  L.b.g.l.InstanceShutdownHandler - Application is shutting down, uploading logs to S3...
+2024-11-24 22:46:13 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2024-11-24 22:46:13 [main] INFO  L.backend.BackendApplication - Starting BackendApplication using Java 17.0.9 with PID 28016 (C:\Users\pss60\Desktop\Mine\항공대\3학년 2학기\프로젝트 X\Backend\out\production\classes started by pss60 in C:\Users\pss60\Desktop\Mine\항공대\3학년 2학기\프로젝트 X\Backend)
+2024-11-24 22:46:13 [main] INFO  L.backend.BackendApplication - The following 1 profile is active: "local"
+2024-11-24 22:46:14 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-11-24 22:46:14 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 84 ms. Found 13 JPA repository interfaces.
+2024-11-24 22:46:15 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2024-11-24 22:46:15 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2024-11-24 22:46:15 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-11-24 22:46:15 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.30]
+2024-11-24 22:46:15 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-11-24 22:46:15 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1591 ms
+2024-11-24 22:46:15 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-11-24 22:46:15 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.3.Final
+2024-11-24 22:46:15 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-11-24 22:46:16 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-11-24 22:46:16 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-11-24 22:46:16 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@40f15786
+2024-11-24 22:46:16 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-11-24 22:46:16 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-11-24 22:46:17 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-11-24 22:46:17 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-11-24 22:46:18 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-11-24 22:46:19 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-11-24 22:46:19 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name jpaUserDetailsManager
+2024-11-24 22:46:19 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2024-11-24 22:46:19 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2024-11-24 22:46:19 [main] INFO  L.backend.BackendApplication - Started BackendApplication in 6.254 seconds (process running for 6.665)
+2024-11-24 22:46:32 [SpringApplicationShutdownHook] INFO  L.b.g.l.InstanceShutdownHandler - Application is shutting down, uploading logs to S3...
