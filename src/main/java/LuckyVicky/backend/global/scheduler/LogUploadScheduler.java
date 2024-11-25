@@ -13,7 +13,7 @@ public class LogUploadScheduler {
 
     private final S3LogService logService;
 
-    @Scheduled(cron = "0 */5 * * * ?", zone = "Asia/Seoul") // 5분에 한번씩으로 테스팅
+    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul")
     public void uploadDailyLogToS3() {
         log.error("Uploading Log to S3 with Scheduler");
         logService.uploadOrAppendLog("yesterday", true);
