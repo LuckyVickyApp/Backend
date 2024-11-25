@@ -15,14 +15,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Set;
 
 @Tag(name = "게임", description = "게임 관련 api 입니다.")
 @RestController
@@ -40,15 +39,17 @@ public class PachinkoController {
     @GetMapping("/chosen-squares")
     public ApiResponse<PachinkoChosenResDto> SelectedSquares(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ){
+    ) {
         User user = userService.findByUserName(customUserDetails.getUsername());
         Set<Integer> chosenSquares = pachinkoService.getSelectedSquares();
+        Long currentRound = pachinkoService.getCurrentRound();
 
         List<Integer> meChosenList = pachinkoService.getMeChosen(user);
         Set<Integer> meChosenSet = new HashSet<>(meChosenList);
         meChosenSet.remove(0);
 
-        return ApiResponse.onSuccess(SuccessCode.PACHINKO_GET_SQUARES_SUCCESS, PachinkoConverter.pachinkoChosenResDto(meChosenSet, chosenSquares));
+        return ApiResponse.onSuccess(SuccessCode.PACHINKO_GET_SQUARES_SUCCESS,
+                PachinkoConverter.pachinkoChosenResDto(currentRound, meChosenSet, chosenSquares));
     }
 
     @Operation(summary = "빠칭코 첫 게임 시작", description = "빠칭코 첫 게임의 각 칸에 대한 보상을 정하는 메서드입니다.")
@@ -56,7 +57,7 @@ public class PachinkoController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PACHINKO_2002", description = "빠칭코 첫 게임 시작 성공"),
     })
     @PostMapping("/start")
-    public ApiResponse<Boolean> startFirstGame(){
+    public ApiResponse<Boolean> startFirstGame() {
         pachinkoService.startFirstRound();
         return ApiResponse.onSuccess(SuccessCode.PACHINKO_START_SUCCESS, true);
     }
@@ -66,11 +67,12 @@ public class PachinkoController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PACHINKO_2003", description = "빠칭코 보상 반환 성공"),
     })
     @GetMapping("/reward")
-    public ApiResponse<PachinkoRewardResDto> getRewards(@AuthenticationPrincipal CustomUserDetails customUserDetails){
+    public ApiResponse<PachinkoRewardResDto> getRewards(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User user = userService.findByUserName(customUserDetails.getUsername());
         List<Long> userJewelList = pachinkoService.getRewards(user);
         List<Pachinko> pachinkoList = pachinkoService.getPreviousPachinkoRewards(user.getPreviousPachinkoRound());
-        return ApiResponse.onSuccess(SuccessCode.PACHINKO_REWARD_SHOW_SUCCESS, PachinkoConverter.pachinkoRewardResDto(userJewelList, pachinkoList));
+        return ApiResponse.onSuccess(SuccessCode.PACHINKO_REWARD_SHOW_SUCCESS,
+                PachinkoConverter.pachinkoRewardResDto(userJewelList, pachinkoList));
     }
 
 }

@@ -18,6 +18,9 @@ public class PachinkoResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class PachinkoChosenResDto {
+        @Schema(description = "현재 라운드")
+        private Long currentRound;
+
         @Schema(description = "내가 선택한 칸들")
         private Set<Integer> meChosen;
 
