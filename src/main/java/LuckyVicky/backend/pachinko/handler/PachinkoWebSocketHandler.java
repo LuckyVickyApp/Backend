@@ -34,6 +34,10 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) {
         sessions.add(session);
         System.out.println("새로운 사용자 접속");
+        System.out.println(sessions);
+        for (WebSocketSession webSocketSession : sessions) {
+            System.out.println(webSocketSession.getId());
+        }
     }
 
     @Override
