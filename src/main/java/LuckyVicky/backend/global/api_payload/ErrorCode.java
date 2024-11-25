@@ -13,7 +13,7 @@ public enum ErrorCode implements BaseCode {
     INVALID_PARAMETER(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON_5002", "잘못된 DAY Parameter 가 들어왔습니다. "),
 
     // Log
-    ERROR_LOG_NOT_FOUND(HttpStatus.NOT_FOUND, "LOG_4041", "에러 로그가 존재하지 않습니다. 서버 에러입니다."),
+    ERROR_LOG_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "LOG_5001", "에러 로그가 존재하지 않습니다. 서버 에러입니다."),
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_4041", "존재하지 않는 회원입니다."),
