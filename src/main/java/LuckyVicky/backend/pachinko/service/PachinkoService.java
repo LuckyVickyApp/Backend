@@ -58,6 +58,7 @@ public class PachinkoService {
         assignRewardsToSquares(currentRound);
     }
 
+    @Transactional
     public List<Integer> getMeChosen(User user) {
         UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, currentRound)
                 .orElse(UserPachinko.builder()
