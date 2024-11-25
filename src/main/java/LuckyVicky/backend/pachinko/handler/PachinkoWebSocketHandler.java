@@ -88,8 +88,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
     }
 
-    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare)
-            throws IOException {
+    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) {
         if (pachinkoService.selectSquare(user, currentRound, selectedSquare)) {
             broadcastMessage(user.getUsername() + "가 " + selectedSquare + "을 선택했습니다.");
             checkGameStatusAndCloseSessionsIfNeeded();
@@ -98,7 +97,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    private boolean validateUserState(WebSocketSession session, User user, long currentRound) throws IOException {
+    private boolean validateUserState(WebSocketSession session, User user, long currentRound) {
         if (pachinkoService.noMoreJewel(user)) {
             sendMessage(session, "칸을 선택할때 필요한 보석이 부족합니다.");
             return false;

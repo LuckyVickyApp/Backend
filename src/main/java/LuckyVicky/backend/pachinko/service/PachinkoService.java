@@ -162,7 +162,7 @@ public class PachinkoService {
 
     public boolean isGameOver() {
         System.out.println("모든 칸 선택 되었나 확인중");
-        return selectedSquares.size() == TOTAL_PACHINKO_SQUARE_COUNT;
+        return (selectedSquares.size() == TOTAL_PACHINKO_SQUARE_COUNT);
     }
 
     @Transactional
