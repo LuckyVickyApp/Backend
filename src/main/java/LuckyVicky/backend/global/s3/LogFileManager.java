@@ -30,7 +30,9 @@ public class LogFileManager {
             releaseLogFile(); // API나 스케줄러 호출 시 잠금 해제
         }
 
-        deleteLogFile(logFile);
+        if (logFile.exists()) {
+            deleteLogFile(logFile);
+        }
 
         resetLogbackContext();
 
@@ -63,7 +65,7 @@ public class LogFileManager {
             file.deleteOnExit(); // 삭제 실패 시 JVM 종료 시 삭제 예약
             log.warn("Marked log file for deletion on JVM exit: {}", file.getAbsolutePath());
         } else {
-            log.warn("Already deleted OR Log file does not exist");
+            log.warn("Log File Successfully deleted");
         }
     }
 }
