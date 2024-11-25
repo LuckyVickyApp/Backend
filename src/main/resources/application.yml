@@ -49,7 +49,7 @@ springdoc:
 
 logging:
   level:
-    root: INFO
+    root: ERROR
   profiles:
     local:
       level: INFO
