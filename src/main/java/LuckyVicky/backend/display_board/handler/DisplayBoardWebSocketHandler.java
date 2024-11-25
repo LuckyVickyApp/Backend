@@ -1,8 +1,11 @@
 package LuckyVicky.backend.display_board.handler;
 
 import LuckyVicky.backend.display_board.dto.DisplayMessage;
+import LuckyVicky.backend.display_board.repository.DisplayMessageRepository;
+import LuckyVicky.backend.display_board.service.DisplayBoardService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class DisplayBoardWebSocketHandler extends TextWebSocketHandler {
     // 현재 연결된 모든 WebSocket 세션을 저장하는 리스트
     private final List<WebSocketSession> sessions = new ArrayList<>();
+    private final DisplayMessageRepository displayMessageRepository;
+    private final DisplayBoardService displayBoardService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -31,10 +36,9 @@ public class DisplayBoardWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
     }
 
-    @Scheduled(fixedRate = )
-
-    public void showMessageThroughDisplayBoard(DisplayMessage displayMessage) {
-        broadcastMessage(displayMessage.getContent());
+    @Scheduled(fixedRate = 5000)
+    public void broadcastActiveMessages() {
+        broadcastMessage(displayBoardService.getNextDisplayMessage().getContent()); // 메시지 내용 브로드캐스트
     }
 
     private void broadcastMessage(String message) {
