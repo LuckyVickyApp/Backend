@@ -49,7 +49,7 @@ public class RouletteService {
         }
 
         // 10초호 다시 룰렛 사용 가능
-        user.setRouletteAvailableTime(LocalDateTime.now().plusSeconds(10));
+        user.setRouletteAvailableTime(LocalDateTime.now().plusSeconds(30));
 
         userRepository.save(user);
     }
