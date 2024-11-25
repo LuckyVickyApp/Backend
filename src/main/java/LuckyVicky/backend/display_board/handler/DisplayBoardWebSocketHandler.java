@@ -21,7 +21,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class DisplayBoardWebSocketHandler extends TextWebSocketHandler {
     // 현재 연결된 모든 WebSocket 세션을 저장하는 리스트
     private final List<WebSocketSession> sessions = new ArrayList<>();
-    private final DisplayMessageRepository displayMessageRepository;
     private final DisplayBoardService displayBoardService;
 
     @Override
@@ -38,8 +37,28 @@ public class DisplayBoardWebSocketHandler extends TextWebSocketHandler {
 
     @Scheduled(fixedRate = 5000)
     public void broadcastActiveMessages() {
-        broadcastMessage(displayBoardService.getNextDisplayMessage().getContent()); // 메시지 내용 브로드캐스트
+        try {
+            System.out.println("Executing broadcastActiveMessages at " + LocalDateTime.now());
+
+            DisplayMessage message = displayBoardService.getNextDisplayMessage();
+            if (message != null) {
+                System.out.println("Broadcasting message: " + message.getContent());
+
+                if (!sessions.isEmpty()) {
+                    broadcastMessage(message.getContent());
+                } else {
+                    System.out.println("No active WebSocket sessions to broadcast.");
+                }
+            } else {
+                System.out.println("No active message to broadcast.");
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error occurred in broadcastActiveMessages: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
 
     private void broadcastMessage(String message) {
         for (WebSocketSession session : sessions) {

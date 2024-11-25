@@ -32,7 +32,7 @@ public class DisplayBoardService {
 
             displayMessageQueue.addAll(messages);
 
-            log.info(INITIALIZE_QUEUE_SUCCESS_MESSAGE, messages.size());
+            log.info(INITIALIZE_QUEUE_SUCCESS_MESSAGE,displayMessageQueue.size());
 
         } catch (Exception e) {
             log.error(INITIALIZE_QUEUE_FAIL_MESSAGE, e.getMessage(), e);
@@ -42,12 +42,14 @@ public class DisplayBoardService {
     public DisplayMessage getNextDisplayMessage() {
         LocalDateTime now = LocalDateTime.now();
 
+        System.out.println(displayMessageQueue);
+
         while(!displayMessageQueue.isEmpty()) {
             // pop
             DisplayMessage message =  displayMessageQueue.poll();
 
             // displayStartTime <= now <= displayEndTime
-            if (message.getDisplayStartTime().isAfter(now) && message.getDisplayEndTime().isBefore(now)) {
+            if (!message.getDisplayStartTime().isAfter(now) && !message.getDisplayEndTime().isBefore(now)) {
                 displayMessageQueue.offer(message);
                 return message;
             }
