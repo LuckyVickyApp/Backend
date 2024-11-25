@@ -7,8 +7,10 @@ import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
+import com.amazonaws.services.s3.transfer.Upload;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -49,13 +51,31 @@ public class S3LogService {
 
             mergeFilesFromS3(tempFile, s3Key, localFile);
 
-            amazonS3.putObject(new PutObjectRequest(bucket, s3Key, tempFile));
-            log.error("Noticing that log is Uploaded to S3: {}", s3Key);
+            uploadLargeFileToS3(tempFile, s3Key);
 
             logFileManager.recreateLogFile(releaseLogContext);
 
         } catch (Exception e) {
+            // 추가적인 오류 처리 및 복구 로직
             log.error("Failed to upload or append log to S3: {}", s3Key, e);
+        }
+    }
+
+    public void uploadLargeFileToS3(File file, String s3Key) {
+        TransferManager transferManager = TransferManagerBuilder.standard()
+                .withS3Client(amazonS3)
+                .build();
+
+        try {
+            Upload upload = transferManager.upload(bucket, s3Key, file);
+            log.info("Multipart upload started for: {}", s3Key);
+
+            upload.waitForCompletion();
+            log.info("Multipart upload completed for: {}", s3Key);
+        } catch (Exception e) {
+            log.error("Multipart upload failed for: {}", s3Key, e);
+        } finally {
+            transferManager.shutdownNow();
         }
     }
 
