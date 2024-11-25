@@ -132,6 +132,8 @@ public class PachinkoService {
         // 보석 차감 로직
         deductUserJewel(user);
 
+        userpachinkoRepository.save(userPachinko);
+
         selectedSquares.add(squareNumber);
 
         return true;
@@ -208,7 +210,9 @@ public class PachinkoService {
         PachinkoReward b1 = pachinkoRewardRepository.findByJewelTypeAndJewelNum(JewelType.B, 1)
                 .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
 
-        int fSquareCount = TOTAL_PACHINKO_SQUARE_COUNT - (s1.getSquareCount() + a1.getSquareCount() + b2.getSquareCount() + b1.getSquareCount());
+        int fSquareCount =
+                TOTAL_PACHINKO_SQUARE_COUNT - (s1.getSquareCount() + a1.getSquareCount() + b2.getSquareCount()
+                        + b1.getSquareCount());
 
         for (int i = 0; i < s1.getSquareCount(); i++) {
             rewards.add(REWARD_S1);
