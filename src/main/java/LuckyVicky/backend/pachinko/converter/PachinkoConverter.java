@@ -19,10 +19,12 @@ public class PachinkoConverter {
         throw new UnsupportedOperationException(CONVERTER_INSTANTIATION_NOT_ALLOWED);
     }
 
-    public static PachinkoChosenResDto pachinkoChosenResDto(Set<Integer> meChosen, Set<Integer> chosenSquares) {
+    public static PachinkoChosenResDto pachinkoChosenResDto(Long currentRound, Set<Integer> meChosen,
+                                                            Set<Integer> chosenSquares) {
         chosenSquares.removeAll(meChosen);
 
         return PachinkoChosenResDto.builder()
+                .currentRound(currentRound)
                 .meChosen(meChosen)
                 .othersChosen(chosenSquares)
                 .build();

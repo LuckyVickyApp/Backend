@@ -118,6 +118,8 @@ public class PachinkoService {
 
         // 이미 선택된 칸인지 확인
         if (selectedSquares.contains(squareNumber)) {
+            System.out.println(selectedSquares);
+
             return false;
         }
 
