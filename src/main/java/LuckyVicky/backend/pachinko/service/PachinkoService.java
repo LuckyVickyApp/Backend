@@ -49,13 +49,18 @@ public class PachinkoService {
     private final UserRepository userRepository;
 
     @Getter
-    private final Set<Integer> selectedSquares = new HashSet<>();
+    private final Set<Integer> selectedSquares = Collections.synchronizedSet(new HashSet<>()); // 스레드 간 동기화 제공
+
+    public Set<Integer> viewSelectedSquares() { // 읽기 전용 뷰 반환
+        return Collections.unmodifiableSet(selectedSquares);
+    }
 
     @Getter
     private Long currentRound = 1L;
 
     public void startFirstRound() {
         assignRewardsToSquares(currentRound);
+        System.out.println("첫번쨰 라운드를 시작하기 위해 각 칸에 보상 할당을 완료했습니다.");
     }
 
     @Transactional
@@ -112,15 +117,21 @@ public class PachinkoService {
     }
 
     @Transactional
-    public boolean selectSquare(User user, long currentRound, int squareNumber) {
+    public String selectSquare(User user, long currentRound, int squareNumber) {
         // 6*6 안의 칸인지 확인
         validateSquareNumber(squareNumber);
 
         // 이미 선택된 칸인지 확인
         if (selectedSquares.contains(squareNumber)) {
-            System.out.println(selectedSquares);
+            System.out.println(selectedSquares + "이미 " + squareNumber + "가 존재합니다.");
 
-            return false;
+            if (isUserSelected(user, currentRound, squareNumber)) {
+                System.out.println("본인이 이전에 선택한 칸입니다.");
+                return "본인이 이전에 선택한 칸입니다.";
+            } else {
+                System.out.println("다른 사용자가 이전에 선택한 칸입니다.");
+                return "다른 사용자가 이전에 선택한 칸입니다.";
+            }
         }
 
         // 사용자 Pachinko 상태 조회
@@ -129,17 +140,35 @@ public class PachinkoService {
 
         // 칸 추가 로직 & 더 이상 선택할 수 없는 경우 처리
         if (!userPachinko.addSquare(squareNumber)) {
-            return false;
+            System.out.println("이미 세칸을 선택하셨습니다.");
+            return "이미 세개의 칸을 선택하셨습니다.";
         }
+
+        userpachinkoRepository.save(userPachinko);
+        System.out.println("user packinko에 선택한 칸인 " + squareNumber + "을 저장했습니다.");
 
         // 보석 차감 로직
         deductUserJewel(user);
+        System.out.println("빠칭코 칸 선택을 위해 b급 보석 하나를 지불하셔서 db에서 보석을 차감했습니다.");
 
-        userpachinkoRepository.save(userPachinko);
+        // 선택한 칸 set에 넣기
+        addSelectedSquare(squareNumber);
+        System.out.println("선택한 칸을 set에 삽입했습니다. 변경된 set: " + selectedSquares);
 
-        selectedSquares.add(squareNumber);
+        return "정상적으로 선택 완료되었습니다.";
+    }
 
-        return true;
+    private boolean isUserSelected(User user, long currentRound, int squareNumber) {
+        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, currentRound)
+                .orElseGet(() -> initializeUserPachinko(user, currentRound));
+        Integer s1 = userPachinko.getSquare1();
+        Integer s2 = userPachinko.getSquare2();
+        Integer s3 = userPachinko.getSquare3();
+        return (squareNumber == s1 || squareNumber == s2 || squareNumber == s3);
+    }
+
+    public synchronized void addSelectedSquare(int square) {
+        selectedSquares.add(square);
     }
 
     private void deductUserJewel(User user) {
@@ -184,15 +213,15 @@ public class PachinkoService {
                 if (squares.get(i) > 0) {
                     int sq = squares.get(i);
                     // 해당 칸에 대한 보상 알아내기
+                    System.out.println("보상찾기 - squares.get(i): " + squares.get(i));
                     Pachinko pa = pachinkoRepository.findByRoundAndSquare(currentRound, sq)
                             .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
                     if (pa.getJewelType() != JewelType.F) {
-                        // 보상에 맞는 보석 종류의 보석함 엔티티 알아내기
                         UserJewel uj = userJewelRepository.findByUserAndJewelType(user, pa.getJewelType())
                                 .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
-                        // 보석 개수 늘리기
                         uj.setCount(pa.getJewelNum());
                         userJewelRepository.save(uj);
+                        System.out.println("user jewel 보상에 따라 갱신완료");
                     }
                 }
             }
@@ -257,7 +286,7 @@ public class PachinkoService {
                 jewelNum = 0;
             }
 
-            Pachinko newPachinco = PachinkoConverter.savePachinko(currentRound, i, jewelType, jewelNum);
+            Pachinko newPachinco = PachinkoConverter.savePachinko(currentRound, i + 1, jewelType, jewelNum);
             pachinkoRepository.save(newPachinco);
             System.out.println("각각의 칸에 보상 설정 완료");
         }
