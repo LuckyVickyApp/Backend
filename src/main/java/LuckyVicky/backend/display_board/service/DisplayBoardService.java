@@ -64,6 +64,9 @@ public class DisplayBoardService {
         try {
             DisplayMessage displayMessage = DisplayBoardConverter.saveDisplayMessage(displayMessageType, nickname);
             displayMessageRepository.save(displayMessage);
+
+            displayMessageQueue.offer(displayMessage);
+
             System.out.println("Successfully added DisplayMessage: {}" + displayMessage);
         } catch (Exception e) {
             System.out.println("Error adding DisplayMessage for nickname: " +  nickname + ", type: " + displayMessageType);
