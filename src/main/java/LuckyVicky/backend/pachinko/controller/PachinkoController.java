@@ -41,11 +41,13 @@ public class PachinkoController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         User user = userService.findByUserName(customUserDetails.getUsername());
-        Set<Integer> chosenSquares = pachinkoService.getSelectedSquares();
+        Set<Integer> chosenSquares = pachinkoService.viewSelectedSquares();
         Long currentRound = pachinkoService.getCurrentRound();
 
         List<Integer> meChosenList = pachinkoService.getMeChosen(user);
         Set<Integer> meChosenSet = new HashSet<>(meChosenList);
+        System.out.println("controller에서 meChosenList을 set으로 바꾼 결과: " + meChosenSet);
+
         meChosenSet.remove(0);
 
         return ApiResponse.onSuccess(SuccessCode.PACHINKO_GET_SQUARES_SUCCESS,
@@ -59,6 +61,7 @@ public class PachinkoController {
     @PostMapping("/start")
     public ApiResponse<Boolean> startFirstGame() {
         pachinkoService.startFirstRound();
+        System.out.println("controller에서 startFirstRound로 첫판 세팅 완료");
         return ApiResponse.onSuccess(SuccessCode.PACHINKO_START_SUCCESS, true);
     }
 
