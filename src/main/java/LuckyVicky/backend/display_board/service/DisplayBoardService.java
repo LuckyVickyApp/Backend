@@ -4,6 +4,8 @@ import LuckyVicky.backend.display_board.converter.DisplayBoardConverter;
 import LuckyVicky.backend.display_board.dto.DisplayMessage;
 import LuckyVicky.backend.display_board.dto.DisplayMessageType;
 import LuckyVicky.backend.display_board.repository.DisplayMessageRepository;
+import LuckyVicky.backend.item.domain.Item;
+import LuckyVicky.backend.user.domain.User;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -60,17 +62,32 @@ public class DisplayBoardService {
         return null;
     }
 
-    public void addDisplayMessage(String nickname, DisplayMessageType displayMessageType) {
+    private void addDisplayMessage(DisplayMessageType displayMessageType, String content) {
         try {
-            DisplayMessage displayMessage = DisplayBoardConverter.saveDisplayMessage(displayMessageType, nickname);
+            DisplayMessage displayMessage = DisplayBoardConverter.saveDisplayMessage(displayMessageType, content);
             displayMessageRepository.save(displayMessage);
 
             displayMessageQueue.offer(displayMessage);
 
-            System.out.println("Successfully added DisplayMessage: {}" + displayMessage);
+            // System.out.println("Successfully added DisplayMessage: " + displayMessage);
         } catch (Exception e) {
-            System.out.println("Error adding DisplayMessage for nickname: " +  nickname + ", type: " + displayMessageType);
+            // System.out.println("Error adding DisplayMessage for content: " +  content + ", type: " + displayMessageType);
             throw e; // 재처리를 위해 예외를 다시 던질 수 있음
         }
+    }
+
+    public void addPachinkoSJewelMessage(User user) {
+        String content = user.getNickname() + DisplayMessageType.PACHINKO_S_JEWEL_MESSAGE.getMessageFormList().get(0);
+        addDisplayMessage(DisplayMessageType.PACHINKO_S_JEWEL_MESSAGE, content);
+    }
+
+    public void addEnhanceItem1stMessage(User user, Item item, Integer ranking) {
+        if (ranking != 1) return;
+
+        List<String> messageFormList = DisplayMessageType.ENHANCE_ITEM_1ST_MESSAGE.getMessageFormList();
+
+        String content = user.getNickname() + messageFormList.get(0) + item.getName() + messageFormList.get(1);
+
+        addDisplayMessage(DisplayMessageType.ENHANCE_ITEM_1ST_MESSAGE, content);
     }
 }

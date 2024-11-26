@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DisplayBoardConverter {
-    public static DisplayMessage saveDisplayMessage(DisplayMessageType displayMessageType, String nickname) {
+    public static DisplayMessage saveDisplayMessage(DisplayMessageType displayMessageType, String content) {
 
         return DisplayMessage.builder()
                 .displayMessageType(displayMessageType)
                 .displayStartTime(LocalDateTime.now())
                 .displayEndTime(LocalDateTime.now().plus(displayMessageType.getDuration()))
-                .content(nickname + displayMessageType.getMessageForm())
+                .content(content)
                 .build();
     }
 }

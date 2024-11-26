@@ -221,7 +221,7 @@ public class PachinkoService {
                             .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
 
                     if (pa.getJewelType() == JewelType.S) {
-                        displayBoardService.addDisplayMessage(user.getNickname(), DisplayMessageType.PACHINKO_S_JEWEL_MESSAGE);
+                        displayBoardService.addPachinkoSJewelMessage(user);
                     }
 
                     if (pa.getJewelType() != JewelType.F) {
