@@ -8,6 +8,8 @@ import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.entity.Uuid;
 import LuckyVicky.backend.global.exception.GeneralException;
+import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
+import LuckyVicky.backend.global.fcm.repository.UserDeviceTokenRepository;
 import LuckyVicky.backend.global.repository.UuidRepository;
 import LuckyVicky.backend.global.s3.AmazonS3Manager;
 import LuckyVicky.backend.user.converter.UserConverter;
@@ -45,6 +47,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserDeviceTokenRepository userDeviceTokenRepository;
     private final JpaUserDetailsManager manager;
     private final JwtTokenUtils jwtTokenUtils;
     private final AmazonS3Manager amazonS3Manager;
@@ -72,6 +75,11 @@ public class UserService {
         userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.S).count(0).build());
         userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.A).count(5).build());
         userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.B).count(10).build());
+
+        // 디바이스 토큰 저장하기
+        UserDeviceToken userDeviceToken = userDeviceTokenRepository.save(
+                UserConverter.saveDeviceToken(newUser, userReqDto));
+        userDeviceTokenRepository.save(userDeviceToken);
 
         // 새로운 사용자 정보를 반환하기 전에 저장된 UserDetails를 다시 로드하여 동기화 시도
         manager.loadUserByUsername(userReqDto.getUsername());

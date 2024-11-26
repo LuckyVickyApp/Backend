@@ -2,6 +2,7 @@ package LuckyVicky.backend.user.domain;
 
 import LuckyVicky.backend.enhance.domain.EnhanceItem;
 import LuckyVicky.backend.global.entity.BaseEntity;
+import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
 import LuckyVicky.backend.invitation.domain.Invitation;
 import LuckyVicky.backend.item.domain.ItemLike;
 import LuckyVicky.backend.pachinko.domain.UserPachinko;
@@ -96,6 +97,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<UserPachinko> userPachinkoList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<UserDeviceToken> deviceTokenList = new ArrayList<>();
 
     public User(String username, String nickname, String email, String provider) {
         this.username = username;

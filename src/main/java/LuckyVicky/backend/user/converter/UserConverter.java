@@ -1,6 +1,7 @@
 package LuckyVicky.backend.user.converter;
 
 import LuckyVicky.backend.global.entity.Uuid;
+import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.dto.JwtDto;
 import LuckyVicky.backend.user.dto.UserRequestDto;
@@ -28,6 +29,13 @@ public class UserConverter {
                 .previousPachinkoRound(0L)
                 .rouletteAvailableTime(today)
                 .advertiseTodayLeftNum(10)
+                .build();
+    }
+
+    public static UserDeviceToken saveDeviceToken(User user, UserRequestDto.UserReqDto userReqDto) {
+        return UserDeviceToken.builder()
+                .user(user)
+                .deviceToken(userReqDto.getDeviceToken())
                 .build();
     }
 
