@@ -1,6 +1,8 @@
 package LuckyVicky.backend.display_board.service;
 
+import LuckyVicky.backend.display_board.converter.DisplayBoardConverter;
 import LuckyVicky.backend.display_board.dto.DisplayMessage;
+import LuckyVicky.backend.display_board.dto.DisplayMessageType;
 import LuckyVicky.backend.display_board.repository.DisplayMessageRepository;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -56,5 +58,16 @@ public class DisplayBoardService {
         }
 
         return null;
+    }
+
+    public void addDisplayMessage(String nickname, DisplayMessageType displayMessageType) {
+        try {
+            DisplayMessage displayMessage = DisplayBoardConverter.saveDisplayMessage(displayMessageType, nickname);
+            displayMessageRepository.save(displayMessage);
+            System.out.println("Successfully added DisplayMessage: {}" + displayMessage);
+        } catch (Exception e) {
+            System.out.println("Error adding DisplayMessage for nickname: " +  nickname + ", type: " + displayMessageType);
+            throw e; // 재처리를 위해 예외를 다시 던질 수 있음
+        }
     }
 }
