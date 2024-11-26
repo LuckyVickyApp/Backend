@@ -10,6 +10,7 @@ import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoRewardResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoSquareRewardResDto;
 import LuckyVicky.backend.pachinko.dto.PachinkoResponseDto.PachinkoUserRewardResDto;
 import LuckyVicky.backend.user.domain.User;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,12 +22,15 @@ public class PachinkoConverter {
 
     public static PachinkoChosenResDto pachinkoChosenResDto(Long currentRound, Set<Integer> meChosen,
                                                             Set<Integer> chosenSquares) {
-        chosenSquares.removeAll(meChosen);
+
+        Set<Integer> chosenSquaresCopy = new HashSet<>(chosenSquares);
+
+        chosenSquaresCopy.removeAll(meChosen);
 
         return PachinkoChosenResDto.builder()
                 .currentRound(currentRound)
                 .meChosen(meChosen)
-                .othersChosen(chosenSquares)
+                .othersChosen(chosenSquaresCopy)
                 .build();
     }
 

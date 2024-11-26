@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -34,7 +35,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) {
         sessions.add(session);
         System.out.println("새로운 사용자 접속");
-        System.out.println(sessions);
+        System.out.println("session 안의 요소 개수: " + sessions.size());
         for (WebSocketSession webSocketSession : sessions) {
             System.out.println(webSocketSession.getId());
         }
@@ -88,17 +89,25 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
     }
 
-    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare)
-            throws IOException {
-        if (pachinkoService.selectSquare(user, currentRound, selectedSquare)) {
+    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) {
+        System.out.println(pachinkoService.viewSelectedSquares() + "핸들러에서 processSquareSelection 시작지점");
+
+        String result = pachinkoService.selectSquare(user, currentRound, selectedSquare);
+        System.out.println(pachinkoService.viewSelectedSquares() + "핸들러에서 processSquareSelection 시작지점");
+
+        if (Objects.equals(result, "정상적으로 선택 완료되었습니다.")) {
             broadcastMessage(user.getUsername() + "가 " + selectedSquare + "을 선택했습니다.");
             checkGameStatusAndCloseSessionsIfNeeded();
-        } else {
+        } else if (Objects.equals(result, "다른 사용자가 이전에 선택한 칸입니다.")) {
             sendMessage(session, selectedSquare + "번째 칸은 이미 다른 사용자에 의해 선택되었습니다.");
+        } else if (Objects.equals(result, "본인이 이전에 선택한 칸입니다.")) {
+            sendMessage(session, selectedSquare + "번째 칸은 본인이 이전에 선택한 칸입니다.");
+        } else {
+            sendMessage(session, "이미 3칸을 선택하셔서 더 이상 칸을 선택할 수 없습니다.");
         }
     }
 
-    private boolean validateUserState(WebSocketSession session, User user, long currentRound) throws IOException {
+    private boolean validateUserState(WebSocketSession session, User user, long currentRound) {
         if (pachinkoService.noMoreJewel(user)) {
             sendMessage(session, "칸을 선택할때 필요한 보석이 부족합니다.");
             return false;
