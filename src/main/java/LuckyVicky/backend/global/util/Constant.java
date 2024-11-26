@@ -19,6 +19,9 @@ public class Constant {
     // Attendance
     public static final int ATTENDANCE_CYCLE_DAYS = 12;
 
+    // Fcm
+    public static final int DEVICE_REGISTRATION_LIMIT = 3;
+
     // Notice
     public static final String CONVERTER_INSTANTIATION_NOT_ALLOWED = "Converter class는 인스턴스화가 불가능합니다.";
 

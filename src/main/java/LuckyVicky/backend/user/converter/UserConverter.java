@@ -32,10 +32,10 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserDeviceToken saveDeviceToken(User user, UserRequestDto.UserReqDto userReqDto) {
+    public static UserDeviceToken saveDeviceToken(User user, String deviceToken) {
         return UserDeviceToken.builder()
                 .user(user)
-                .deviceToken(userReqDto.getDeviceToken())
+                .deviceToken(deviceToken)
                 .build();
     }
 

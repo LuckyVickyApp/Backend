@@ -1,5 +1,6 @@
 package LuckyVicky.backend.global.fcm.domain;
 
+import LuckyVicky.backend.global.entity.BaseEntity;
 import LuckyVicky.backend.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "user_device_token")
-public class UserDeviceToken {
+public class UserDeviceToken extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,5 +35,4 @@ public class UserDeviceToken {
 
     @Column(nullable = false)
     private String deviceToken;
-
 }
