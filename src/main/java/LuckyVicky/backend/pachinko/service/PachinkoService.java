@@ -49,13 +49,14 @@ public class PachinkoService {
     private final UserRepository userRepository;
 
     @Getter
-    private final Set<Integer> selectedSquares = new HashSet<>();
+    private final Set<Integer> selectedSquares = Collections.synchronizedSet(new HashSet<>());
 
     @Getter
     private Long currentRound = 1L;
 
     public void startFirstRound() {
         assignRewardsToSquares(currentRound);
+        System.out.println("첫번쨰 라운드를 시작하기 위해 각 칸에 보상 할당을 완료했습니다.");
     }
 
     @Transactional
@@ -118,7 +119,7 @@ public class PachinkoService {
 
         // 이미 선택된 칸인지 확인
         if (selectedSquares.contains(squareNumber)) {
-            System.out.println(selectedSquares);
+            System.out.println(selectedSquares + "이미 " + squareNumber + "가 존재합니다.");
 
             return false;
         }
@@ -129,15 +130,20 @@ public class PachinkoService {
 
         // 칸 추가 로직 & 더 이상 선택할 수 없는 경우 처리
         if (!userPachinko.addSquare(squareNumber)) {
+            System.out.println("이미 세칸을 선택하셨습니다.");
             return false;
         }
 
+        userpachinkoRepository.save(userPachinko);
+        System.out.println("user packinko에 선택한 칸인 " + squareNumber + "을 저장했습니다.");
+
         // 보석 차감 로직
         deductUserJewel(user);
+        System.out.println("빠칭코 칸 선택을 위해 b급 보석 하나를 지불하셔서 db에서 보석을 차감했습니다.");
 
-        userpachinkoRepository.save(userPachinko);
-
+        // 선택한 칸 set에 넣기
         selectedSquares.add(squareNumber);
+        System.out.println("선택한 칸을 set에 삽입했습니다. 변경된 set: " + selectedSquares);
 
         return true;
     }
