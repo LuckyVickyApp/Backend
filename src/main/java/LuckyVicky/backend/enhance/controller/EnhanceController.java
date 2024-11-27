@@ -1,5 +1,6 @@
 package LuckyVicky.backend.enhance.controller;
 
+import LuckyVicky.backend.display_board.service.DisplayBoardService;
 import LuckyVicky.backend.enhance.converter.EnhanceConverter;
 import LuckyVicky.backend.enhance.service.EnhanceService;
 import LuckyVicky.backend.global.api_payload.ApiResponse;
@@ -37,6 +38,7 @@ public class EnhanceController {
     private final ItemService itemService;
     private final EnhanceItemService enhanceItemService;
     private final EnhanceService enhanceService;
+    private final DisplayBoardService displayBoardService;
 
     @Operation(summary = "강화 화면 요소 반환 메서드", description = "강화 화면에 필요한 요소들을 반환하는 메서드입니다.")
     @ApiResponses(value = {
@@ -87,6 +89,8 @@ public class EnhanceController {
 
         // 랭킹 변화 수치
         Integer rankingChange = previousRanking - afterRanking;
+
+        displayBoardService.addEnhanceItem1stMessage(user, item, afterRanking);
 
         return ApiResponse.onSuccess(SuccessCode.ENHANCE_RESULT_SUCCESS, EnhanceConverter.itemEnhanceExecuteResDto(enhanceItem, enhanceResult, rankingChange));
     }

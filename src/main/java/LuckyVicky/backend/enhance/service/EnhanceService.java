@@ -25,6 +25,7 @@ public class EnhanceService {
     private final EnhanceItemRepository enhanceItemRepository;
     private final UserJewelRepository userJewelRepository;
 
+
     // 상품 강화 후, 결과 반환
     @Transactional
     public EnhanceResult getItemEnhanceResult(EnhanceItem enhanceItem, String jewelTypeStr) {

@@ -1,5 +1,7 @@
 package LuckyVicky.backend.pachinko.service;
 
+import LuckyVicky.backend.display_board.dto.DisplayMessageType;
+import LuckyVicky.backend.display_board.service.DisplayBoardService;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
@@ -47,6 +49,7 @@ public class PachinkoService {
     private final PachinkoRewardRepository pachinkoRewardRepository;
     private final UserJewelRepository userJewelRepository;
     private final UserRepository userRepository;
+    private final DisplayBoardService displayBoardService;
 
     @Getter
     private final Set<Integer> selectedSquares = Collections.synchronizedSet(new HashSet<>()); // 스레드 간 동기화 제공
@@ -216,6 +219,11 @@ public class PachinkoService {
                     System.out.println("보상찾기 - squares.get(i): " + squares.get(i));
                     Pachinko pa = pachinkoRepository.findByRoundAndSquare(currentRound, sq)
                             .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
+
+                    if (pa.getJewelType() == JewelType.S) {
+                        displayBoardService.addPachinkoSJewelMessage(user);
+                    }
+
                     if (pa.getJewelType() != JewelType.F) {
                         UserJewel uj = userJewelRepository.findByUserAndJewelType(user, pa.getJewelType())
                                 .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
