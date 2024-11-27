@@ -26,7 +26,7 @@ public class UserConverter {
                 .signInDate(todayDate)
                 .lastAttendanceCheckedDay(0)
                 .inviteCode(Uuid.generateUuid().getUuid())
-                .previousPachinkoRound(0L)
+                .previousPachinkoRound(-1L)
                 .rouletteAvailableTime(today)
                 .advertiseTodayLeftNum(10)
                 .build();

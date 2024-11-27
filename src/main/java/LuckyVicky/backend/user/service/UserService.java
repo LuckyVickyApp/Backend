@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.crypto.BadPaddingException;
@@ -62,13 +64,28 @@ public class UserService {
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND_BY_USERNAME));
     }
 
+    public UserJewel findFirstByUserAndJewelType(User user, JewelType jewelType) {
+        return userJewelRepository.findFirstByUserAndJewelType(user, jewelType);
+    }
+
+    public List<Integer> getUserJewels(User user) {
+        List<Integer> jewelsNumber = new ArrayList<>();
+        UserJewel jewelB = findFirstByUserAndJewelType(user, JewelType.B);
+        UserJewel jewelA = findFirstByUserAndJewelType(user, JewelType.A);
+        UserJewel jewelS = findFirstByUserAndJewelType(user, JewelType.S);
+        jewelsNumber.add(jewelB.getCount());
+        jewelsNumber.add(jewelA.getCount());
+        jewelsNumber.add(jewelS.getCount());
+        return jewelsNumber;
+    }
+
     @Transactional
     public Boolean checkMemberByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
     @Transactional
-    public User createUser(UserReqDto userReqDto) {
+    public User createUser(UserRequestDto.UserReqDto userReqDto) {
         Uuid uuid = Uuid.generateUuid();
         String nick = "user" + uuid.getUuid();
         uuidRepository.save(uuid);

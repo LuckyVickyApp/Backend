@@ -56,7 +56,7 @@ public class PachinkoService {
     }
 
     @Getter
-    private Long currentRound = 1L;
+    private Long currentRound = 0L;
 
     public void startFirstRound() {
         assignRewardsToSquares(currentRound);
@@ -295,7 +295,7 @@ public class PachinkoService {
     @Transactional
     public List<Long> getRewards(User user) {
         Long round = user.getPreviousPachinkoRound();
-        if (round == 0) {
+        if (round == -1) {
             throw new GeneralException(ErrorCode.PACHINKO_NO_PREVIOUS_ROUND);
         }
 
