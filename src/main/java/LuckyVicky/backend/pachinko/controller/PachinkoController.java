@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "게임", description = "게임 관련 api 입니다.")
+@Tag(name = "빠칭코", description = "빠칭코 관련 api 입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/game/pachinko")
@@ -41,6 +41,9 @@ public class PachinkoController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         User user = userService.findByUserName(customUserDetails.getUsername());
+
+        List<Integer> jewelsNumber = userService.getUserJewels(user);
+
         Set<Integer> chosenSquares = pachinkoService.viewSelectedSquares();
         Long currentRound = pachinkoService.getCurrentRound();
 
@@ -51,7 +54,7 @@ public class PachinkoController {
         meChosenSet.remove(0);
 
         return ApiResponse.onSuccess(SuccessCode.PACHINKO_GET_SQUARES_SUCCESS,
-                PachinkoConverter.pachinkoChosenResDto(currentRound, meChosenSet, chosenSquares));
+                PachinkoConverter.pachinkoChosenResDto(jewelsNumber, currentRound, meChosenSet, chosenSquares));
     }
 
     @Operation(summary = "빠칭코 첫 게임 시작", description = "빠칭코 첫 게임의 각 칸에 대한 보상을 정하는 메서드입니다.")
@@ -72,10 +75,14 @@ public class PachinkoController {
     @GetMapping("/reward")
     public ApiResponse<PachinkoRewardResDto> getRewards(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User user = userService.findByUserName(customUserDetails.getUsername());
-        List<Long> userJewelList = pachinkoService.getRewards(user);
+        List<Integer> jewelsNumber = userService.getUserJewels(user);
+
+        List<Long> rewardList = pachinkoService.getRewards(user);
+
         List<Pachinko> pachinkoList = pachinkoService.getPreviousPachinkoRewards(user.getPreviousPachinkoRound());
+
         return ApiResponse.onSuccess(SuccessCode.PACHINKO_REWARD_SHOW_SUCCESS,
-                PachinkoConverter.pachinkoRewardResDto(userJewelList, pachinkoList));
+                PachinkoConverter.pachinkoRewardResDto(jewelsNumber, rewardList, pachinkoList));
     }
 
 }

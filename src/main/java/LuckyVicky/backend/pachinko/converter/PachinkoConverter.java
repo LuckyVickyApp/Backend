@@ -20,7 +20,8 @@ public class PachinkoConverter {
         throw new UnsupportedOperationException(CONVERTER_INSTANTIATION_NOT_ALLOWED);
     }
 
-    public static PachinkoChosenResDto pachinkoChosenResDto(Long currentRound, Set<Integer> meChosen,
+    public static PachinkoChosenResDto pachinkoChosenResDto(List<Integer> jewelsNumber, Long currentRound,
+                                                            Set<Integer> meChosen,
                                                             Set<Integer> chosenSquares) {
 
         Set<Integer> chosenSquaresCopy = new HashSet<>(chosenSquares);
@@ -28,6 +29,7 @@ public class PachinkoConverter {
         chosenSquaresCopy.removeAll(meChosen);
 
         return PachinkoChosenResDto.builder()
+                .jewelsNumber(jewelsNumber)
                 .currentRound(currentRound)
                 .meChosen(meChosen)
                 .othersChosen(chosenSquaresCopy)
@@ -54,8 +56,10 @@ public class PachinkoConverter {
                 .collect(Collectors.toList());
     }
 
-    public static PachinkoRewardResDto pachinkoRewardResDto(List<Long> userJewelList, List<Pachinko> pachinkoList) {
+    public static PachinkoRewardResDto pachinkoRewardResDto(List<Integer> jewelsNumber, List<Long> userJewelList,
+                                                            List<Pachinko> pachinkoList) {
         return PachinkoRewardResDto.builder()
+                .jewelsNumber(jewelsNumber)
                 .pachinkoUserRewardResDto(pachinkoUserRewardResDto(userJewelList))
                 .pachinkoSquareRewardResDtoList(pachinkoSquareRewardResDto(pachinkoList))
                 .build();

@@ -18,6 +18,10 @@ public class PachinkoResponseDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class PachinkoChosenResDto {
+
+        @Schema(description = "유저의 B, A, S급 보석 개수")
+        private List<Integer> jewelsNumber;
+
         @Schema(description = "현재 라운드")
         private Long currentRound;
 
@@ -69,12 +73,14 @@ public class PachinkoResponseDto {
     @NoArgsConstructor
     public static class PachinkoRewardResDto {
 
+        @Schema(description = "유저의 B, A, S급 보석 개수")
+        private List<Integer> jewelsNumber;
+
         @Schema(description = "유저의 보상")
         private PachinkoUserRewardResDto pachinkoUserRewardResDto;
 
         @Schema(description = "칸 각각의 보상")
         private List<PachinkoSquareRewardResDto> pachinkoSquareRewardResDtoList;
-
     }
 
 }
