@@ -1,11 +1,8 @@
 package LuckyVicky.backend.display_board.handler;
 
-import LuckyVicky.backend.display_board.dto.DisplayMessage;
-import LuckyVicky.backend.display_board.repository.DisplayMessageRepository;
+import LuckyVicky.backend.display_board.domain.DisplayMessage;
 import LuckyVicky.backend.display_board.service.DisplayBoardService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

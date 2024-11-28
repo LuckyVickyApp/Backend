@@ -1,6 +1,5 @@
 package LuckyVicky.backend.pachinko.service;
 
-import LuckyVicky.backend.display_board.dto.DisplayMessageType;
 import LuckyVicky.backend.display_board.service.DisplayBoardService;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;

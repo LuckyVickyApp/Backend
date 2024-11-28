@@ -1,6 +1,6 @@
 package LuckyVicky.backend.display_board.repository;
 
-import LuckyVicky.backend.display_board.dto.DisplayMessage;
+import LuckyVicky.backend.display_board.domain.DisplayMessage;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

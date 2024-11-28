@@ -1,4 +1,4 @@
-package LuckyVicky.backend.display_board.dto;
+package LuckyVicky.backend.display_board.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

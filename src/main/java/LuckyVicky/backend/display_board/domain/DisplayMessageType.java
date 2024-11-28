@@ -1,8 +1,6 @@
-package LuckyVicky.backend.display_board.dto;
+package LuckyVicky.backend.display_board.domain;
 
 import java.time.Duration;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 

@@ -1,13 +1,11 @@
 package LuckyVicky.backend.display_board.converter;
 
-import LuckyVicky.backend.display_board.dto.DisplayMessage;
-import LuckyVicky.backend.display_board.dto.DisplayMessageType;
+import LuckyVicky.backend.display_board.domain.DisplayMessage;
+import LuckyVicky.backend.display_board.domain.DisplayMessageType;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
 public class DisplayBoardConverter {
     public static DisplayMessage saveDisplayMessage(DisplayMessageType displayMessageType, String content) {
 

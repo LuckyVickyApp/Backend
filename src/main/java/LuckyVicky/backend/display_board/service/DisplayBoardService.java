@@ -1,8 +1,8 @@
 package LuckyVicky.backend.display_board.service;
 
 import LuckyVicky.backend.display_board.converter.DisplayBoardConverter;
-import LuckyVicky.backend.display_board.dto.DisplayMessage;
-import LuckyVicky.backend.display_board.dto.DisplayMessageType;
+import LuckyVicky.backend.display_board.domain.DisplayMessage;
+import LuckyVicky.backend.display_board.domain.DisplayMessageType;
 import LuckyVicky.backend.display_board.repository.DisplayMessageRepository;
 import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.user.domain.User;
@@ -10,7 +10,6 @@ import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
