@@ -30,6 +30,10 @@ jwt:
   accessExpirationTime: ${jwt.expiration}
   refreshExpirationTime: ${jwt.refresh.expiration}
 
+# fcm
+fcm:
+  project-id: ${FCM_PROJECT_ID}
+
 # 문자 발송 api key
 coolsms:
   api-key: ${COOLSMS_API_KEY}
@@ -47,6 +51,7 @@ springdoc:
     disabled: true
   use-fqn: true
 
+# log
 logging:
   level:
     root: ERROR

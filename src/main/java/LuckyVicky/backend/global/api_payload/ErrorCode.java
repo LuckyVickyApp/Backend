@@ -75,6 +75,9 @@ public enum ErrorCode implements BaseCode {
     // Ranking
     RANKING_WEEK_ITEM_LIST_EMPTY(HttpStatus.BAD_REQUEST, "RANKING_4001", "해당 주차에 강화한 상품이 없습니다."),
 
+    // Fcm
+    GOOGLE_REQUEST_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FCM_5001", "Google 인증 토큰을 가져오는 데 실패했습니다."),
+
     ;
 
     private final HttpStatus httpStatus;

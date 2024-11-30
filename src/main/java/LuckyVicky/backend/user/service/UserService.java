@@ -8,6 +8,8 @@ import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.entity.Uuid;
 import LuckyVicky.backend.global.exception.GeneralException;
+import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
+import LuckyVicky.backend.global.fcm.repository.UserDeviceTokenRepository;
 import LuckyVicky.backend.global.repository.UuidRepository;
 import LuckyVicky.backend.global.s3.AmazonS3Manager;
 import LuckyVicky.backend.user.converter.UserConverter;
@@ -16,6 +18,7 @@ import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.dto.JwtDto;
 import LuckyVicky.backend.user.dto.UserRequestDto;
+import LuckyVicky.backend.user.dto.UserRequestDto.UserReqDto;
 import LuckyVicky.backend.user.jwt.JwtTokenUtils;
 import LuckyVicky.backend.user.repository.RefreshTokenRepository;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
@@ -47,6 +50,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserDeviceTokenRepository userDeviceTokenRepository;
     private final JpaUserDetailsManager manager;
     private final JwtTokenUtils jwtTokenUtils;
     private final AmazonS3Manager amazonS3Manager;
@@ -54,6 +58,7 @@ public class UserService {
     private final UserJewelRepository userJewelRepository;
     private final AesEncryptService aesEncryptService;
 
+    @Transactional
     public User findByUserName(String userName) {
         return userRepository.findByUsername(userName)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_NOT_FOUND_BY_USERNAME));
@@ -74,6 +79,7 @@ public class UserService {
         return jewelsNumber;
     }
 
+    @Transactional
     public Boolean checkMemberByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
@@ -85,34 +91,39 @@ public class UserService {
         uuidRepository.save(uuid);
         User newUser = userRepository.save(UserConverter.saveUser(userReqDto, nick));
 
-        // 보석함 만들기
-        userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.S).count(0).build());
-        userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.A).count(5).build());
-        userJewelRepository.save(UserJewel.builder().user(newUser).jewelType(JewelType.B).count(10).build());
-
         // 새로운 사용자 정보를 반환하기 전에 저장된 UserDetails를 다시 로드하여 동기화 시도
         manager.loadUserByUsername(userReqDto.getUsername());
-
         return newUser;
     }
 
     @Transactional
-    public JwtDto jwtMakeSave(String username) {
+    public void makeUserJewel(User user) {
+        userJewelRepository.save(UserJewel.builder().user(user).jewelType(JewelType.S).count(0).build());
+        userJewelRepository.save(UserJewel.builder().user(user).jewelType(JewelType.A).count(5).build());
+        userJewelRepository.save(UserJewel.builder().user(user).jewelType(JewelType.B).count(10).build());
+    }
 
-        // JWT 생성 - access & refresh
+    @Transactional
+    public void registerDeviceToken(User user, String deviceToken) {
+        UserDeviceToken userDeviceToken = userDeviceTokenRepository.save(
+                UserConverter.saveDeviceToken(user, deviceToken));
+        userDeviceTokenRepository.save(userDeviceToken);
+    }
+
+    @Transactional
+    public JwtDto jwtMakeSave(String username) {
         UserDetails details
                 = manager.loadUserByUsername(username);
 
-        JwtDto jwt = jwtTokenUtils.generateToken(details); //2. access, refresh token 생성 및 발급
+        JwtDto jwt = jwtTokenUtils.generateToken(details);
         log.info("accessToken: {}", jwt.getAccessToken());
         log.info("refreshToken: {} ", jwt.getRefreshToken());
 
-        // DB에 저장된 해당 사용자의 리프레시 토큰을 업데이트
+        // 리프레시 토큰 업데이트
         Optional<RefreshToken> existingToken = refreshTokenRepository.findById(username);
         if (existingToken.isPresent()) {
             refreshTokenRepository.deleteById(username);
         }
-
         refreshTokenRepository.save(
                 RefreshToken.builder()
                         .username(username)
@@ -120,16 +131,13 @@ public class UserService {
                         .build()
         );
 
-        // JSON 형태로 응답
         return jwt;
     }
 
     @Transactional
     public void logout(HttpServletRequest request) {
-        // 1. access token 찾아오기
         String accessToken = request.getHeader("Authorization").split(" ")[1];
 
-        // 2. 리프레시 토큰을 username으로 찾아 삭제
         String username = jwtTokenUtils.parseClaims(accessToken).getSubject();
         log.info("access token에서 추출한 username : {}", username);
         if (refreshTokenRepository.existsByUsername(username)) {
@@ -140,7 +148,6 @@ public class UserService {
         }
     }
 
-    // access, refresh 토큰 재발급
     @Transactional
     public JwtDto reissue(HttpServletRequest request) {
         // 1. Request에서 Refresh Token 추출
@@ -186,10 +193,8 @@ public class UserService {
 
     @Transactional
     public void saveNickname(UserRequestDto.UserNicknameReqDto nicknameReqDto, User user) {
-        // 입력된 닉네임
         String nickname = nicknameReqDto.getNickname();
 
-        // 중복 검사
         if (userRepository.existsByNickname(nickname)) {
             throw GeneralException.of(ErrorCode.ALREADY_USED_NICKNAME);
         }
@@ -237,11 +242,9 @@ public class UserService {
                 throw GeneralException.of(ErrorCode.ITEM_IMAGE_UPLOAD_FAILED);
             }
 
-            // 이전 프로필 이미지가 존재하는지 확인
             if (!isEmpty(user.getProfileImage())) {
-                // 기존 프로필 이미지를 S3에서 삭제
                 String previousFilePath = user.getProfileImage();
-                amazonS3Manager.delete(previousFilePath); // S3에서 삭제
+                amazonS3Manager.delete(previousFilePath);
             }
 
             java.io.File uploadFile = amazonS3Manager.convert(file)
@@ -250,7 +253,8 @@ public class UserService {
             String fileName = dirName + AmazonS3Manager.generateFileName(file);
             uploadFileUrl = amazonS3Manager.putS3(uploadFile, fileName);
 
-            user.updateProfileImage(uploadFileUrl); // 새로운 사진 url 저장
+            user.updateProfileImage(uploadFileUrl);
+            userRepository.save(user);
         }
     }
 }
