@@ -45,7 +45,7 @@ public class DisplayBoardService {
     public DisplayMessage getNextDisplayMessage() {
         LocalDateTime now = LocalDateTime.now();
 
-        System.out.println(displayMessageQueue);
+        // System.out.println(displayMessageQueue);
 
         while(!displayMessageQueue.isEmpty()) {
             // pop
