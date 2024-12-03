@@ -1,7 +1,5 @@
 package LuckyVicky.backend.global.fcm.service;
 
-import static LuckyVicky.backend.global.util.Constant.FIREBASE_SECRET_KEY_PATH;
-
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.global.fcm.converter.FcmConverter;
@@ -10,6 +8,7 @@ import LuckyVicky.backend.global.fcm.dto.FcmRequestDto;
 import LuckyVicky.backend.global.util.Constant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -28,6 +27,9 @@ public class FcmService {
     private final ObjectMapper objectMapper;
     private final Constant constant;
 
+    @Value("${fcm.key-content}")
+    private String firebaseKeyContent;
+
     public void sendMessageTo(FcmRequestDto.FcmSimpleReqDto requestDTO) throws IOException {
         String message = makeMessage(requestDTO.getDeviceToken(), requestDTO.getTitle(), requestDTO.getBody());
 
@@ -36,6 +38,7 @@ public class FcmService {
         Request request = FcmConverter.createFcmRequest(constant.getFcmApiUrl(), getFcmAccessToken(), message);
 
         Response response = client.newCall(request).execute();
+        assert response.body() != null;
         log.info("fcm response: {}", response.body().string());
     }
 
@@ -48,8 +51,14 @@ public class FcmService {
     // Firebase Admin SDK의 비공개 키를 참조하여 Bearer 토큰을 발급 받음
     private String getFcmAccessToken() {
         try {
+            if (firebaseKeyContent == null || firebaseKeyContent.isEmpty()) {
+                throw new IllegalArgumentException("FIREBASE_KEY_CONTENT 환경 변수가 설정되지 않았습니다.");
+            }
+
+            ByteArrayInputStream serviceAccountStream = new ByteArrayInputStream(firebaseKeyContent.getBytes());
+
             final GoogleCredentials googleCredentials = GoogleCredentials
-                    .fromStream(new ClassPathResource(FIREBASE_SECRET_KEY_PATH).getInputStream())
+                    .fromStream(serviceAccountStream)
                     .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
             googleCredentials.refreshIfExpired();
