@@ -38,6 +38,7 @@ public class FcmService {
         Request request = FcmConverter.createFcmRequest(constant.getFcmApiUrl(), getFcmAccessToken(), message);
 
         Response response = client.newCall(request).execute();
+        assert response.body() != null;
         log.info("fcm response: {}", response.body().string());
     }
 
