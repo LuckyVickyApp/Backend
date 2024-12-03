@@ -36,7 +36,7 @@ public class FcmService {
         Request request = FcmConverter.createFcmRequest(constant.getFcmApiUrl(), getFcmAccessToken(), message);
 
         Response response = client.newCall(request).execute();
-        System.out.println(response.body().string());
+        log.info("fcm response: {}", response.body().string());
     }
 
     private String makeMessage(String deviceToken, String title, String body)
