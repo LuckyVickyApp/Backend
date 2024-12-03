@@ -26,13 +26,14 @@ import org.springframework.stereotype.Service;
 public class FcmService {
 
     private final ObjectMapper objectMapper;
+    private final Constant constant;
 
     public void sendMessageTo(FcmRequestDto.FcmSimpleReqDto requestDTO) throws IOException {
         String message = makeMessage(requestDTO.getDeviceToken(), requestDTO.getTitle(), requestDTO.getBody());
 
         OkHttpClient client = new OkHttpClient();
 
-        Request request = FcmConverter.createFcmRequest(Constant.FCM_API_URL, getFcmAccessToken(), message);
+        Request request = FcmConverter.createFcmRequest(constant.getFcmApiUrl(), getFcmAccessToken(), message);
 
         Response response = client.newCall(request).execute();
         System.out.println(response.body().string());
