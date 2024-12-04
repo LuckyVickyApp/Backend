@@ -5,18 +5,18 @@ import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.global.fcm.converter.FcmConverter;
 import LuckyVicky.backend.global.fcm.dto.FcmMessage;
 import LuckyVicky.backend.global.fcm.dto.FcmRequestDto;
+import LuckyVicky.backend.global.s3.AmazonS3Manager;
 import LuckyVicky.backend.global.util.Constant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -26,9 +26,8 @@ public class FcmService {
 
     private final ObjectMapper objectMapper;
     private final Constant constant;
+    private final AmazonS3Manager amazonS3Manager;
 
-    @Value("${fcm.key-content}")
-    private String firebaseKeyContent;
 
     public void sendMessageTo(FcmRequestDto.FcmSimpleReqDto requestDTO) throws IOException {
         String message = makeMessage(requestDTO.getDeviceToken(), requestDTO.getTitle(), requestDTO.getBody());
@@ -48,24 +47,16 @@ public class FcmService {
         return objectMapper.writeValueAsString(fcmMessage);
     }
 
-    // Firebase Admin SDK의 비공개 키를 참조하여 Bearer 토큰을 발급 받음
-    private String getFcmAccessToken() {
-        try {
-            if (firebaseKeyContent == null || firebaseKeyContent.isEmpty()) {
-                throw new IllegalArgumentException("FIREBASE_KEY_CONTENT 환경 변수가 설정되지 않았습니다.");
-            }
-
-            ByteArrayInputStream serviceAccountStream = new ByteArrayInputStream(firebaseKeyContent.getBytes());
-
-            final GoogleCredentials googleCredentials = GoogleCredentials
-                    .fromStream(serviceAccountStream)
+    // s3에 있는 Firebase Admin SDK의 비공개 키를 참조하여 Bearer 토큰을 발급 받음
+    public String getFcmAccessToken() {
+        try (InputStream secretKeyStream = amazonS3Manager.getFcmSecretKeyFromS3()) {
+            GoogleCredentials googleCredentials = GoogleCredentials
+                    .fromStream(secretKeyStream)
                     .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
             googleCredentials.refreshIfExpired();
-            log.info("access token: {}", googleCredentials.getAccessToken());
             return googleCredentials.getAccessToken().getTokenValue();
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new GeneralException(ErrorCode.GOOGLE_REQUEST_TOKEN_ERROR);
         }
     }
