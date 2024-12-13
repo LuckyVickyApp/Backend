@@ -33,6 +33,10 @@ public class Constant {
     // Notice
     public static final String CONVERTER_INSTANTIATION_NOT_ALLOWED = "Converter class는 인스턴스화가 불가능합니다.";
 
+    // FCM
+    public static final String FCM_TITLE_CURRENT_WEEK_AWARD = "이번 주 강화 보상";
+
+
     // FCM API URL 동적으로 생성
     public String getFcmApiUrl() {
         return "https://fcm.googleapis.com/v1/projects/" + fcmProjectId + "/messages:send";

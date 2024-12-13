@@ -4,7 +4,7 @@ import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.global.fcm.converter.FcmConverter;
 import LuckyVicky.backend.global.fcm.dto.FcmMessage;
-import LuckyVicky.backend.global.fcm.dto.FcmRequestDto;
+import LuckyVicky.backend.global.fcm.dto.FcmRequestDto.FcmSimpleReqDto;
 import LuckyVicky.backend.global.s3.AmazonS3Manager;
 import LuckyVicky.backend.global.util.Constant;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,8 +28,7 @@ public class FcmService {
     private final Constant constant;
     private final AmazonS3Manager amazonS3Manager;
 
-
-    public void sendMessageTo(FcmRequestDto.FcmSimpleReqDto requestDTO) throws IOException {
+    public void sendMessageTo(FcmSimpleReqDto requestDTO) throws IOException {
         String message = makeMessage(requestDTO.getDeviceToken(), requestDTO.getTitle(), requestDTO.getBody());
 
         OkHttpClient client = new OkHttpClient();
