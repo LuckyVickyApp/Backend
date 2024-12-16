@@ -7,12 +7,21 @@ import LuckyVicky.backend.enhance.dto.EnhanceResponseDto.ItemForEnhanceResDto;
 import LuckyVicky.backend.enhance.repository.EnhanceItemRepository;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
+import LuckyVicky.backend.global.fcm.converter.FcmConverter;
+import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
+import LuckyVicky.backend.global.fcm.dto.FcmRequestDto.FcmSimpleReqDto;
+import LuckyVicky.backend.global.fcm.service.FcmService;
+import LuckyVicky.backend.global.util.Constant;
 import LuckyVicky.backend.item.domain.Item;
+import LuckyVicky.backend.item.service.ItemService;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.dto.UserJewelResponseDto.UserJewelResDto;
 import jakarta.transaction.Transactional;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +29,8 @@ import org.springframework.stereotype.Service;
 public class EnhanceItemService {
     private static final int DEFAULT_ENHANCE_LEVEL = 1;
     private final EnhanceItemRepository enhanceItemRepository;
+    private final ItemService itemService;
+    private final FcmService fcmService;
 
     public EnhanceItem findByUserAndItem(User user, Item item) {
         return enhanceItemRepository.findByUserAndItem(user, item)
@@ -65,4 +76,37 @@ public class EnhanceItemService {
 
         return EnhanceConverter.itemEnhanceResDto(itemForEnhanceResDtoList, userJewelResDtoList);
     }
+
+    @Scheduled(cron = "0 0 21 ? * SUN", zone = "Asia/Seoul")
+    public void currentWeekAward() throws IOException {
+        executeCurrentWeekAward();
+    }
+
+    private void executeCurrentWeekAward() throws IOException {
+        List<Item> currentWeekItemList = itemService.getWeekItemList(LocalDate.now());
+
+        for (Item item : currentWeekItemList) {
+            List<EnhanceItem> enhanceItemList = enhanceItemRepository.findEnhanceItemsByItemOrderByEnhanceLevelAndReachedTime(
+                    item);
+
+            for (EnhanceItem enhanceItem : enhanceItemList) {
+                if (enhanceItem.getIsGet()) {
+                    User user = enhanceItem.getUser();
+
+                    List<UserDeviceToken> userDeviceTokenList = user.getDeviceTokenList();
+                    for (UserDeviceToken userDeviceToken : userDeviceTokenList) {
+                        String deviceToken = userDeviceToken.getDeviceToken();
+                        FcmSimpleReqDto fcmSimpleReqDto = FcmConverter.toFcmSimpleReqDto(deviceToken,
+                                Constant.FCM_TITLE_CURRENT_WEEK_AWARD, createFcmBody(user, item));
+                        fcmService.sendMessageTo(fcmSimpleReqDto);
+                    }
+                }
+            }
+        }
+    }
+
+    private String createFcmBody(User user, Item item) {
+        return user.getNickname() + "님이 " + item.getName() + "을(를) 획득하셨습니다.";
+    }
+
 }

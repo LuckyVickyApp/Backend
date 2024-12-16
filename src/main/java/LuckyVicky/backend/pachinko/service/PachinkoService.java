@@ -4,6 +4,10 @@ import LuckyVicky.backend.display_board.service.DisplayBoardService;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
+import LuckyVicky.backend.global.fcm.converter.FcmConverter;
+import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
+import LuckyVicky.backend.global.fcm.dto.FcmRequestDto.FcmSimpleReqDto;
+import LuckyVicky.backend.global.fcm.service.FcmService;
 import LuckyVicky.backend.pachinko.converter.PachinkoConverter;
 import LuckyVicky.backend.pachinko.domain.Pachinko;
 import LuckyVicky.backend.pachinko.domain.PachinkoReward;
@@ -17,6 +21,7 @@ import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +54,7 @@ public class PachinkoService {
     private final UserJewelRepository userJewelRepository;
     private final UserRepository userRepository;
     private final DisplayBoardService displayBoardService;
+    private final FcmService fcmService;
 
     @Getter
     private final Set<Integer> selectedSquares = Collections.synchronizedSet(new HashSet<>()); // 스레드 간 동기화 제공
@@ -197,7 +203,7 @@ public class PachinkoService {
     }
 
     @Transactional
-    public void giveRewards() {
+    public void giveRewards() throws IOException {
         System.out.println("보상 전달 시작");
         List<UserPachinko> userPachinkoList = userpachinkoRepository.findByRound(currentRound);
 
@@ -219,16 +225,23 @@ public class PachinkoService {
                     Pachinko pa = pachinkoRepository.findByRoundAndSquare(currentRound, sq)
                             .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
 
-                    if (pa.getJewelType() == JewelType.S) {
-                        displayBoardService.addPachinkoSJewelMessage(user);
-                    }
-
                     if (pa.getJewelType() != JewelType.F) {
                         UserJewel uj = userJewelRepository.findByUserAndJewelType(user, pa.getJewelType())
                                 .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
                         uj.setCount(pa.getJewelNum());
                         userJewelRepository.save(uj);
                         System.out.println("user jewel 보상에 따라 갱신완료");
+                    }
+
+                    if (pa.getJewelType() == JewelType.S) {
+                        displayBoardService.addPachinkoSJewelMessage(user);
+                    }
+
+                    List<UserDeviceToken> userDeviceTokens = user.getDeviceTokenList();
+                    for (UserDeviceToken userDeviceToken : userDeviceTokens) {
+                        FcmSimpleReqDto requestDTO = FcmConverter.toFcmSimpleReqDto(userDeviceToken.getDeviceToken(),
+                                "빠칭코 게임이 끝났습니다!", "두구두구 당신이 뽑은 칸의 결과는?!?!");
+                        fcmService.sendMessageTo(requestDTO);
                     }
                 }
             }

@@ -2,7 +2,7 @@ package LuckyVicky.backend.global.fcm.controller;
 
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
-import LuckyVicky.backend.global.fcm.dto.FcmRequestDto;
+import LuckyVicky.backend.global.fcm.dto.FcmRequestDto.FcmSimpleReqDto;
 import LuckyVicky.backend.global.fcm.service.FcmService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,7 +26,7 @@ public class FcmController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "FCM_2001", description = "fcm 알림 전송 성공"),
     })
     @PostMapping("/pushMessage")
-    public ApiResponse<String> pushMessage(@RequestBody FcmRequestDto.FcmSimpleReqDto requestDTO) throws IOException {
+    public ApiResponse<String> pushMessage(@RequestBody FcmSimpleReqDto requestDTO) throws IOException {
         System.out.println(requestDTO.getDeviceToken() + " "
                 + requestDTO.getTitle() + " " + requestDTO.getBody());
         fcmService.sendMessageTo(requestDTO);
