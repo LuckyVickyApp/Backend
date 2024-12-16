@@ -58,6 +58,7 @@ public class DisplayBoardService {
             }
             else {
                 displayMessageRepository.delete(message);
+                displayMessageRepository.flush();
             }
         }
 
