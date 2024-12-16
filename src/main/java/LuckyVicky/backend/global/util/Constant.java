@@ -39,7 +39,8 @@ public class Constant {
     public static final String FCM_INVITATION_TITLE = "초대 보상으로 보석 지급 완료!!";
     public static final String FCM_PACHINKO_GAME_FINISH_TITLE = "빠칭코 게임이 끝났습니다!";
     public static final String FCM_PACHINKO_GAME_FINISH_BODY = "당신이 뽑은 칸의 결과는?!? 빠칭코 게임 화면에서 확인해보세요!!";
-
+    public static final String FCM_ROULETTE_CAN_START_TITLE = "룰렛 돌리러 고고씽!!";
+    public static final String FCM_ROULETTE_CAN_START_BODY = "룰렛 대기 시간 10분이 끝났습니다!";
 
     // FCM API URL 동적으로 생성
     public String getFcmApiUrl() {
