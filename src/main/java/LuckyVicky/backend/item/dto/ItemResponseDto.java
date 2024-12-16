@@ -24,6 +24,15 @@ public class ItemResponseDto {
         private LocalDate enhanceStartDate;
     }
 
+    @Schema(description = "ItemDetailListResDto")
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ItemDetailListResDto {
+        List<ItemDetailResDto> itemDetailResDtoList;
+    }
+
     @Schema(description = "ItemDescriptionResDto")
     @Getter
     @Builder

@@ -26,7 +26,7 @@ public class DisplayBoardService {
     private final Queue<DisplayMessage> displayMessageQueue = new LinkedList<>();
 
     @PostConstruct
-    private void initializeQueue() {
+    public Integer initializeQueue() {
         try {
             displayMessageQueue.clear();
 
@@ -40,6 +40,8 @@ public class DisplayBoardService {
         } catch (Exception e) {
             log.error(INITIALIZE_QUEUE_FAIL_MESSAGE, e.getMessage(), e);
         }
+
+        return displayMessageQueue.size();
     }
 
     public DisplayMessage getNextDisplayMessage() {

@@ -37,6 +37,7 @@ public enum SuccessCode implements BaseCode {
     ITEM_UNLIKE_SUCCESS(HttpStatus.OK, "ITEM_2002", "상품 좋아요가 취소되었습니다."),
     ITEM_ENHANCE_SUCCESS(HttpStatus.OK, "ITEM_2003", "상품 강화 화면에 필요한 요소들이 반환 완료되었습니다."),
     ITEM_DESCRIPTION_VIEW_SUCCESS(HttpStatus.OK, "ITEM_2013", "상품 상세 정보 반환이 완료되었습니다."),
+    ITEM_CURRENT_WEEK_LIST_SUCCESS(HttpStatus.OK, "ITEM_2014", "이번 주 상품 리스트 조회가 완료되었습니다."),
 
     // Pachinko
     PACHINKO_GET_SQUARES_SUCCESS(HttpStatus.OK, "PACHINKO_2001", "빠칭코 선택 완료된 칸들을 반환 완료되었습니다."),
@@ -69,7 +70,10 @@ public enum SuccessCode implements BaseCode {
     SMS_CERTIFICATE_SUCCESS(HttpStatus.OK, "SMS_2002", "문자 인증이 완료되었습니다."),
 
     // Fcm
-    FCM_SEND_SUCCESS(HttpStatus.OK, "FCM_2001", "fcm 알람이 성공적으로 전송되었습니다.");
+    FCM_SEND_SUCCESS(HttpStatus.OK, "FCM_2001", "fcm 알람이 성공적으로 전송되었습니다."),
+
+    // Display Board
+    DISPLAY_BOARD_RESET_QUEUE_SUCCESS(HttpStatus.OK, "DISPLAY_2001","전광판 큐 내 메세지들이 리셋되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -29,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final ItemConverter itemConverter;
     private final AmazonS3Manager amazonS3Manager;
 
     // 현재 강화할 수 있는 상품 리스트 반환
@@ -70,22 +69,16 @@ public class ItemService {
             uploadFileUrl = uploadImageToS3(requestDto.getImageFile());
         }
 
-        Item item = itemConverter.toEntity(requestDto, uploadFileUrl);
+        Item item = ItemConverter.toEntity(requestDto, uploadFileUrl);
         itemRepository.save(item);
 
-        return itemConverter.toDto(item);
-    }
-
-    public List<ItemDetailResDto> getAllItems() {
-        return itemRepository.findAll().stream()
-                .map(itemConverter::toDto)
-                .collect(Collectors.toList());
+        return ItemConverter.itemDetailResDto(item);
     }
 
     public ItemDetailResDto getItemByName(String name) {
         Item item = itemRepository.findByName(name)
                 .orElseThrow(() -> new GeneralException(ErrorCode.ITEM_NOT_FOUND));
-        return itemConverter.toDto(item);
+        return ItemConverter.itemDetailResDto(item);
     }
 
     @Transactional
