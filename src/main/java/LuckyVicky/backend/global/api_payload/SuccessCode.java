@@ -70,7 +70,10 @@ public enum SuccessCode implements BaseCode {
     SMS_CERTIFICATE_SUCCESS(HttpStatus.OK, "SMS_2002", "문자 인증이 완료되었습니다."),
 
     // Fcm
-    FCM_SEND_SUCCESS(HttpStatus.OK, "FCM_2001", "fcm 알람이 성공적으로 전송되었습니다.");
+    FCM_SEND_SUCCESS(HttpStatus.OK, "FCM_2001", "fcm 알람이 성공적으로 전송되었습니다."),
+
+    // Display Board
+    DISPLAY_BOARD_RESET_QUEUE_SUCCESS(HttpStatus.OK, "DISPLAY_2001","전광판 큐 내 메세지들이 리셋되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
