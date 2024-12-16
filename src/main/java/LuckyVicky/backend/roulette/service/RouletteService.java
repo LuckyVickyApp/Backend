@@ -7,6 +7,7 @@ import LuckyVicky.backend.global.fcm.converter.FcmConverter;
 import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
 import LuckyVicky.backend.global.fcm.dto.FcmRequestDto.FcmSimpleReqDto;
 import LuckyVicky.backend.global.fcm.service.FcmService;
+import LuckyVicky.backend.global.util.Constant;
 import LuckyVicky.backend.roulette.dto.RouletteResponseDto;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
@@ -84,7 +85,7 @@ public class RouletteService {
         List<UserDeviceToken> userDeviceTokens = user.getDeviceTokenList();
         for (UserDeviceToken userDeviceToken : userDeviceTokens) {
             FcmSimpleReqDto requestDTO = FcmConverter.toFcmSimpleReqDto(userDeviceToken.getDeviceToken(),
-                    "룰렛 돌리러 고고씽!!", "룰렛 대기 시간 10분이 끝났습니다!");
+                    Constant.FCM_ROULETTE_CAN_START_TITLE, Constant.FCM_ROULETTE_CAN_START_BODY);
             fcmService.sendMessageTo(requestDTO);
         }
     }
