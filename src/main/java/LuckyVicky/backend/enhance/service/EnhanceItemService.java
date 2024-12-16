@@ -97,7 +97,7 @@ public class EnhanceItemService {
                     for (UserDeviceToken userDeviceToken : userDeviceTokenList) {
                         String deviceToken = userDeviceToken.getDeviceToken();
                         FcmSimpleReqDto fcmSimpleReqDto = FcmConverter.toFcmSimpleReqDto(deviceToken,
-                                Constant.FCM_TITLE_CURRENT_WEEK_AWARD, createFcmBody(user, item));
+                                Constant.FCM_CONGRATULATION, createFcmBody(user, item));
                         fcmService.sendMessageTo(fcmSimpleReqDto);
                     }
                 }
@@ -106,7 +106,7 @@ public class EnhanceItemService {
     }
 
     private String createFcmBody(User user, Item item) {
-        return user.getNickname() + "님이 " + item.getName() + "을(를) 획득하셨습니다.";
+        return "강화 보상으로" + user.getNickname() + "님이 " + item.getName() + "을(를) 획득하셨습니다.";
     }
 
 }

@@ -34,7 +34,9 @@ public class Constant {
     public static final String CONVERTER_INSTANTIATION_NOT_ALLOWED = "Converter class는 인스턴스화가 불가능합니다.";
 
     // FCM
-    public static final String FCM_TITLE_CURRENT_WEEK_AWARD = "이번 주 강화 보상";
+    public static final String FCM_CONGRATULATION = "축하드립니다!!";
+    public static final String FCM_CURRENT_WEEK_AWARD_TITLE = "이번 주 강화 보상";
+    public static final String FCM_INVITATION_TITLE = "초대 보상으로 보석 지급 완료!!";
 
 
     // FCM API URL 동적으로 생성
