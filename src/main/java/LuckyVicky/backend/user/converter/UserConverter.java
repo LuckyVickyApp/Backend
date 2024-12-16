@@ -1,6 +1,5 @@
 package LuckyVicky.backend.user.converter;
 
-import LuckyVicky.backend.global.entity.Uuid;
 import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.dto.JwtDto;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class UserConverter {
-    public static User saveUser(UserRequestDto.UserReqDto userReqDto, String nick) {
+    public static User saveUser(UserRequestDto.UserReqDto userReqDto, String nick, String code) {
 
         LocalDateTime today = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
@@ -25,7 +24,7 @@ public class UserConverter {
                 .provider(userReqDto.getProvider())
                 .signInDate(todayDate)
                 .lastAttendanceCheckedDay(0)
-                .inviteCode(Uuid.generateUuid().getUuid())
+                .inviteCode(code)
                 .previousPachinkoRound(-1L)
                 .rouletteAvailableTime(today)
                 .advertiseTodayLeftNum(10)

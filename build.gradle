@@ -44,6 +44,9 @@ dependencies {
     // coolsms sdk
     implementation 'net.nurigo:sdk:4.2.0'
 
+    // nano id
+    implementation 'com.aventrix.jnanoid:jnanoid:2.0.0'
+
     // database
     runtimeOnly 'com.mysql:mysql-connector-j'
 
