@@ -37,6 +37,8 @@ public class Constant {
     public static final String FCM_CONGRATULATION = "축하드립니다!!";
     public static final String FCM_CURRENT_WEEK_AWARD_TITLE = "이번 주 강화 보상";
     public static final String FCM_INVITATION_TITLE = "초대 보상으로 보석 지급 완료!!";
+    public static final String FCM_PACHINKO_GAME_FINISH_TITLE = "빠칭코 게임이 끝났습니다!";
+    public static final String FCM_PACHINKO_GAME_FINISH_BODY = "당신이 뽑은 칸의 결과는?!? 빠칭코 게임 화면에서 확인해보세요!!";
 
 
     // FCM API URL 동적으로 생성

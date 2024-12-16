@@ -8,6 +8,7 @@ import LuckyVicky.backend.global.fcm.converter.FcmConverter;
 import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
 import LuckyVicky.backend.global.fcm.dto.FcmRequestDto.FcmSimpleReqDto;
 import LuckyVicky.backend.global.fcm.service.FcmService;
+import LuckyVicky.backend.global.util.Constant;
 import LuckyVicky.backend.pachinko.converter.PachinkoConverter;
 import LuckyVicky.backend.pachinko.domain.Pachinko;
 import LuckyVicky.backend.pachinko.domain.PachinkoReward;
@@ -240,7 +241,7 @@ public class PachinkoService {
                     List<UserDeviceToken> userDeviceTokens = user.getDeviceTokenList();
                     for (UserDeviceToken userDeviceToken : userDeviceTokens) {
                         FcmSimpleReqDto requestDTO = FcmConverter.toFcmSimpleReqDto(userDeviceToken.getDeviceToken(),
-                                "빠칭코 게임이 끝났습니다!", "두구두구 당신이 뽑은 칸의 결과는?!?!");
+                                Constant.FCM_PACHINKO_GAME_FINISH_TITLE, Constant.FCM_PACHINKO_GAME_FINISH_BODY);
                         fcmService.sendMessageTo(requestDTO);
                     }
                 }
