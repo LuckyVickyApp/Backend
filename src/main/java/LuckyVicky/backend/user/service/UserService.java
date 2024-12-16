@@ -6,19 +6,17 @@ import static org.apache.logging.log4j.util.Strings.isEmpty;
 import LuckyVicky.backend.aes.service.AesEncryptService;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
-import LuckyVicky.backend.global.entity.Uuid;
 import LuckyVicky.backend.global.exception.GeneralException;
 import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
 import LuckyVicky.backend.global.fcm.repository.UserDeviceTokenRepository;
-import LuckyVicky.backend.global.repository.UuidRepository;
 import LuckyVicky.backend.global.s3.AmazonS3Manager;
+import LuckyVicky.backend.global.util.UuidGenerator;
 import LuckyVicky.backend.user.converter.UserConverter;
 import LuckyVicky.backend.user.domain.RefreshToken;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.dto.JwtDto;
 import LuckyVicky.backend.user.dto.UserRequestDto;
-import LuckyVicky.backend.user.dto.UserRequestDto.UserReqDto;
 import LuckyVicky.backend.user.jwt.JwtTokenUtils;
 import LuckyVicky.backend.user.repository.RefreshTokenRepository;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
@@ -54,7 +52,6 @@ public class UserService {
     private final JpaUserDetailsManager manager;
     private final JwtTokenUtils jwtTokenUtils;
     private final AmazonS3Manager amazonS3Manager;
-    private final UuidRepository uuidRepository;
     private final UserJewelRepository userJewelRepository;
     private final AesEncryptService aesEncryptService;
 
@@ -86,10 +83,9 @@ public class UserService {
 
     @Transactional
     public User createUser(UserRequestDto.UserReqDto userReqDto) {
-        Uuid uuid = Uuid.generateUuid();
-        String nick = "user" + uuid.getUuid();
-        uuidRepository.save(uuid);
-        User newUser = userRepository.save(UserConverter.saveUser(userReqDto, nick));
+        String nick = "user" + UuidGenerator.generateNanoUuid();
+        String code = UuidGenerator.generateUuid();
+        User newUser = userRepository.save(UserConverter.saveUser(userReqDto, nick, code));
 
         // 새로운 사용자 정보를 반환하기 전에 저장된 UserDetails를 다시 로드하여 동기화 시도
         manager.loadUserByUsername(userReqDto.getUsername());
