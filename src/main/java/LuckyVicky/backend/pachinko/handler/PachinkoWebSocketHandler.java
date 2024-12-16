@@ -89,15 +89,14 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
     }
 
-    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare)
-            throws IOException {
+    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) {
         System.out.println(pachinkoService.viewSelectedSquares() + "핸들러에서 processSquareSelection 시작지점");
 
         String result = pachinkoService.selectSquare(user, currentRound, selectedSquare);
         System.out.println(pachinkoService.viewSelectedSquares() + "핸들러에서 processSquareSelection 시작지점");
 
         if (Objects.equals(result, "정상적으로 선택 완료되었습니다.")) {
-            broadcastMessage(user.getUsername() + "가 " + selectedSquare + "을 선택했습니다.");
+            broadcastMessage(user.getNickname() + "가 " + selectedSquare + "을 선택했습니다.");
             checkGameStatusAndCloseSessionsIfNeeded();
         } else if (Objects.equals(result, "다른 사용자가 이전에 선택한 칸입니다.")) {
             sendMessage(session, selectedSquare + "번째 칸은 이미 다른 사용자에 의해 선택되었습니다.");
