@@ -78,11 +78,16 @@ public class EnhanceItemService {
     }
 
     @Scheduled(cron = "0 0 21 ? * SUN", zone = "Asia/Seoul")
-    private void currentWeekAward() throws IOException {
+    public void currentWeekAward() throws IOException {
+        executeCurrentWeekAward();
+    }
+
+    private void executeCurrentWeekAward() throws IOException {
         List<Item> currentWeekItemList = itemService.getWeekItemList(LocalDate.now());
 
         for (Item item : currentWeekItemList) {
-            List<EnhanceItem> enhanceItemList = enhanceItemRepository.findEnhanceItemsByItemOrderByEnhanceLevelAndReachedTime(item);
+            List<EnhanceItem> enhanceItemList = enhanceItemRepository.findEnhanceItemsByItemOrderByEnhanceLevelAndReachedTime(
+                    item);
 
             for (EnhanceItem enhanceItem : enhanceItemList) {
                 if (enhanceItem.getIsGet()) {
@@ -91,7 +96,8 @@ public class EnhanceItemService {
                     List<UserDeviceToken> userDeviceTokenList = user.getDeviceTokenList();
                     for (UserDeviceToken userDeviceToken : userDeviceTokenList) {
                         String deviceToken = userDeviceToken.getDeviceToken();
-                        FcmSimpleReqDto fcmSimpleReqDto = FcmConverter.toFcmSimpleReqDto(deviceToken, Constant.FCM_TITLE_CURRENT_WEEK_AWARD, createFcmBody(user, item));
+                        FcmSimpleReqDto fcmSimpleReqDto = FcmConverter.toFcmSimpleReqDto(deviceToken,
+                                Constant.FCM_TITLE_CURRENT_WEEK_AWARD, createFcmBody(user, item));
                         fcmService.sendMessageTo(fcmSimpleReqDto);
                     }
                 }
