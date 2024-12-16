@@ -130,21 +130,32 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    private void checkGameStatusAndCloseSessionsIfNeeded() throws IOException {
+    private void checkGameStatusAndCloseSessionsIfNeeded() {
         if (pachinkoService.isGameOver()) {
             System.out.println("게임 끝남 확인. 보상 전달 시작");
             broadcastMessage("해당 판이 종료되었습니다. 10초 후 새로운 판이 시작됩니다.");
-            pachinkoService.giveRewards();
-            broadcastMessage("보상 전달이 완료되었습니다.");
 
-            new Thread(() -> {
+            Thread rewardThread = new Thread(() -> {
+                try {
+                    pachinkoService.giveRewards();
+                    broadcastMessage("보상 전달이 완료되었습니다.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+            Thread countdownThread = new Thread(() -> {
                 try {
                     countdownAndNotifyPlayers(10);
                     startNewRoundAndNotifyPlayers();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }).start();
+            });
+
+            // 두 작업을 비동기로 병렬 실행
+            rewardThread.start();
+            countdownThread.start();
         }
     }
 
