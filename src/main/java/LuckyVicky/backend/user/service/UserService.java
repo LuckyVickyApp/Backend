@@ -23,6 +23,7 @@ import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -83,12 +84,28 @@ public class UserService {
 
     @Transactional
     public User createUser(UserRequestDto.UserReqDto userReqDto) {
-        String nick = "user" + UuidGenerator.generateNanoUuid();
-        String code = UuidGenerator.generateUuid();
-        User newUser = userRepository.save(UserConverter.saveUser(userReqDto, nick, code));
+        int retryCount = 3; // 최대 재시도 횟수
+        User newUser = null;
 
-        // 새로운 사용자 정보를 반환하기 전에 저장된 UserDetails를 다시 로드하여 동기화 시도
-        manager.loadUserByUsername(userReqDto.getUsername());
+        for (int i = 0; i < retryCount; i++) {
+            try {
+                String nick = "user" + UuidGenerator.generateNanoUuid();
+                String code = UuidGenerator.generateUuid();
+                newUser = UserConverter.saveUser(userReqDto, nick, code);
+
+                userRepository.save(newUser); // 저장 시도
+                break;
+            } catch (ConstraintViolationException e) {
+                log.warn("UUID 충돌 발생, 재시도 ({}/{})", i + 1, retryCount);
+            }
+        }
+        if (newUser == null) {
+            log.error("최대 재시도 횟수를 초과하여 UUID를 생성하지 못했습니다.");
+            throw new RuntimeException("최대 재시도 횟수를 초과하여 UUID를 생성하지 못했습니다.");
+        }
+
+        manager.loadUserByUsername(userReqDto.getUsername()); // 저장된 사용자 정보를 다시 로드하여 동기화 시도
+
         return newUser;
     }
 
