@@ -3,16 +3,23 @@ package LuckyVicky.backend.roulette.service;
 import LuckyVicky.backend.enhance.domain.JewelType;
 import LuckyVicky.backend.global.api_payload.ErrorCode;
 import LuckyVicky.backend.global.exception.GeneralException;
+import LuckyVicky.backend.global.fcm.converter.FcmConverter;
+import LuckyVicky.backend.global.fcm.domain.UserDeviceToken;
+import LuckyVicky.backend.global.fcm.dto.FcmRequestDto.FcmSimpleReqDto;
+import LuckyVicky.backend.global.fcm.service.FcmService;
 import LuckyVicky.backend.roulette.dto.RouletteResponseDto;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +29,8 @@ public class RouletteService {
 
     private final UserJewelRepository userJewelRepository;
     private final UserRepository userRepository;
+    private final FcmService fcmService;
+    private final TaskScheduler taskScheduler; // 동적 스케줄러
 
     @Transactional
     public RouletteResponseDto.RouletteAvailableDto checkRouletteAvailability(User user) {
@@ -40,17 +49,14 @@ public class RouletteService {
     public void saveRouletteResult(User user, String jewelType, int jewelCount) {
         log.info("사용자 {}에게 {} 보석 {}개 추가", user.getUsername(), jewelType, jewelCount);
 
-        // F 보석인 경우에는 보상 저장을 건너뜀
-        if (JewelType.valueOf(jewelType) == JewelType.F) {
-            log.info("사용자 {}는 보상 없이 10분 타이머를 갱신합니다.", user.getUsername());
-        } else {
+        if (JewelType.valueOf(jewelType) != JewelType.F) {
             addJewel(user, jewelType, jewelCount);
         }
 
-        // 10분 후 다시 룰렛 사용 가능
         user.setRouletteAvailableTime(LocalDateTime.now().plusMinutes(10));
-
         userRepository.save(user);
+
+        scheduleRouletteNotification(user, 10);
     }
 
     private void addJewel(User user, String jewelType, int count) {
@@ -61,4 +67,26 @@ public class RouletteService {
         jewel.increaseCount(count);
         userJewelRepository.save(jewel);
     }
+
+    private void scheduleRouletteNotification(User user, int delayInMinutes) {
+        taskScheduler.schedule(() -> {
+                    try {
+                        sendRouletteNotification(user);
+                    } catch (IOException e) {
+                        log.error("알림 전송 중 오류 발생: 사용자 {}, 메시지: {}", user.getUsername(), e.getMessage(), e);
+                    }
+                },
+                LocalDateTime.now().plusMinutes(delayInMinutes).atZone(java.time.ZoneId.systemDefault()).toInstant());
+    }
+
+    private void sendRouletteNotification(User user) throws IOException {
+
+        List<UserDeviceToken> userDeviceTokens = user.getDeviceTokenList();
+        for (UserDeviceToken userDeviceToken : userDeviceTokens) {
+            FcmSimpleReqDto requestDTO = FcmConverter.toFcmSimpleReqDto(userDeviceToken.getDeviceToken(),
+                    "룰렛 돌리러 고고씽!!", "룰렛 대기 시간 10분이 끝났습니다!");
+            fcmService.sendMessageTo(requestDTO);
+        }
+    }
+
 }
