@@ -35,23 +35,13 @@ public class DisplayBoardWebSocketHandler extends TextWebSocketHandler {
     @Scheduled(fixedRate = 5000)
     public void broadcastActiveMessages() {
         try {
-            // System.out.println("Executing broadcastActiveMessages at " + LocalDateTime.now());
-
             DisplayMessage message = displayBoardService.getNextDisplayMessage();
             if (message != null) {
-                // System.out.println("Broadcasting message: " + message.getContent());
-
                 if (!sessions.isEmpty()) {
                     broadcastMessage(message.getContent());
-                } else {
-                    // System.out.println("No active WebSocket sessions to broadcast.");
                 }
-            } else {
-                // System.out.println("No active message to broadcast.");
             }
-
         } catch (Exception e) {
-            // System.err.println("Error occurred in broadcastActiveMessages: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -47,8 +47,6 @@ public class DisplayBoardService {
     public DisplayMessage getNextDisplayMessage() {
         LocalDateTime now = LocalDateTime.now();
 
-        // System.out.println(displayMessageQueue);
-
         while(!displayMessageQueue.isEmpty()) {
             // pop
             DisplayMessage message =  displayMessageQueue.poll();
@@ -57,6 +55,9 @@ public class DisplayBoardService {
             if (!message.getDisplayStartTime().isAfter(now) && !message.getDisplayEndTime().isBefore(now)) {
                 displayMessageQueue.offer(message);
                 return message;
+            }
+            else {
+                displayMessageRepository.delete(message);
             }
         }
 
@@ -82,8 +83,8 @@ public class DisplayBoardService {
         addDisplayMessage(DisplayMessageType.PACHINKO_S_JEWEL_MESSAGE, content);
     }
 
-    public void addEnhanceItem1stMessage(User user, Item item, Integer ranking) {
-        if (ranking != 1) return;
+    public void addEnhanceItem1stMessage(User user, Item item, Integer previousRanking, Integer afterRanking) {
+        if (afterRanking != 1 || previousRanking == 1) return;
 
         List<String> messageFormList = DisplayMessageType.ENHANCE_ITEM_1ST_MESSAGE.getMessageFormList();
 

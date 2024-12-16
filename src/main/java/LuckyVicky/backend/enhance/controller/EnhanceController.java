@@ -90,7 +90,7 @@ public class EnhanceController {
         // 랭킹 변화 수치
         Integer rankingChange = previousRanking - afterRanking;
 
-        displayBoardService.addEnhanceItem1stMessage(user, item, afterRanking);
+        displayBoardService.addEnhanceItem1stMessage(user, item, previousRanking, afterRanking);
 
         return ApiResponse.onSuccess(SuccessCode.ENHANCE_RESULT_SUCCESS, EnhanceConverter.itemEnhanceExecuteResDto(enhanceItem, enhanceResult, rankingChange));
     }
