@@ -49,6 +49,10 @@ public class InvitationService {
         ownerSLevelJewel.increaseCount(1);
         System.out.println(ownerSLevelJewel.getCount());
 
+        UserJewel writerSLevelJewel = jewelRepository.findFirstByUserAndJewelType(writer, JewelType.S);
+        writerSLevelJewel.increaseCount(1);
+        System.out.println(writerSLevelJewel.getCount());
+
         List<UserDeviceToken> userDeviceTokens = owner.getDeviceTokenList();
         for (UserDeviceToken userDeviceToken : userDeviceTokens) {
             FcmSimpleReqDto fcmSimpleReqDto = FcmConverter.toFcmSimpleReqDto(userDeviceToken.getDeviceToken(),
