@@ -9,12 +9,11 @@ import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +47,8 @@ public class RouletteService {
             addJewel(user, jewelType, jewelCount);
         }
 
-        // 10초호 다시 룰렛 사용 가능
-        user.setRouletteAvailableTime(LocalDateTime.now().plusSeconds(30));
+        // 10분 후 다시 룰렛 사용 가능
+        user.setRouletteAvailableTime(LocalDateTime.now().plusMinutes(10));
 
         userRepository.save(user);
     }
