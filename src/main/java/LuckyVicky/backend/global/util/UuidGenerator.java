@@ -10,6 +10,6 @@ public class UuidGenerator {
     }
 
     public static String generateUuid() {
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().replace("-", "");
     }
 }
