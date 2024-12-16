@@ -37,6 +37,7 @@ public enum SuccessCode implements BaseCode {
     ITEM_UNLIKE_SUCCESS(HttpStatus.OK, "ITEM_2002", "상품 좋아요가 취소되었습니다."),
     ITEM_ENHANCE_SUCCESS(HttpStatus.OK, "ITEM_2003", "상품 강화 화면에 필요한 요소들이 반환 완료되었습니다."),
     ITEM_DESCRIPTION_VIEW_SUCCESS(HttpStatus.OK, "ITEM_2013", "상품 상세 정보 반환이 완료되었습니다."),
+    ITEM_CURRENT_WEEK_LIST_SUCCESS(HttpStatus.OK, "ITEM_2014", "이번 주 상품 리스트 조회가 완료되었습니다."),
 
     // Pachinko
     PACHINKO_GET_SQUARES_SUCCESS(HttpStatus.OK, "PACHINKO_2001", "빠칭코 선택 완료된 칸들을 반환 완료되었습니다."),

@@ -4,6 +4,7 @@ import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.item.dto.ItemRequestDto;
 import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDescriptionResDto;
 import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDescriptionResListDto;
+import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDetailListResDto;
 import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDetailResDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class ItemConverter {
         throw new UnsupportedOperationException(CONVERTER_INSTANTIATION_NOT_ALLOWED);
     }*/
 
-    public Item toEntity(ItemRequestDto requestDto, String imageUrl) {
+    public static Item toEntity(ItemRequestDto requestDto, String imageUrl) {
         LocalDate availableDate = (requestDto.getAvailableDate() != null)
                 ? LocalDate.parse(requestDto.getAvailableDate())
                 : null;
@@ -33,13 +34,23 @@ public class ItemConverter {
                 .build();
     }
 
-    public ItemDetailResDto toDto(Item item) {
+    public static ItemDetailResDto itemDetailResDto(Item item) {
         return ItemDetailResDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .enhanceStartDate(item.getEnhanceStartDate())
                 .quantity(item.getQuantity())
                 .imageUrl(item.getImageUrl())
+                .build();
+    }
+
+    public static ItemDetailListResDto itemDetailListResDto(List<Item> itemList) {
+        List<ItemDetailResDto> itemDetailResDtoList = itemList.stream()
+                .map(ItemConverter::itemDetailResDto)
+                .toList();
+
+        return ItemDetailListResDto.builder()
+                .itemDetailResDtoList(itemDetailResDtoList)
                 .build();
     }
 

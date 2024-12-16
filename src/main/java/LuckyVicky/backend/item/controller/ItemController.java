@@ -3,8 +3,10 @@ package LuckyVicky.backend.item.controller;
 import LuckyVicky.backend.global.api_payload.ApiResponse;
 import LuckyVicky.backend.global.api_payload.SuccessCode;
 import LuckyVicky.backend.item.converter.ItemConverter;
+import LuckyVicky.backend.item.domain.Item;
 import LuckyVicky.backend.item.dto.ItemRequestDto;
 import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDescriptionResListDto;
+import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDetailListResDto;
 import LuckyVicky.backend.item.dto.ItemResponseDto.ItemDetailResDto;
 import LuckyVicky.backend.item.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -54,14 +57,15 @@ public class ItemController {
         return ApiResponse.onSuccess(SuccessCode.ITEM_CREATE_SUCCESS, createdItem);
     }
 
-    @Operation(summary = "상품 리스트 조회", description = "모든 상품을 조회하는 API입니다.")
+    @Operation(summary = "이번주 상품 리스트 조회", description = "이번주 상품을 조회하는 메서드입니다..")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "상품 리스트 조회 완료")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ITEM_2001", description = "이번 주 상품 리스트 조회가 완료되었습니다.")
     })
     @GetMapping("")
-    public ResponseEntity<List<ItemDetailResDto>> getItems() {
-        List<ItemDetailResDto> items = itemService.getAllItems();
-        return ResponseEntity.ok(items);
+    public ApiResponse<ItemDetailListResDto> getCurrentWeekItemList() {
+        List<Item> currentWeekItemList = itemService.getWeekItemList(LocalDate.now());
+
+        return ApiResponse.onSuccess(SuccessCode.ITEM_CURRENT_WEEK_LIST_SUCCESS, ItemConverter.itemDetailListResDto(currentWeekItemList));
     }
 
 
