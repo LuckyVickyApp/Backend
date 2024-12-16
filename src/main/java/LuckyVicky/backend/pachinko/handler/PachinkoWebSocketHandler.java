@@ -89,7 +89,8 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         sessions.remove(session);
     }
 
-    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) {
+    private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare)
+            throws IOException {
         System.out.println(pachinkoService.viewSelectedSquares() + "핸들러에서 processSquareSelection 시작지점");
 
         String result = pachinkoService.selectSquare(user, currentRound, selectedSquare);
@@ -129,7 +130,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    private void checkGameStatusAndCloseSessionsIfNeeded() {
+    private void checkGameStatusAndCloseSessionsIfNeeded() throws IOException {
         if (pachinkoService.isGameOver()) {
             System.out.println("게임 끝남 확인. 보상 전달 시작");
             broadcastMessage("해당 판이 종료되었습니다. 10초 후 새로운 판이 시작됩니다.");
