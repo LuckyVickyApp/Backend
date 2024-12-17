@@ -35,7 +35,7 @@ public class InvitationService {
         User owner = userRepository.findByInviteCode(code).orElseThrow(()
                 -> new GeneralException(ErrorCode.INVITATION_NOT_FOUND));
 
-        if (Objects.equals(owner.getInviteCode(), code)) {
+        if (Objects.equals(writer.getInviteCode(), code)) {
             throw new GeneralException(ErrorCode.INVITATION_MINE_INVALID);
         }
 
