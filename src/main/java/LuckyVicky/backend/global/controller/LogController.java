@@ -26,7 +26,7 @@ public class LogController {
     @PostMapping("/error-upload")
     public ApiResponse<String> uploadLogFile() {
 
-        logService.uploadOrAppendLog("today", true);
+        logService.uploadDailyLog("today");
         return ApiResponse.onSuccess(SuccessCode.ERROR_LOG_S3_UPLOADED, "Log file uploaded to S3.");
     }
 }
