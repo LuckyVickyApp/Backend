@@ -1,5 +1,12 @@
 package LuckyVicky.backend.global.s3;
 
+import static LuckyVicky.backend.global.util.Constant.LOG_DATE_FORMAT;
+import static LuckyVicky.backend.global.util.Constant.LOG_LOGBACK_ERROR_FILE_NAME;
+import static LuckyVicky.backend.global.util.Constant.LOG_LOGBACK_FILE_DIRECTORY;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -12,9 +19,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -56,11 +63,28 @@ public class S3LogService {
             // 업로드 후 로컬 로그 파일 삭제 및 Logback 초기화
             Files.deleteIfExists(localFile.toPath());
             log.info("Deleted local log file: {}", localFile.getName());
+            resetLogbackContext();
 
         } catch (Exception e) {
             log.error("Failed to upload or merge log file to S3. day={}, file={}, key={}", day, localFile, s3Key, e);
         } finally {
             tempFile.delete(); // 임시 파일 삭제
+        }
+    }
+
+    private void resetLogbackContext() {
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        loggerContext.stop(); // 기존 컨텍스트 정지
+
+        try {
+            loggerContext.reset(); // 컨텍스트 초기화
+            JoranConfigurator configurator = new JoranConfigurator();
+            configurator.setContext(loggerContext);
+            configurator.doConfigure(LOG_LOGBACK_FILE_DIRECTORY + LOG_LOGBACK_ERROR_FILE_NAME);
+            loggerContext.start(); // 컨텍스트 다시 시작
+            log.info("Logback context has been reset. New log file will be created.");
+        } catch (JoranException e) {
+            log.error("Failed to reset Logback context", e);
         }
     }
 
@@ -89,7 +113,7 @@ public class S3LogService {
     private File getLocalLogFile(String day) {
         String logHome = System.getProperty("LOG_HOME", "./logs");
         LocalDate targetDate = "yesterday".equals(day) ? LocalDate.now().minusDays(1) : LocalDate.now();
-        String dateStr = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String dateStr = targetDate.format(LOG_DATE_FORMAT);
 
         if ("yesterday".equals(day)) {
             return new File(logHome, "error-" + dateStr + ".log");
@@ -100,7 +124,7 @@ public class S3LogService {
 
     private String buildS3Key(String day) {
         LocalDate targetDate = "yesterday".equals(day) ? LocalDate.now().minusDays(1) : LocalDate.now();
-        String dateStr = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String dateStr = targetDate.format(LOG_DATE_FORMAT);
 
         String activeProfile = environment.getProperty("spring.profiles.active", "default");
 
