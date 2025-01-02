@@ -69,6 +69,7 @@ configurations.all {
 
 tasks.named('test') {
     useJUnitPlatform()
+    systemProperty "LOG_HOME", "./logs"
 }
 
 jar {
