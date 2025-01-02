@@ -11,9 +11,6 @@ public class Constant {
     private String fcmProjectId;
 
     // Log
-    public static final String LOG_S3_DIRECTORY = "logs/";
-    public static final String LOG_LOCAL_FILE_DIRECTORY = "src/main/resources/logs/";
-    public static final String LOG_LOCAL_ERROR_FILE_NAME = "error.log";
     public static final String LOG_LOGBACK_FILE_DIRECTORY = "src/main/resources/";
     public static final String LOG_LOGBACK_ERROR_FILE_NAME = "logback-spring.xml";
 
