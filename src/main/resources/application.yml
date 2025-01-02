@@ -9,6 +9,11 @@ spring:
       max-file-size: 20MB
       max-request-size: 50MB
 
+# log
+logging:
+  level:
+    root: INFO
+
 # s3
 cloud:
   aws:
@@ -51,16 +56,6 @@ springdoc:
   cache:
     disabled: true
   use-fqn: true
-
-# log
-logging:
-  level:
-    root: ERROR
-  profiles:
-    local:
-      level: INFO
-    develop:
-      level: ERROR
 
 
 ---

@@ -16,7 +16,7 @@ public class LogUploadScheduler {
     @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul")
     public void uploadDailyLogToS3() {
         log.error("Uploading Log to S3 with Scheduler");
-        logService.uploadOrAppendLog("yesterday", true);
+        logService.uploadDailyLog("yesterday");
         log.error("Uploaded Log to S3 with Scheduler");
     }
 }
