@@ -11,9 +11,7 @@ public class Constant {
     private String fcmProjectId;
 
     // Log
-    public static final String LOG_LOGBACK_FILE_DIRECTORY = "src/main/resources/";
-    public static final String LOG_LOGBACK_ERROR_FILE_NAME = "logback-spring.xml";
-
+    public static final String LOG_LOGBACK_FILE_DIRECTORY = "src/main/resources/logback-spring.xml";
     public static final DateTimeFormatter LOG_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     // Phone
