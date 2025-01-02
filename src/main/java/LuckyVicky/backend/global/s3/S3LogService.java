@@ -38,11 +38,9 @@ public class S3LogService {
     private String bucket;
 
     public void uploadDailyLog(String day) {
+        log.info("Starting uploadDailyLog for day: {}", day);
         File localFile = getLocalLogFile(day);
-        if (!localFile.exists()) {
-            log.warn("No local log file found for day={}", day);
-            return;
-        }
+        ensureLogFileExists(localFile); // 로그 파일이 없으면 생성
 
         String s3Key = buildS3Key(day);
         File tempFile = new File("temp-" + localFile.getName());
@@ -50,9 +48,10 @@ public class S3LogService {
         try {
             // S3에 기존 로그 파일이 있는 경우 다운로드하여 병합
             if (amazonS3.doesObjectExist(bucket, s3Key)) {
-                log.info("Existing log found in S3. Merging logs...");
+                log.info("Existing log found in S3. Merging logs for key: {}", s3Key);
                 mergeLogsFromS3(localFile, tempFile, s3Key);
             } else {
+                log.info("No existing log found in S3 for key: {}. Copying local file.", s3Key);
                 Files.copy(localFile.toPath(), tempFile.toPath());
             }
 
@@ -68,11 +67,16 @@ public class S3LogService {
         } catch (Exception e) {
             log.error("Failed to upload or merge log file to S3. day={}, file={}, key={}", day, localFile, s3Key, e);
         } finally {
-            tempFile.delete(); // 임시 파일 삭제
+            if (tempFile.delete()) {
+                log.info("Temporary file deleted: {}", tempFile.getName());
+            } else {
+                log.warn("Failed to delete temporary file: {}", tempFile.getName());
+            }
         }
     }
 
     private void resetLogbackContext() {
+        log.info("Resetting Logback context to create a new log file.");
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         loggerContext.stop(); // 기존 컨텍스트 정지
 
@@ -86,18 +90,24 @@ public class S3LogService {
         } catch (JoranException e) {
             log.error("Failed to reset Logback context", e);
         }
+
+        ensureLogFileExists(getLocalLogFile("today"));
+        log.info("Dummy log written to trigger new file creation.");
     }
 
     private void mergeLogsFromS3(File localFile, File tempFile, String s3Key) throws IOException {
+        log.info("Merging S3 log and local log for key: {}", s3Key);
         try (S3Object s3Object = amazonS3.getObject(new GetObjectRequest(bucket, s3Key));
              InputStream s3InputStream = s3Object.getObjectContent();
              OutputStream tempOutputStream = new FileOutputStream(tempFile, true);
              InputStream localInputStream = new FileInputStream(localFile)) {
 
             // S3 로그 내용을 임시 파일에 복사
+            log.info("Copying S3 log content to temp file.");
             copyContent(s3InputStream, tempOutputStream);
 
             // 로컬 로그 내용을 임시 파일에 이어서 복사
+            log.info("Appending local log content to temp file.");
             copyContent(localInputStream, tempOutputStream);
         }
     }
@@ -107,6 +117,19 @@ public class S3LogService {
         int bytesRead;
         while ((bytesRead = input.read(buffer)) > 0) {
             output.write(buffer, 0, bytesRead);
+        }
+    }
+
+    private void ensureLogFileExists(File logFile) {
+        if (!logFile.exists()) {
+            try {
+                Files.createFile(logFile.toPath());
+                log.info("Log file manually created: {}", logFile.getAbsolutePath());
+            } catch (IOException e) {
+                log.error("Failed to create log file manually: {}", logFile.getAbsolutePath(), e);
+            }
+        } else {
+            log.info("Log file already exists: {}", logFile.getAbsolutePath());
         }
     }
 
