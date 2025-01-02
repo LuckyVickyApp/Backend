@@ -47,16 +47,16 @@ public class S3LogService {
     }
 
     private File getLocalLogFile(String day) {
-        // LOG_HOME=/var/logs/myapp
+        // LOG_HOME=/var/app/current/logs
         String logHome = System.getProperty("LOG_HOME", "./logs");
         LocalDate targetDate = "yesterday".equals(day) ? LocalDate.now().minusDays(1) : LocalDate.now();
         String dateStr = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         if ("yesterday".equals(day)) {
-            // 롤오버된 파일: /var/logs/myapp/error-2025-01-01.log
+            // 롤오버된 파일: /var/app/current/logs/error-2025-01-01.log
             return new File(logHome, "error-" + dateStr + ".log");
         } else {
-            // 아직 열려 있는 로그: /var/logs/myapp/error.log
+            // 아직 열려 있는 로그: /var/app/current/logs/error.log
             return new File(logHome, "error.log");
         }
     }

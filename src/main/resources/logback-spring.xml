@@ -1,5 +1,5 @@
 <configuration>
-    <property name="LOG_HOME" value="/var/logs/myapp"/>
+    <property name="LOG_HOME" value="/var/app/current/logs"/>
 
     <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_HOME}/error.log</file>
