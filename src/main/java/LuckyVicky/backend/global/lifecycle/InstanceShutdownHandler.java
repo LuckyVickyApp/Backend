@@ -17,5 +17,6 @@ public class InstanceShutdownHandler {
     public void onShutdown() {
         log.info("Application is shutting down. Uploading today's log to S3...");
         logService.uploadDailyLog("today");
+        log.info("Uploaded Log to S3 with PreDestroy");
     }
 }
