@@ -1,8 +1,6 @@
 package LuckyVicky.backend.global.s3;
 
 import static LuckyVicky.backend.global.util.Constant.LOG_DATE_FORMAT;
-import static LuckyVicky.backend.global.util.Constant.LOG_LOGBACK_ERROR_FILE_NAME;
-import static LuckyVicky.backend.global.util.Constant.LOG_LOGBACK_FILE_DIRECTORY;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -19,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.time.LocalDate;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
@@ -84,7 +83,8 @@ public class S3LogService {
             loggerContext.reset(); // 컨텍스트 초기화
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(loggerContext);
-            configurator.doConfigure(LOG_LOGBACK_FILE_DIRECTORY + LOG_LOGBACK_ERROR_FILE_NAME);
+            configurator.doConfigure( // 클래스패스를 통한 접근
+                    Objects.requireNonNull(getClass().getClassLoader().getResource("logback-spring.xml")));
             loggerContext.start(); // 컨텍스트 다시 시작
             log.info("Logback context has been reset. New log file will be created.");
         } catch (JoranException e) {
