@@ -1,7 +1,6 @@
 package LuckyVicky.backend.ranking.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.xml.bind.annotation.XmlType.DEFAULT;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -48,7 +47,7 @@ public class RankingResponseDto {
         private String itemName;
 
         @Schema(description = "사용자 랭킹")
-        private Integer myRanking;
+        private String myRanking;
     }
 
     // 주차별 랭킹 정보
