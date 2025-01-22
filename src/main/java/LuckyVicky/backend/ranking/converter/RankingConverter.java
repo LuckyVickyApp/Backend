@@ -31,7 +31,7 @@ public class RankingConverter {
         return ItemRankingResDto.builder()
                 .userRankingResDtoList(userRankingResDtoList)
                 .itemName(item.getName())
-                .myRanking(myRanking)
+                .myRanking(myRanking > 0 ? Integer.toString(myRanking) : "-")
                 .build();
     }
 

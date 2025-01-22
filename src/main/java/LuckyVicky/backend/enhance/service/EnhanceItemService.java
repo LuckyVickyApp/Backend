@@ -20,6 +20,7 @@ import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -37,9 +38,12 @@ public class EnhanceItemService {
                 .orElseThrow(() -> new GeneralException(ErrorCode.ENHANCE_ITEM_NOT_FOUND));
     }
 
+    public Optional<EnhanceItem> findByUserAndItemInOptional(User user, Item item) {
+        return enhanceItemRepository.findByUserAndItem(user, item);
+    }
+
     public EnhanceItem findByUserAndItemOrCreateEnhanceItem(User user, Item item) {
         return enhanceItemRepository.findByUserAndItem(user, item)
-                // 없으면 새로운 Entity 생성
                 .orElseGet(() -> {
                     Integer lastRanking = enhanceItemRepository.countByItem(item) + 1;
                     EnhanceItem newEnhanceItem = EnhanceConverter.createEnhanceItem(user, item, lastRanking);

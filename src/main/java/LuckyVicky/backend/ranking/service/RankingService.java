@@ -13,11 +13,11 @@ import LuckyVicky.backend.ranking.dto.RankingResponseDto.ItemRankingResDto;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.UserRankingResDto;
 import LuckyVicky.backend.ranking.dto.RankingResponseDto.WeekRankingResDto;
 import LuckyVicky.backend.user.domain.User;
-import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.Locale;
-import java.time.LocalDate;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,14 +44,15 @@ public class RankingService {
         List<EnhanceItem> enhanceItemList =
                 enhanceItemRepository.findEnhanceItemsByItemOrderByEnhanceLevelAndReachedTime(item);
 
-        Integer myRanking = enhanceItemService.findByUserAndItemOrCreateEnhanceItem(user, item).getRanking();
+        Optional<EnhanceItem> enhanceItem = enhanceItemService.findByUserAndItemInOptional(user, item);
+        Integer myRanking = enhanceItem.map(EnhanceItem::getRanking).orElse(-1);
 
         List<UserRankingResDto> userRankingResDtoList
                 = enhanceItemList.stream()
                 .map(RankingConverter::userRankingResDto)
                 .toList();
 
-        return RankingConverter.itemRankingResDto(item, myRanking ,userRankingResDtoList);
+        return RankingConverter.itemRankingResDto(item, myRanking, userRankingResDtoList);
     }
 
     public WeekRankingResDto getWeekRankingResDto(User user, List<Item> weekItemList, LocalDate date) {
@@ -67,7 +68,8 @@ public class RankingService {
         LocalDate enhanceStartDate = weekItemList.get(0).getEnhanceStartDate();
         LocalDate enhanceEndDate = weekItemList.get(0).getEnhanceEndDate();
 
-        return RankingConverter.weekRankingResDto(enhanceMonthWeek, itemRankingResDtoList, enhanceStartDate, enhanceEndDate);
+        return RankingConverter.weekRankingResDto(enhanceMonthWeek, itemRankingResDtoList, enhanceStartDate,
+                enhanceEndDate);
     }
 
     public CurrentItemRankingResDto getCurrentItemRankingResDto(Item item, EnhanceItem enhanceItem) {
@@ -75,7 +77,7 @@ public class RankingService {
                 enhanceItemRepository.findEnhanceItemsByItemOrderByEnhanceLevelAndReachedTime(item);
 
         List<UserRankingResDto> userRankingResDtoList
-                 = enhanceItemList.stream()
+                = enhanceItemList.stream()
                 .map(RankingConverter::userRankingResDto)
                 .toList();
 
