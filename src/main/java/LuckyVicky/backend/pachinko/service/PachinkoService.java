@@ -26,13 +26,17 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -58,7 +62,7 @@ public class PachinkoService {
     private final FcmService fcmService;
 
     @Getter
-    private final Set<Integer> selectedSquares = Collections.synchronizedSet(new HashSet<>()); // 스레드 간 동기화 제공
+    private final Set<Integer> selectedSquares = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public Set<Integer> viewSelectedSquares() { // 읽기 전용 뷰 반환
         return Collections.unmodifiableSet(selectedSquares);
@@ -126,45 +130,56 @@ public class PachinkoService {
     }
 
     @Transactional
+    @Retryable(
+            value = DataIntegrityViolationException.class,
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 100, multiplier = 2)
+    )
     public String selectSquare(User user, long currentRound, int squareNumber) {
-        // 6*6 안의 칸인지 확인
+        // 1. 칸 번호 유효성 검증
         validateSquareNumber(squareNumber);
 
-        // 이미 선택된 칸인지 확인
+        // 2. 이미 선택된 칸인지 확인
         if (selectedSquares.contains(squareNumber)) {
-            System.out.println(selectedSquares + "이미 " + squareNumber + "가 존재합니다.");
-
+            log.info("{} 이미 {}가 존재합니다.", selectedSquares, squareNumber);
             if (isUserSelected(user, currentRound, squareNumber)) {
-                System.out.println("본인이 이전에 선택한 칸입니다.");
+                log.info("본인이 이전에 선택한 칸입니다.");
                 return "본인이 이전에 선택한 칸입니다.";
             } else {
-                System.out.println("다른 사용자가 이전에 선택한 칸입니다.");
+                log.info("다른 사용자가 이전에 선택한 칸입니다.");
                 return "다른 사용자가 이전에 선택한 칸입니다.";
             }
         }
 
-        // 사용자 Pachinko 상태 조회
-        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, currentRound)
+        // 3. 사용자 Pachinko 상태 조회 및 초기화
+        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRoundForUpdate(user, currentRound)
                 .orElseGet(() -> initializeUserPachinko(user, currentRound));
 
-        // 칸 추가 로직 & 더 이상 선택할 수 없는 경우 처리
+        // 4. 칸 추가 로직 & 더 이상 선택할 수 없는 경우 처리
         if (!userPachinko.addSquare(squareNumber)) {
-            System.out.println("이미 세칸을 선택하셨습니다.");
-            return "이미 세개의 칸을 선택하셨습니다.";
+            log.info("이미 세 칸을 선택하셨습니다.");
+            return "이미 세 개의 칸을 선택하셨습니다.";
         }
 
+        // 5. 사용자 Pachinko 상태 저장
         userpachinkoRepository.save(userPachinko);
-        System.out.println("user packinko에 선택한 칸인 " + squareNumber + "을 저장했습니다.");
+        log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
 
-        // 보석 차감 로직
+        // 6. 보석 차감 로직
         deductUserJewel(user);
-        System.out.println("빠칭코 칸 선택을 위해 b급 보석 하나를 지불하셔서 db에서 보석을 차감했습니다.");
+        log.info("빠칭코 칸 선택을 위해 B급 보석 하나를 지불하여 DB에서 보석을 차감했습니다.");
 
-        // 선택한 칸 set에 넣기
+        // 7. 선택한 칸을 set에 추가
         addSelectedSquare(squareNumber);
-        System.out.println("선택한 칸을 set에 삽입했습니다. 변경된 set: " + selectedSquares);
+        log.info("선택한 칸을 set에 삽입했습니다. 변경된 set: {}", selectedSquares);
 
         return "정상적으로 선택 완료되었습니다.";
+    }
+
+    @Recover
+    public String recover(DataIntegrityViolationException e, User user, long currentRound, int squareNumber) {
+        log.warn("재시도 후에도 UserPachinko 엔티티 중복 생성 시도: {}", e.getMessage());
+        return "이미 다른 트랜잭션에서 생성된 사용자 데이터입니다.";
     }
 
     private boolean isUserSelected(User user, long currentRound, int squareNumber) {
