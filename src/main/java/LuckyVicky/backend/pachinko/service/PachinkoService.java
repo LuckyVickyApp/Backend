@@ -144,7 +144,7 @@ public class PachinkoService {
         }
 
         // 사용자 Pachinko 상태 조회
-        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRound(user, currentRound)
+        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRoundForUpdate(user, currentRound)
                 .orElseGet(() -> initializeUserPachinko(user, currentRound));
 
         // 칸 추가 로직 & 더 이상 선택할 수 없는 경우 처리
