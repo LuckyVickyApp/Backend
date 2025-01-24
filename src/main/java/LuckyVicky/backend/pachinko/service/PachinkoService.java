@@ -62,7 +62,6 @@ public class PachinkoService {
     private final FcmService fcmService;
 
     @Getter
-    //private final Set<Integer> selectedSquares = Collections.synchronizedSet(new HashSet<>()); // 스레드 간 동기화 제공
     private final Set<Integer> selectedSquares = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public Set<Integer> viewSelectedSquares() { // 읽기 전용 뷰 반환
