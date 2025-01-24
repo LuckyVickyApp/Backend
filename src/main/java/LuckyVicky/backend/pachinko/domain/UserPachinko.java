@@ -1,15 +1,30 @@
 package LuckyVicky.backend.pachinko.domain;
 
 import LuckyVicky.backend.user.domain.User;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "user_pachinko")
+@Table(
+        name = "user_pachinko",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "round"})
+)
 public class UserPachinko {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +42,7 @@ public class UserPachinko {
 
     private Integer square3;
 
-    public void setSquares(int square1, int square2, int square3){
+    public void setSquares(int square1, int square2, int square3) {
         this.square1 = square1;
         this.square2 = square2;
         this.square3 = square3;
