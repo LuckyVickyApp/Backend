@@ -74,13 +74,11 @@ public class PachinkoConverter {
                 .build();
     }
 
-    public static UserPachinko saveUserPachinko(Long currentRound, User user) {
+    public static UserPachinko saveUserPachinko(User user, Long currentRound, Integer squareNumber) {
         return UserPachinko.builder()
                 .round(currentRound)
                 .user(user)
-                .square1(0)
-                .square2(0)
-                .square3(0)
+                .square(squareNumber)
                 .build();
     }
 
