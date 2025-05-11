@@ -37,7 +37,7 @@ public class PachinkoController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PACHINKO_2001", description = "빠칭코 선택완료 칸 확인 성공"),
     })
     @GetMapping("/chosen-squares")
-    public ApiResponse<PachinkoChosenResDto> SelectedSquares(
+    public ApiResponse<PachinkoChosenResDto> ChosenSquares(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         User user = userService.findByUserName(customUserDetails.getUsername());
@@ -55,6 +55,18 @@ public class PachinkoController {
 
         return ApiResponse.onSuccess(SuccessCode.PACHINKO_GET_SQUARES_SUCCESS,
                 PachinkoConverter.pachinkoChosenResDto(jewelsNumber, currentRound, meChosenSet, chosenSquares));
+    }
+
+    @Operation(summary = "빠칭코 선택된 칸 반환", description = "빠칭코에서 선택 완료된 칸 반환하는 메서드입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "PACHINKO_T_2000", description = "빠칭코 선택완료 칸 확인 성공"),
+    })
+    @GetMapping("/selected-squares")
+    public ApiResponse<Set<Integer>> SelectedSquares() {
+
+        Set<Integer> chosenSquares = pachinkoService.viewSelectedSquares();
+
+        return ApiResponse.onSuccess(SuccessCode.PACHINKO_GET_SQUARES_SUCCESS, chosenSquares);
     }
 
     @Operation(summary = "빠칭코 첫 게임 시작", description = "빠칭코 첫 게임의 각 칸에 대한 보상을 정하는 메서드입니다.")
