@@ -139,39 +139,43 @@ public class PachinkoService {
         // 1. 칸 번호 유효성 검증
         validateSquareNumber(squareNumber);
 
-        // 2. 이미 선택된 칸인지 확인
-        if (selectedSquares.contains(squareNumber)) {
-            log.info("{} 이미 {}가 존재합니다.", selectedSquares, squareNumber);
-            if (isUserSelected(user, currentRound, squareNumber)) {
-                log.info("본인이 이전에 선택한 칸입니다.");
-                return "본인이 이전에 선택한 칸입니다.";
-            } else {
-                log.info("다른 사용자가 이전에 선택한 칸입니다.");
-                return "다른 사용자가 이전에 선택한 칸입니다.";
+        synchronized (this) {
+
+            // 2. 이미 선택된 칸인지 확인
+            if (selectedSquares.contains(squareNumber)) {
+                log.info("{} 이미 {}가 존재합니다.", selectedSquares, squareNumber);
+                if (isUserSelected(user, currentRound, squareNumber)) {
+                    log.info("본인이 이전에 선택한 칸입니다.");
+                    return "본인이 이전에 선택한 칸입니다.";
+                } else {
+                    log.info("다른 사용자가 이전에 선택한 칸입니다.");
+                    return "다른 사용자가 이전에 선택한 칸입니다.";
+                }
             }
+
+            // 3. 사용자 Pachinko 상태 조회 및 초기화
+            UserPachinko userPachinko = userpachinkoRepository.findByUserAndRoundForUpdate(user, currentRound)
+                    .orElseGet(() -> initializeUserPachinko(user, currentRound));
+
+            // 4. 칸 추가 로직 & 더 이상 선택할 수 없는 경우 처리
+            if (!userPachinko.addSquare(squareNumber)) {
+                log.info("이미 세 칸을 선택하셨습니다.");
+                return "이미 세 개의 칸을 선택하셨습니다.";
+            }
+
+            // 7. 선택한 칸을 set에 추가
+            addSelectedSquare(squareNumber);
+            log.info("선택한 칸을 set에 삽입했습니다. 변경된 set: {}", selectedSquares);
+
+            // 5. 사용자 Pachinko 상태 저장
+            userpachinkoRepository.save(userPachinko);
+            log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
+
         }
-
-        // 3. 사용자 Pachinko 상태 조회 및 초기화
-        UserPachinko userPachinko = userpachinkoRepository.findByUserAndRoundForUpdate(user, currentRound)
-                .orElseGet(() -> initializeUserPachinko(user, currentRound));
-
-        // 4. 칸 추가 로직 & 더 이상 선택할 수 없는 경우 처리
-        if (!userPachinko.addSquare(squareNumber)) {
-            log.info("이미 세 칸을 선택하셨습니다.");
-            return "이미 세 개의 칸을 선택하셨습니다.";
-        }
-
-        // 5. 사용자 Pachinko 상태 저장
-        userpachinkoRepository.save(userPachinko);
-        log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
 
         // 6. 보석 차감 로직
         deductUserJewel(user);
         log.info("빠칭코 칸 선택을 위해 B급 보석 하나를 지불하여 DB에서 보석을 차감했습니다.");
-
-        // 7. 선택한 칸을 set에 추가
-        addSelectedSquare(squareNumber);
-        log.info("선택한 칸을 set에 삽입했습니다. 변경된 set: {}", selectedSquares);
 
         return "정상적으로 선택 완료되었습니다.";
     }
@@ -351,7 +355,7 @@ public class PachinkoService {
                 Pachinko pa = pachinkoRepository.findByRoundAndSquare(round, sq)
                         .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));
                 if (pa.getJewelType() == JewelType.S) {
-                    jewelsNum.set(0, jewelsNum.get(0) + pa.getJewelNum());
+                    jewelsNum.set(0, jewelsNum.getFirst() + pa.getJewelNum());
                 } else if (pa.getJewelType() == JewelType.A) {
                     jewelsNum.set(1, jewelsNum.get(1) + pa.getJewelNum());
                 } else if (pa.getJewelType() == JewelType.B) {
