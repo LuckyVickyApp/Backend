@@ -1,5 +1,7 @@
 package LuckyVicky.backend.pachinko.handler;
 
+import static LuckyVicky.backend.pachinko.service.PachinkoService.PACHINKO_USER_MAX_SQUARES;
+
 import LuckyVicky.backend.pachinko.service.PachinkoService;
 import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.jwt.JwtTokenUtils;
@@ -11,13 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PachinkoWebSocketHandler extends TextWebSocketHandler {
@@ -28,6 +33,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final List<WebSocketSession> sessions = new ArrayList<>();
     private final ExecutorService virtualThreadExecutor = Executors.newVirtualThreadPerTaskExecutor();
+    private final Semaphore messageLimiter = new Semaphore(200); // 동시에 200개만 처리
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -99,7 +105,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
             return false;
         }
         if (!pachinkoService.canSelectMore(user, currentRound)) {
-            sendMessage(session, "이미 3칸을 선택하셔서 더 이상 칸을 선택할 수 없습니다.");
+            sendMessage(session, "이미 " + PACHINKO_USER_MAX_SQUARES + "칸을 선택하셔서 더 이상 칸을 선택할 수 없습니다.");
             return false;
         }
         return true;
@@ -126,17 +132,19 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
                 try {
                     pachinkoService.giveRewards();
                     broadcastMessage("보상 전달이 완료되었습니다.");
+                    pachinkoService.startNewRound();
+                    log.info("새로운 판 준비가 완료되었습니다.");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("보상 처리 중 예외 발생", e);
                 }
             });
 
-            new Thread(() -> {
+            Thread.startVirtualThread(() -> {
                 try {
                     countdownAndNotifyPlayers(10);
-                    startNewRoundAndNotifyPlayers();
+                    broadcastMessage("새로운 판이 시작됩니다.");
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    log.error("카운트다운 중 예외 발생", e);
                 }
             });
         }
@@ -145,13 +153,8 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     private void countdownAndNotifyPlayers(int seconds) throws InterruptedException {
         for (int i = seconds; i > 0; i--) {
             broadcastMessage(i + "초 후에 새로운 게임이 시작됩니다.");
-            Thread.sleep(1000);
+            Thread.sleep(1000); // 가상 쓰레드라 문제 없음
         }
-    }
-
-    private void startNewRoundAndNotifyPlayers() {
-        broadcastMessage("새로운 판이 시작됩니다.");
-        pachinkoService.startNewRound();
     }
 
     private void broadcastMessage(String message) {
