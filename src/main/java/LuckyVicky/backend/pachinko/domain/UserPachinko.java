@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(
         name = "user_pachinko",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "round", "square"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"round", "square"})
 )
 public class UserPachinko {
     @Id
