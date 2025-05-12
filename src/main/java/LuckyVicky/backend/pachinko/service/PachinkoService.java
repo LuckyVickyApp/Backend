@@ -152,7 +152,7 @@ public class PachinkoService {
         return "정상적으로 선택 완료되었습니다.";
     }
 
-    public synchronized void addSelectedSquare(int square) {
+    public void addSelectedSquare(int square) {
         selectedSquares.add(square);
     }
 
