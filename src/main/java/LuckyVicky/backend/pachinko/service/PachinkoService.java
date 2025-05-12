@@ -115,6 +115,7 @@ public class PachinkoService {
     @Transactional
     @Retryable(
             value = DataIntegrityViolationException.class,
+            maxAttempts = 2,
             backoff = @Backoff(delay = 100, multiplier = 2)
     )
     public String selectSquare(User user, long currentRound, int squareNumber) {
