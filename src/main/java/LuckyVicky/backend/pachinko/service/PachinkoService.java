@@ -137,13 +137,13 @@ public class PachinkoService {
             }
         }
 
-        // 선택한 칸을 set에 추가
-        addSelectedSquare(squareNumber);
-        log.info("선택한 칸을 set에 삽입했습니다. 변경된 set: {}", selectedSquares);
-
         // 사용자 Pachinko 상태 저장
         userPachinkoRepository.save(PachinkoConverter.saveUserPachinko(user, currentRound, squareNumber));
         log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
+
+        // 선택한 칸을 set에 추가
+        addSelectedSquare(squareNumber);
+        log.info("선택한 칸을 set에 삽입했습니다. 변경된 set: {}", selectedSquares);
 
         // 보석 차감
         deductUserJewel(user);
