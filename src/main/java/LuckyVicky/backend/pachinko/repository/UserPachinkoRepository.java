@@ -2,11 +2,8 @@ package LuckyVicky.backend.pachinko.repository;
 
 import LuckyVicky.backend.pachinko.domain.UserPachinko;
 import LuckyVicky.backend.user.domain.User;
-import jakarta.persistence.LockModeType;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,11 +11,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserPachinkoRepository extends JpaRepository<UserPachinko, Long> {
 
-    Optional<UserPachinko> findByUserAndRound(User user, Long round);
+    List<UserPachinko> findByUserAndRound(User user, Long round);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT u FROM UserPachinko u WHERE u.user = :user AND u.round = :round")
-    Optional<UserPachinko> findByUserAndRoundForUpdate(@Param("user") User user, @Param("round") Long round);
+    long countByUserAndRound(User user, Long round);
+
+    boolean existsByUserAndRoundAndSquare(User user, Long round, Integer square);
+
+    @Query("""
+                SELECT up FROM UserPachinko up
+                JOIN FETCH up.user u
+                LEFT JOIN FETCH u.deviceTokenList
+                WHERE up.round = :round
+            """)
+    List<UserPachinko> findByRoundWithUserAndDeviceTokens(@Param("round") Long round);
 
     List<UserPachinko> findByRound(Long round);
 
