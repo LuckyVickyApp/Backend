@@ -34,6 +34,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.retry.annotation.Backoff;
@@ -118,33 +119,19 @@ public class PachinkoService {
             maxAttempts = 2,
             backoff = @Backoff(delay = 100, multiplier = 2)
     )
-    public String selectSquare(User user, long currentRound, int squareNumber) {
+    @Synchronized
+    public String selectSquare(User user, int squareNumber) {
         // 칸 번호 유효성 검증
         validateSquareNumber(squareNumber);
 
-        // 이미 선택된 칸인지 확인
-        if (selectedSquares.contains(squareNumber)) {
-            log.info("{} 이미 {}가 선택되었습니다.", selectedSquares, squareNumber);
-
-            boolean userAlreadySelected = userPachinkoRepository.existsByUserAndRoundAndSquare(user, currentRound,
-                    squareNumber);
-
-            if (userAlreadySelected) {
-                log.info("본인이 이전에 선택한 칸입니다.");
-                return "본인이 이전에 선택한 칸입니다.";
-            } else {
-                log.info("다른 사용자가 이전에 선택한 칸입니다.");
-                return "다른 사용자가 이전에 선택한 칸입니다.";
-            }
+        // DB 확인
+        if (userPachinkoRepository.existsByRoundAndSquare(currentRound, squareNumber)) {
+            return "이미 선택된 칸 입니다.";
         }
 
-        // 사용자 Pachinko 상태 저장
+        // DB 갱신
         userPachinkoRepository.save(PachinkoConverter.saveUserPachinko(user, currentRound, squareNumber));
         log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
-
-        // 선택한 칸을 set에 추가
-        addSelectedSquare(squareNumber);
-        log.info("선택한 칸을 set에 삽입했습니다. 변경된 set: {}", selectedSquares);
 
         // 보석 차감
         deductUserJewel(user);
