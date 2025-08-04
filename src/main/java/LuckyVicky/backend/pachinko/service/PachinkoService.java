@@ -36,9 +36,6 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -115,11 +112,6 @@ public class PachinkoService {
     }
 
     @Transactional
-    @Retryable(
-            value = DataIntegrityViolationException.class,
-            maxAttempts = 2,
-            backoff = @Backoff(delay = 100, multiplier = 2)
-    )
     public String selectSquare(User user, int squareNumber) {
         // 칸 번호 유효성 검증
         validateSquareNumber(squareNumber);
