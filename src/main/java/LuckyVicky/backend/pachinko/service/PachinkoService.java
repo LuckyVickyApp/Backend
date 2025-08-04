@@ -31,10 +31,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.retry.annotation.Backoff;
@@ -66,6 +66,7 @@ public class PachinkoService {
 
     @Getter
     private final Set<Integer> selectedSquares = ConcurrentHashMap.newKeySet();
+    private final ConcurrentHashMap<Integer, ReentrantLock> squareLocks = new ConcurrentHashMap<>();
 
     public Set<Integer> viewSelectedSquares() { // 읽기 전용 뷰 반환
         return Collections.unmodifiableSet(selectedSquares);
@@ -119,25 +120,42 @@ public class PachinkoService {
             maxAttempts = 2,
             backoff = @Backoff(delay = 100, multiplier = 2)
     )
-    @Synchronized
     public String selectSquare(User user, int squareNumber) {
         // 칸 번호 유효성 검증
         validateSquareNumber(squareNumber);
 
-        // DB 확인
-        if (userPachinkoRepository.existsByRoundAndSquare(currentRound, squareNumber)) {
-            return "이미 선택된 칸 입니다.";
+        // 캐시 검증
+        if (selectedSquares.contains(squareNumber)) {
+            throw new IllegalStateException("이미 선택된 칸입니다.");
         }
 
-        // DB 갱신
-        userPachinkoRepository.save(PachinkoConverter.saveUserPachinko(user, currentRound, squareNumber));
-        log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
+        // lock 획득 시도
+        ReentrantLock lock = squareLocks.computeIfAbsent(squareNumber, key -> new ReentrantLock());
+        if (!lock.tryLock()) {
+            return "다른 사용자가 해당 칸을 선택 중입니다.";
+        }
+        try {
+            // DB, 캐시 갱신 이전 재확인
+            if (selectedSquares.contains(squareNumber)) {
+                return "이미 선택된 칸입니다.";
+            }
 
-        // 보석 차감
-        deductUserJewel(user);
-        log.info("빠칭코 칸 선택을 위해 B급 보석 하나를 지불하여 DB에서 보석을 차감했습니다.");
+            // DB 갱신
+            userPachinkoRepository.save(PachinkoConverter.saveUserPachinko(user, currentRound, squareNumber));
+            log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
 
-        return "정상적으로 선택 완료되었습니다.";
+            // 캐시 갱신
+            addSelectedSquare(squareNumber);
+            log.info("선택한 칸을 set에 삽입했습니다. 변경된 set: {}", selectedSquares);
+
+            // 보석 차감
+            deductUserJewel(user);
+            log.info("빠칭코 칸 선택을 위해 B급 보석 하나를 지불하여 DB에서 보석을 차감했습니다.");
+
+            return "정상적으로 선택 완료되었습니다.";
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void addSelectedSquare(int square) {
