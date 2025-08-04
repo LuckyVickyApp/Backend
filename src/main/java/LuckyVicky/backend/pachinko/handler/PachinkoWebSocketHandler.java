@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,7 +32,6 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final List<WebSocketSession> sessions = new ArrayList<>();
     private final ExecutorService virtualThreadExecutor = Executors.newVirtualThreadPerTaskExecutor();
-    private final Semaphore messageLimiter = new Semaphore(200); // 동시에 200개만 처리
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -112,7 +110,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     }
 
     private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) {
-        String result = pachinkoService.selectSquare(user, currentRound, selectedSquare);
+        String result = pachinkoService.selectSquare(user, selectedSquare);
         switch (result) {
             case "정상적으로 선택 완료되었습니다." -> {
                 broadcastMessage(user.getNickname() + "가 " + selectedSquare + "을 선택했습니다.");
