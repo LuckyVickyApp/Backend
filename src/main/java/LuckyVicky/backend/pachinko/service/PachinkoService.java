@@ -118,7 +118,7 @@ public class PachinkoService {
 
         // 캐시 검증
         if (selectedSquares.contains(squareNumber)) {
-            throw new IllegalStateException("이미 선택된 칸입니다.");
+            return "이미 선택된 칸입니다.";
         }
 
         // lock 획득 시도
