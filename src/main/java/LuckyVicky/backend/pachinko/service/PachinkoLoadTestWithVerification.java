@@ -125,7 +125,6 @@ public class PachinkoLoadTestWithVerification {
         if (con.getResponseCode() == 200) {
             try (Scanner scanner = new Scanner(con.getInputStream()).useDelimiter("\\A")) {
                 String response = scanner.hasNext() ? scanner.next() : "";
-                System.out.println("선택된 칸 결과 확인 응답:");
                 int resultStart = response.indexOf("[");
                 int resultEnd = response.indexOf("]", resultStart) + 1;
                 String resultJsonArray = response.substring(resultStart, resultEnd);
@@ -133,7 +132,7 @@ public class PachinkoLoadTestWithVerification {
 
                 System.out.printf("최종 선택된 칸 개수: %d개%n", squares.length);
                 if (squares.length == TOTAL_SQUARES) {
-                    System.out.printf("테스트 성공: %d개 칸이 정확히 채워졌습니다.", squares.length);
+                    System.out.printf("테스트 성공: %d개 칸이 정확히 채워졌습니다.\n", squares.length);
                 } else {
                     System.err.println("테스트 실패: 선택된 칸 수 = " + squares.length);
                 }
