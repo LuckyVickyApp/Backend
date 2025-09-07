@@ -20,6 +20,7 @@ import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
+import LuckyVicky.backend.user.service.UserJewelService;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
@@ -31,13 +32,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -61,10 +60,12 @@ public class PachinkoService {
     private final UserJewelRepository userJewelRepository;
     private final UserRepository userRepository;
     private final DisplayBoardService displayBoardService;
+    private final UserJewelService userJewelService;
     private final FcmService fcmService;
 
     @Getter
-    private final Set<Integer> selectedSquares = ConcurrentHashMap.newKeySet();
+    private final Set<Integer> selectedSquares = ConcurrentHashMap.newKeySet(); // 캐시에 미리 선택되지 않았다는 데이터 넣어두자
+    private final ConcurrentHashMap<Integer, ReentrantLock> squareLocks = new ConcurrentHashMap<>();
 
     public Set<Integer> viewSelectedSquares() { // 읽기 전용 뷰 반환
         return Collections.unmodifiableSet(selectedSquares);
@@ -100,68 +101,51 @@ public class PachinkoService {
     }
 
     @Transactional
-    public boolean noMoreJewel(User user) {
-        UserJewel userJewel = userJewelRepository.findByUserAndJewelType(user, PACHINKO_NEED_JEWEL_TYPE)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
-
-        return userJewel.getCount() < PACHINKO_NEED_JEWEL_COUNT;
-    }
-
-    @Transactional
     public boolean canSelectMore(User user, Long round) {
         return userPachinkoRepository.countByUserAndRound(user, round) < PACHINKO_USER_MAX_SQUARES;
     }
 
     @Transactional
-    @Retryable(
-            value = DataIntegrityViolationException.class,
-            maxAttempts = 2,
-            backoff = @Backoff(delay = 100, multiplier = 2)
-    )
-    public String selectSquare(User user, long currentRound, int squareNumber) {
+    public String selectSquare(User user, int squareNumber) {
         // 칸 번호 유효성 검증
         validateSquareNumber(squareNumber);
 
-        // 이미 선택된 칸인지 확인
+        // 캐시 검증
         if (selectedSquares.contains(squareNumber)) {
-            log.info("{} 이미 {}가 선택되었습니다.", selectedSquares, squareNumber);
-
-            boolean userAlreadySelected = userPachinkoRepository.existsByUserAndRoundAndSquare(user, currentRound,
-                    squareNumber);
-
-            if (userAlreadySelected) {
-                log.info("본인이 이전에 선택한 칸입니다.");
-                return "본인이 이전에 선택한 칸입니다.";
-            } else {
-                log.info("다른 사용자가 이전에 선택한 칸입니다.");
-                return "다른 사용자가 이전에 선택한 칸입니다.";
-            }
+            return "이미 선택된 칸입니다.";
         }
 
-        // 사용자 Pachinko 상태 저장
-        userPachinkoRepository.save(PachinkoConverter.saveUserPachinko(user, currentRound, squareNumber));
-        log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
+        // lock 획득 시도
+        ReentrantLock lock = squareLocks.computeIfAbsent(squareNumber, key -> new ReentrantLock());
+        if (!lock.tryLock()) {
+            return "다른 사용자가 해당 칸을 선택 중입니다.";
+        }
+        try {
+            // DB, 캐시 갱신 이전 재확인
+            if (selectedSquares.contains(squareNumber)) {
+                return "이미 선택된 칸입니다.";
+            }
 
-        // 선택한 칸을 set에 추가
-        addSelectedSquare(squareNumber);
-        log.info("선택한 칸을 set에 삽입했습니다. 변경된 set: {}", selectedSquares);
+            // 보석 개수 확인 후 차감
+            userJewelService.deductUserJewel(user);
+            log.info("빠칭코 칸 선택을 위해 B급 보석 하나를 지불하여 DB에서 보석을 차감했습니다.");
 
-        // 보석 차감
-        deductUserJewel(user);
-        log.info("빠칭코 칸 선택을 위해 B급 보석 하나를 지불하여 DB에서 보석을 차감했습니다.");
+            // 캐시 갱신
+            addSelectedSquare(squareNumber);
+            log.info("선택한 칸을 set에 삽입했습니다. 변경된 set: {}", selectedSquares);
 
-        return "정상적으로 선택 완료되었습니다.";
+            // DB 갱신
+            userPachinkoRepository.save(PachinkoConverter.saveUserPachinko(user, currentRound, squareNumber));
+            log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
+
+            return "정상적으로 선택 완료되었습니다.";
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void addSelectedSquare(int square) {
         selectedSquares.add(square);
-    }
-
-    private void deductUserJewel(User user) {
-        UserJewel userJewel = userJewelRepository.findByUserAndJewelType(user, PACHINKO_NEED_JEWEL_TYPE)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
-        userJewel.decreaseCount(PACHINKO_NEED_JEWEL_COUNT);
-        userJewelRepository.save(userJewel);
     }
 
     private void validateSquareNumber(int squareNumber) {

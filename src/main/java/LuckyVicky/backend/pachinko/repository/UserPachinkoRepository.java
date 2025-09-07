@@ -15,7 +15,7 @@ public interface UserPachinkoRepository extends JpaRepository<UserPachinko, Long
 
     long countByUserAndRound(User user, Long round);
 
-    boolean existsByUserAndRoundAndSquare(User user, Long round, Integer square);
+    boolean existsByRoundAndSquare(Long round, Integer square);
 
     @Query("""
                 SELECT up FROM UserPachinko up

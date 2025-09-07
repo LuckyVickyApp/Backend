@@ -16,12 +16,11 @@ import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.glassfish.tyrus.client.ClientManager;
 
 public class PachinkoLoadTestWithVerification {
 
-    private static final int USERS_PER_SQUARE = 1000;
-    private static final int TOTAL_SQUARES = 5;
+    private static final int USERS_PER_SQUARE = 30;
+    private static final int TOTAL_SQUARES = 36;
     private static final String TOKEN_URL = "http://localhost:8080/token/generate";
     private static final String WS_URL = "ws://localhost:8080/pachinko";
     private static final String VERIFY_URL = "http://localhost:8080/game/pachinko/selected-squares";
@@ -29,10 +28,7 @@ public class PachinkoLoadTestWithVerification {
     private static final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     public static void main(String[] args) throws Exception {
-        WebSocketContainer container = ClientManager.createClient();
-        //WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        System.out.println("사용 중인 WebSocketContainer 구현체: " + container.getClass().getName());
-
+        long start = System.nanoTime();
         CountDownLatch latch = new CountDownLatch(USERS_PER_SQUARE * TOTAL_SQUARES);
 
         for (int square = 1; square <= TOTAL_SQUARES; square++) {
@@ -56,13 +52,17 @@ public class PachinkoLoadTestWithVerification {
         executor.shutdown();
         System.out.println("make user finish");
 
+        long end = System.nanoTime();
+
         // 결과 검증
         Thread.sleep(2000); // 데이터 반영 대기
         verifySelectedSquares();
+
+        double elapsedMs = (end - start) / 1_000_000.0;
+        System.out.printf("부하 테스트 완료 – 총 소요 시간: %.2fms (%.2f초)\n", elapsedMs, elapsedMs / 1000.0);
     }
 
     private static String getTokenForUser(int userNum) throws Exception {
-        System.out.println(userNum);
         URL url = new URL(TOKEN_URL);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
@@ -87,9 +87,7 @@ public class PachinkoLoadTestWithVerification {
                 String response = scanner.hasNext() ? scanner.next() : "";
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode root = mapper.readTree(response);
-                String token = root.get("result").get("accessToken").asText();
-                System.out.println(token);
-                return token;
+                return root.get("result").get("accessToken").asText();
 
             }
         } else {
@@ -127,9 +125,6 @@ public class PachinkoLoadTestWithVerification {
         if (con.getResponseCode() == 200) {
             try (Scanner scanner = new Scanner(con.getInputStream()).useDelimiter("\\A")) {
                 String response = scanner.hasNext() ? scanner.next() : "";
-                System.out.println("선택된 칸 결과 확인 응답:");
-                System.out.println(response);
-
                 int resultStart = response.indexOf("[");
                 int resultEnd = response.indexOf("]", resultStart) + 1;
                 String resultJsonArray = response.substring(resultStart, resultEnd);
@@ -137,7 +132,7 @@ public class PachinkoLoadTestWithVerification {
 
                 System.out.printf("최종 선택된 칸 개수: %d개%n", squares.length);
                 if (squares.length == TOTAL_SQUARES) {
-                    System.out.printf("테스트 성공: %d개 칸이 정확히 채워졌습니다.", squares.length);
+                    System.out.printf("테스트 성공: %d개 칸이 정확히 채워졌습니다.\n", squares.length);
                 } else {
                     System.err.println("테스트 실패: 선택된 칸 수 = " + squares.length);
                 }

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,7 +32,6 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final List<WebSocketSession> sessions = new ArrayList<>();
     private final ExecutorService virtualThreadExecutor = Executors.newVirtualThreadPerTaskExecutor();
-    private final Semaphore messageLimiter = new Semaphore(200); // 동시에 200개만 처리
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -100,10 +98,6 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     }
 
     private boolean validateUserState(WebSocketSession session, User user, long currentRound) {
-        if (pachinkoService.noMoreJewel(user)) {
-            sendMessage(session, "칸을 선택할때 필요한 보석이 부족합니다.");
-            return false;
-        }
         if (!pachinkoService.canSelectMore(user, currentRound)) {
             sendMessage(session, "이미 " + PACHINKO_USER_MAX_SQUARES + "칸을 선택하셔서 더 이상 칸을 선택할 수 없습니다.");
             return false;
@@ -112,15 +106,14 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
     }
 
     private void processSquareSelection(WebSocketSession session, User user, long currentRound, int selectedSquare) {
-        String result = pachinkoService.selectSquare(user, currentRound, selectedSquare);
+        String result = pachinkoService.selectSquare(user, selectedSquare);
         switch (result) {
             case "정상적으로 선택 완료되었습니다." -> {
                 broadcastMessage(user.getNickname() + "가 " + selectedSquare + "을 선택했습니다.");
                 checkGameStatusAndCloseSessionsIfNeeded();
             }
-            case "다른 사용자가 이전에 선택한 칸입니다." -> sendMessage(session, selectedSquare + "번째 칸은 이미 다른 사용자에 의해 선택되었습니다.");
-            case "본인이 이전에 선택한 칸입니다." -> sendMessage(session, selectedSquare + "번째 칸은 본인이 이전에 선택한 칸입니다.");
-            case null, default -> sendMessage(session, "이미 3칸을 선택하셔서 더 이상 칸을 선택할 수 없습니다.");
+            case "이미 선택된 칸입니다." -> sendMessage(session, selectedSquare + "번째 칸은 이미 다른 사용자에 의해 선택되었습니다.");
+            case "다른 사용자가 해당 칸을 선택 중입니다." -> sendMessage(session, selectedSquare + "번째 칸은 다른 사용자가 선택중인 칸입니다.");
         }
     }
 
