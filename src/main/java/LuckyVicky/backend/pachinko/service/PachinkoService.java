@@ -64,7 +64,7 @@ public class PachinkoService {
     private final FcmService fcmService;
 
     @Getter
-    private final Set<Integer> selectedSquares = ConcurrentHashMap.newKeySet();
+    private final Set<Integer> selectedSquares = ConcurrentHashMap.newKeySet(); // 캐시에 미리 선택되지 않았다는 데이터 넣어두자
     private final ConcurrentHashMap<Integer, ReentrantLock> squareLocks = new ConcurrentHashMap<>();
 
     public Set<Integer> viewSelectedSquares() { // 읽기 전용 뷰 반환
@@ -101,14 +101,6 @@ public class PachinkoService {
     }
 
     @Transactional
-    public boolean noMoreJewel(User user) {
-        UserJewel userJewel = userJewelRepository.findByUserAndJewelType(user, PACHINKO_NEED_JEWEL_TYPE)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
-
-        return userJewel.getCount() < PACHINKO_NEED_JEWEL_COUNT;
-    }
-
-    @Transactional
     public boolean canSelectMore(User user, Long round) {
         return userPachinkoRepository.countByUserAndRound(user, round) < PACHINKO_USER_MAX_SQUARES;
     }
@@ -134,7 +126,7 @@ public class PachinkoService {
                 return "이미 선택된 칸입니다.";
             }
 
-            // 보석 여부 확인 후 차감
+            // 보석 개수 확인 후 차감
             userJewelService.deductUserJewel(user);
             log.info("빠칭코 칸 선택을 위해 B급 보석 하나를 지불하여 DB에서 보석을 차감했습니다.");
 

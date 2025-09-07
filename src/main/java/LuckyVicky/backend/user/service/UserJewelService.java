@@ -25,6 +25,7 @@ public class UserJewelService {
         // DB에서 락 걸고 사용자 보석 정보 조회
         UserJewel userJewel = userJewelRepository.findByUserAndJewelType(user, PACHINKO_NEED_JEWEL_TYPE)
                 .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
+        // 선택을 위한 코색 개수가 있는지
         if (userJewel.getCount() < PACHINKO_NEED_JEWEL_COUNT) {
             throw new GeneralException(ErrorCode.PACHINKO_NO_MORE_JEWEL);
         }
