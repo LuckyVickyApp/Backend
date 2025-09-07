@@ -118,7 +118,7 @@ public class PachinkoWebSocketHandler extends TextWebSocketHandler {
             }
             case "다른 사용자가 이전에 선택한 칸입니다." -> sendMessage(session, selectedSquare + "번째 칸은 이미 다른 사용자에 의해 선택되었습니다.");
             case "본인이 이전에 선택한 칸입니다." -> sendMessage(session, selectedSquare + "번째 칸은 본인이 이전에 선택한 칸입니다.");
-            case null, default -> sendMessage(session, "이미 3칸을 선택하셔서 더 이상 칸을 선택할 수 없습니다.");
+            case "이미 3칸을 선택하셔서 더 이상 칸을 선택할 수 없습니다." -> sendMessage(session, "이미 3칸을 선택하셔서 더 이상 칸을 선택할 수 없습니다.");
         }
     }
 

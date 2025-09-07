@@ -19,8 +19,8 @@ import java.util.concurrent.Executors;
 
 public class PachinkoLoadTestWithVerification {
 
-    private static final int USERS_PER_SQUARE = 200;
-    private static final int TOTAL_SQUARES = 5;
+    private static final int USERS_PER_SQUARE = 30;
+    private static final int TOTAL_SQUARES = 36;
     private static final String TOKEN_URL = "http://localhost:8080/token/generate";
     private static final String WS_URL = "ws://localhost:8080/pachinko";
     private static final String VERIFY_URL = "http://localhost:8080/game/pachinko/selected-squares";

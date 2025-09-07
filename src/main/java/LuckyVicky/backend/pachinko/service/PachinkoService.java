@@ -20,6 +20,7 @@ import LuckyVicky.backend.user.domain.User;
 import LuckyVicky.backend.user.domain.UserJewel;
 import LuckyVicky.backend.user.repository.UserJewelRepository;
 import LuckyVicky.backend.user.repository.UserRepository;
+import LuckyVicky.backend.user.service.UserJewelService;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import java.security.SecureRandom;
@@ -59,6 +60,7 @@ public class PachinkoService {
     private final UserJewelRepository userJewelRepository;
     private final UserRepository userRepository;
     private final DisplayBoardService displayBoardService;
+    private final UserJewelService userJewelService;
     private final FcmService fcmService;
 
     @Getter
@@ -132,17 +134,17 @@ public class PachinkoService {
                 return "이미 선택된 칸입니다.";
             }
 
-            // DB 갱신
-            userPachinkoRepository.save(PachinkoConverter.saveUserPachinko(user, currentRound, squareNumber));
-            log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
+            // 보석 여부 확인 후 차감
+            userJewelService.deductUserJewel(user);
+            log.info("빠칭코 칸 선택을 위해 B급 보석 하나를 지불하여 DB에서 보석을 차감했습니다.");
 
             // 캐시 갱신
             addSelectedSquare(squareNumber);
             log.info("선택한 칸을 set에 삽입했습니다. 변경된 set: {}", selectedSquares);
 
-            // 보석 차감
-            deductUserJewel(user);
-            log.info("빠칭코 칸 선택을 위해 B급 보석 하나를 지불하여 DB에서 보석을 차감했습니다.");
+            // DB 갱신
+            userPachinkoRepository.save(PachinkoConverter.saveUserPachinko(user, currentRound, squareNumber));
+            log.info("user pachinko에 선택한 칸인 {}을 저장했습니다.", squareNumber);
 
             return "정상적으로 선택 완료되었습니다.";
         } finally {
@@ -152,13 +154,6 @@ public class PachinkoService {
 
     public void addSelectedSquare(int square) {
         selectedSquares.add(square);
-    }
-
-    private void deductUserJewel(User user) {
-        UserJewel userJewel = userJewelRepository.findByUserAndJewelType(user, PACHINKO_NEED_JEWEL_TYPE)
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_JEWEL_NOT_FOUND));
-        userJewel.decreaseCount(PACHINKO_NEED_JEWEL_COUNT);
-        userJewelRepository.save(userJewel);
     }
 
     private void validateSquareNumber(int squareNumber) {
